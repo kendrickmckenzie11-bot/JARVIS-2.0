@@ -161,18 +161,17 @@
   .btn.danger{color:var(--danger);border-color:rgba(255,42,42,.4);background:rgba(255,42,42,.08)}
   .btn.danger:hover{background:rgba(255,42,42,.25);color:#fff}
   .btn.primary{background:var(--red);color:#fff;border-color:var(--red);font-weight:700}
-  .model-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
-  .model-chip{padding:6px 10px;font-size:10px;background:rgba(255,42,42,.08);border:1px solid var(--line);color:var(--red);cursor:pointer;border-radius:2px;letter-spacing:.06em;transition:all .18s;font-family:var(--font-mono);white-space:nowrap}
-  .model-chip:hover{background:rgba(255,42,42,.22);border-color:var(--red);color:#fff}
-  .model-chip.active{background:var(--red);color:#fff;border-color:var(--red)}
-  .model-chip .v{color:var(--dim2);margin-left:4px;font-size:9px}
+  .btn.primary:hover{background:var(--red-bright);box-shadow:0 0 22px rgba(255,42,42,.7)}
   .key-row{display:flex;gap:6px;align-items:stretch}
   .key-row .text-input{flex:1;font-family:var(--font-mono);font-size:11px}
-  .key-toggle{flex:0 0 auto;background:rgba(255,42,42,.08);border:1px solid var(--line);color:var(--red);padding:0 10px;font-size:10px;letter-spacing:.14em;cursor:pointer;border-radius:2px;transition:all .2s;font-weight:600}
+  .key-toggle{flex:0 0 auto;background:rgba(255,42,42,.08);border:1px solid var(--line);color:var(--red);padding:0 9px;font-size:10px;letter-spacing:.12em;cursor:pointer;border-radius:2px;transition:all .2s;font-weight:600}
   .key-toggle:hover{background:rgba(255,42,42,.2);color:#fff}
   .key-badge{display:inline-block;padding:3px 8px;font-size:9.5px;letter-spacing:.2em;background:rgba(255,42,42,.15);border:1px solid var(--red-soft);color:var(--red);border-radius:2px;font-family:var(--font-mono);margin-left:8px;text-transform:uppercase}
   .key-badge.ok{background:rgba(62,232,126,.12);border-color:rgba(62,232,126,.5);color:var(--ok)}
   .key-badge.warn{background:rgba(255,160,42,.14);border-color:rgba(255,160,42,.5);color:var(--warn)}
+  .key-length{font-size:10.5px;color:var(--dim2);font-family:var(--font-mono);margin-top:4px}
+  .key-length b{color:var(--ok);font-weight:500}
+  .key-length.bad b{color:var(--red)}
   .settings-footer{padding:16px 22px;border-top:1px solid var(--line-soft);font-size:10.5px;color:var(--dim2);letter-spacing:.24em;text-align:center;flex:0 0 auto;font-style:italic}
   .toast{position:fixed;bottom:110px;left:50%;transform:translate(-50%,20px);background:rgba(255,42,42,.15);border:1px solid var(--red-soft);color:#fff;padding:11px 22px;font-size:11px;letter-spacing:.26em;text-transform:uppercase;opacity:0;transition:all .3s;z-index:70;pointer-events:none;border-radius:2px;box-shadow:0 0 24px rgba(255,42,42,.35);white-space:nowrap;max-width:90vw;overflow:hidden;text-overflow:ellipsis;font-family:var(--font-serif);font-style:italic}
   .toast.show{opacity:1;transform:translate(-50%,0)}
@@ -247,7 +246,7 @@
 
   <main id="mainGrid">
     <aside class="panel" id="telemetryPanel">
-      <div class="panel-title">System Diagnostics <span class="tag">v7.6</span></div>
+      <div class="panel-title">System Diagnostics <span class="tag">v7.7</span></div>
       <div class="stat"><div class="row"><span>REACTOR OUTPUT</span><b id="v-pwr">98%</b></div><div class="bar"><i id="b-pwr"></i></div></div>
       <div class="stat"><div class="row"><span>COGNITION LOAD</span><b id="v-cpu">--</b></div><div class="bar"><i id="b-cpu"></i></div></div>
       <div class="stat"><div class="row"><span>MEMORY BANK</span><b id="v-mem">--</b></div><div class="bar"><i id="b-mem"></i></div></div>
@@ -327,30 +326,26 @@
       <label class="setting-row col">
         <span>API Key <span id="keySourceBadge" class="key-badge" style="display:none">HARDCODED</span></span>
         <div class="key-row">
-          <input type="password" id="setApiKey" class="text-input" placeholder="sk-or-v1-…" autocomplete="new-password" spellcheck="false" autocapitalize="off" autocorrect="off">
-          <button type="button" class="key-toggle" id="toggleKeyBtn" title="Show/hide key">SHOW</button>
-          <button type="button" class="key-toggle" id="clearKeyBtn" title="Clear key from settings">CLEAR</button>
+          <input type="password" id="setApiKey" class="text-input" placeholder="sk-or-v1-…" autocomplete="new-password" spellcheck="false" autocapitalize="off" autocorrect="off" data-lpignore="true" data-form-type="other">
+          <button type="button" class="key-toggle" id="toggleKeyBtn" title="Show/hide">SHOW</button>
+          <button type="button" class="key-toggle" id="copyKeyBtn" title="Copy field contents">COPY</button>
+          <button type="button" class="key-toggle" id="clearKeyBtn" title="Clear field">CLR</button>
         </div>
       </label>
+      <div class="key-length" id="keyLengthDisplay">Field is empty</div>
       <div class="setting-help" id="keyHelp">
         Get a key at <a href="https://openrouter.ai/keys" target="_blank" rel="noopener">openrouter.ai/keys</a>.
-        Keys start with <b>sk-or-v1-</b>. Use the <b>Diagnose API key</b> button below if you get a 401.
+        Keys look like <b>sk-or-v1-...</b> and are ~73 chars. Use <b>Diagnose</b> or <b>Verify</b> below if you get a 401.
       </div>
 
       <button class="btn primary" id="diagnoseKeyBtn" style="margin-top:6px">Diagnose API key</button>
-      <button class="btn" id="verifyKeyBtn">Verify key with OpenRouter</button>
+      <button class="btn" id="verifyKeyBtn">Verify key (live request)</button>
+      <button class="btn" id="hardResetBtn">Hard reset &amp; reload</button>
 
       <label class="setting-row col" style="margin-top:14px">
         <span>Chat Model</span>
         <input type="text" id="setModel" class="text-input" placeholder="openai/gpt-4o-mini" autocomplete="off" spellcheck="false">
       </label>
-
-      <div class="model-chips" id="modelChips">
-        <button type="button" class="model-chip" data-model="openai/gpt-4o-mini">gpt-4o-mini<span class="v">vision</span></button>
-        <button type="button" class="model-chip" data-model="openai/gpt-4o">gpt-4o<span class="v">vision</span></button>
-        <button type="button" class="model-chip" data-model="anthropic/claude-3.5-sonnet">claude-3.5-sonnet<span class="v">vision</span></button>
-        <button type="button" class="model-chip" data-model="google/gemini-flash-1.5">gemini-flash-1.5<span class="v">vision</span></button>
-      </div>
 
       <label class="setting-row col" style="margin-top:14px">
         <span>Vision Model <i style="color:var(--dim2);font-style:italic;font-weight:400">(optional)</i></span>
@@ -470,7 +465,7 @@
       <button class="btn danger" id="resetBtn">Reset all settings</button>
     </section>
 
-    <div class="settings-footer">A.C.E. v7.6 · Autonomous Cognitive Entity · Saved automatically</div>
+    <div class="settings-footer">A.C.E. v7.7 · Autonomous Cognitive Entity · Saved automatically</div>
   </div>
 </aside>
 
@@ -478,23 +473,14 @@
 (function () {
   "use strict";
 
-  /* ============================================================
-     ⚙️  HARDCODED CONFIG
-     ------------------------------------------------------------
-     Paste your OpenRouter key between the quotes below to skip
-     entering it in the settings panel. Leave it as "" to only
-     use the key you type into the settings panel.
-
-     IMPORTANT: the key must start with "sk-or-v1-" and must NOT
-     contain spaces, newlines, or quotes.
-     ============================================================ */
-  var HARDCODED_API_KEY = "";   // ← paste key here, e.g. "sk-or-v1-abc123..."
-
+  // ═══════════════════════════════════════════════════════════════
+  //  HARDCODED CONFIG — paste your key here to skip the UI entirely
+  // ═══════════════════════════════════════════════════════════════
+  var HARDCODED_API_KEY = "";
   var HARDCODED_CHAT_MODEL   = "openai/gpt-4o-mini";
   var HARDCODED_VISION_MODEL = "";
   var HARDCODED_TTS_MODEL    = "deepgram/flux-tts:free";
-  var HARDCODED_TTS_VOICE    = "";  // blank = model default
-  /* ============================================================ */
+  var HARDCODED_TTS_VOICE    = "";
 
   function $(id) { return document.getElementById(id); }
   function sleep(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
@@ -506,7 +492,6 @@
 
   var OPENROUTER_ENDPOINT = "https://openrouter.ai/api/v1/chat/completions";
   var OPENROUTER_TTS_ENDPOINT = "https://openrouter.ai/api/v1/audio/speech";
-  var OPENROUTER_KEY_ENDPOINT = "https://openrouter.ai/api/v1/auth/key";
   var OPENROUTER_REFERER = "https://github.com/";
   var OPENROUTER_TITLE = "A.C.E. Interface";
 
@@ -549,8 +534,7 @@
     ]
   };
 
-  // Bump the storage key so old, corrupted settings don't carry over
-  var STORAGE_KEY = "ace.settings.v7.6";
+  var STORAGE_KEY = "ace.settings.v7.7";
 
   var DEFAULT_SYSTEM_PROMPT =
     "You are A.C.E. — Autonomous Cognitive Entity — a concise, capable AI assistant with a " +
@@ -605,25 +589,38 @@
   }
   var settings = loadSettings();
 
-  // Strip every possible whitespace-ish character, not just trim()
   function cleanKey(raw) {
     if (!raw) return "";
     return String(raw).replace(/[\s\u200B-\u200D\uFEFF\u00A0]/g, "");
   }
 
+  // ═══════════════════════════════════════════════════════════════════
+  //  THE FIX: effectiveApiKey() reads the LIVE FIELD FIRST
+  //  This catches browser autofill, paste events, and any other way
+  //  the field could end up with a value different from settings.
+  // ═══════════════════════════════════════════════════════════════════
   function effectiveApiKey() {
+    // Live field value wins — it's the ground truth of what the user sees
+    if (els.setApiKey && els.setApiKey.value) {
+      var fromField = cleanKey(els.setApiKey.value);
+      if (fromField) return fromField;
+    }
+    // Fall back to saved settings
     var fromSettings = cleanKey(settings.apiKey);
     if (fromSettings) return fromSettings;
+    // Fall back to hardcoded
     return cleanKey(HARDCODED_API_KEY);
   }
+
   function isUsingHardcodedKey() {
+    if (els.setApiKey && cleanKey(els.setApiKey.value)) return false;
     return !cleanKey(settings.apiKey) && !!cleanKey(HARDCODED_API_KEY);
   }
-  // Quick validity heuristics — OpenRouter keys start with sk-or-v1-
+
   function keyLooksValid(k) {
     if (!k) return false;
-    if (!/^sk-/.test(k)) return false;
-    if (k.length < 20) return false;
+    if (!/^sk-or-v1-/.test(k)) return false;
+    if (k.length < 60) return false;
     return true;
   }
 
@@ -638,7 +635,6 @@
     return s;
   }
 
-  // ==================== STATE ====================
   var logCount = 0;
   var listening = false, wantListening = false, speaking = false;
   var userHasInteracted = false;
@@ -703,7 +699,6 @@
     } catch (e) {}
   }
 
-  // ==================== BROWSER TTS ====================
   function refreshVoices() {
     if (!("speechSynthesis" in window)) return;
     allVoices = speechSynthesis.getVoices();
@@ -724,9 +719,7 @@
     jarvisVoice = null;
     for (var p = 0; p < preferred.length; p++) {
       for (var v = 0; v < allVoices.length; v++) {
-        if (allVoices[v].name === preferred[p] || allVoices[v].name.indexOf(preferred[p]) > -1) {
-          jarvisVoice = allVoices[v]; break;
-        }
+        if (allVoices[v].name === preferred[p] || allVoices[v].name.indexOf(preferred[p]) > -1) { jarvisVoice = allVoices[v]; break; }
       }
       if (jarvisVoice) break;
     }
@@ -750,8 +743,7 @@
       if (v) u.voice = v;
       u.rate = Number(settings.rate); u.pitch = Number(settings.pitch); u.volume = Number(settings.volume);
       u.onstart = function () {
-        speaking = true;
-        setStatus("SPEAKING", "SAY 'BE QUIET' TO INTERRUPT");
+        speaking = true; setStatus("SPEAKING", "SAY 'BE QUIET' TO INTERRUPT");
         energy = Math.max(energy, 0.65);
         if (els.stopSpeakBtn) els.stopSpeakBtn.classList.add("show");
         updateChips();
@@ -768,36 +760,25 @@
     } catch (e) {}
   }
 
-  // ==================== TTS VIA OPENROUTER ====================
   function ttsConfigured() { return !!(effectiveApiKey() && settings.ttsModel); }
 
   async function speak(text) {
-    if (!settings.speak) return;
-    if (!userHasInteracted) return;
-
+    if (!settings.speak || !userHasInteracted) return;
     var spoken = text.replace(/```[\s\S]*?```/g, " (code block omitted) ").slice(0, 2000);
-
     if (!ttsConfigured()) { browserSpeak(spoken); return; }
-
     stopAudio();
     if ("speechSynthesis" in window) { try { speechSynthesis.cancel(); } catch (e) {} }
-
     setStatus("SPEAKING", "SYNTHESISING VOICE");
     speaking = true;
     if (els.stopSpeakBtn) els.stopSpeakBtn.classList.add("show");
     updateChips();
     energy = Math.max(energy, 0.7);
-
     var apiKey = effectiveApiKey();
     var model = settings.ttsModel;
     var voice = (settings.ttsVoice || "").trim();
-
     var reqBody = { model: model, input: spoken, response_format: "mp3" };
     if (voice) reqBody.voice = voice;
-
-    logLine("TTS → " + model + (voice ? (" voice=" + voice) : " (default voice)"), "sys");
-    logLine("Auth header length: " + ("Bearer " + apiKey).length + " | key length: " + apiKey.length, "sys");
-
+    logLine("TTS → " + model + (voice ? (" voice=" + voice) : " (default)"), "sys");
     try {
       var res = await fetch(OPENROUTER_TTS_ENDPOINT, {
         method: "POST",
@@ -809,7 +790,6 @@
         },
         body: JSON.stringify(reqBody)
       });
-
       if (!res.ok) {
         var errText = "";
         try { errText = await res.text(); } catch (e) {}
@@ -821,39 +801,22 @@
             else if (p.error.message) detail = p.error.message;
           }
         } catch (e) {}
-
         lastTtsError = "HTTP " + res.status + " — " + detail;
         logLine("TTS ERROR: " + lastTtsError, "err");
-
         if (res.status === 401) {
-          logLine("→ 401 from TTS. The API key being sent is NOT valid on OpenRouter.", "err");
-          logLine("→ Run 'Diagnose API key' in settings to see the exact key A.C.E. has stored.", "warn");
-          highlightKeyField();
-        } else if (res.status === 404) {
-          logLine("→ Model or voice not found.", "warn");
-        } else if (res.status === 402) {
-          logLine("→ Out of credits or quota.", "warn");
-        } else if (res.status === 429) {
-          logLine("→ Rate limited.", "warn");
-        } else if (res.status === 400) {
-          logLine("→ Bad request. Voice id might be wrong for this model.", "warn");
+          logLine("→ 401 from TTS. The key A.C.E. sent was rejected.", "err");
+          logLine("→ Key sent: " + apiKey.length + " chars, starts with " + apiKey.slice(0, 12) + "…", "err");
         }
-
         speaking = false;
         if (els.stopSpeakBtn) els.stopSpeakBtn.classList.remove("show");
         updateChips();
         browserSpeak(spoken);
         return;
       }
-
-      var contentType = res.headers.get("content-type") || "";
-      logLine("TTS response: " + contentType, "sys");
-
       var blob = await res.blob();
       logLine("TTS audio received: " + bytes(blob.size), "ok");
-
       if (blob.size < 512) {
-        lastTtsError = "Audio response too small (" + blob.size + " bytes)";
+        lastTtsError = "Audio too small (" + blob.size + " bytes)";
         logLine("TTS ERROR: " + lastTtsError, "err");
         speaking = false;
         if (els.stopSpeakBtn) els.stopSpeakBtn.classList.remove("show");
@@ -861,14 +824,11 @@
         browserSpeak(spoken);
         return;
       }
-
       ttsAudioUrl = URL.createObjectURL(blob);
       currentAudio = new Audio(ttsAudioUrl);
       currentAudio.volume = Number(settings.volume);
-
       currentAudio.onplay = function () {
-        speaking = true;
-        setStatus("SPEAKING", "SAY 'BE QUIET' TO INTERRUPT");
+        speaking = true; setStatus("SPEAKING", "SAY 'BE QUIET' TO INTERRUPT");
         if (els.stopSpeakBtn) els.stopSpeakBtn.classList.add("show");
         updateChips();
       };
@@ -876,50 +836,34 @@
         speaking = false;
         if (els.stopSpeakBtn) els.stopSpeakBtn.classList.remove("show");
         if (!listening) setStatus("ONLINE", "ALL SYSTEMS NOMINAL");
-        updateChips();
-        stopAudio();
+        updateChips(); stopAudio();
         if (wantListening && !listening && settings.alwaysOn) scheduleRestart(180);
       };
       currentAudio.onended = done;
       currentAudio.onerror = function () {
         lastTtsError = "Audio playback failed";
         logLine("TTS ERROR: " + lastTtsError, "err");
-        done();
-        browserSpeak(spoken);
+        done(); browserSpeak(spoken);
       };
       currentAudio.play();
     } catch (err) {
       var msg = err && err.message ? err.message : String(err);
       lastTtsError = msg;
-      if (/Failed to fetch|NetworkError|Load failed/i.test(msg)) {
-        logLine("TTS ERROR: Network/CORS — " + msg, "err");
-      } else {
-        logLine("TTS ERROR: " + msg, "err");
-      }
+      logLine("TTS ERROR: " + msg, "err");
       speaking = false;
       if (els.stopSpeakBtn) els.stopSpeakBtn.classList.remove("show");
-      updateChips();
-      browserSpeak(spoken);
+      updateChips(); browserSpeak(spoken);
     }
   }
 
   function stopAudio() {
-    if (currentAudio) {
-      try { currentAudio.pause(); currentAudio.currentTime = 0; } catch (e) {}
-      currentAudio = null;
-    }
-    if (ttsAudioUrl) {
-      try { URL.revokeObjectURL(ttsAudioUrl); } catch (e) {}
-      ttsAudioUrl = null;
-    }
+    if (currentAudio) { try { currentAudio.pause(); currentAudio.currentTime = 0; } catch (e) {} currentAudio = null; }
+    if (ttsAudioUrl) { try { URL.revokeObjectURL(ttsAudioUrl); } catch (e) {} ttsAudioUrl = null; }
   }
   function stopSpeaking(silent) {
     var was = speaking;
     if (currentAudio) { was = was || !currentAudio.paused; stopAudio(); }
-    if ("speechSynthesis" in window) {
-      was = was || speechSynthesis.speaking;
-      try { speechSynthesis.cancel(); } catch (e) {}
-    }
+    if ("speechSynthesis" in window) { was = was || speechSynthesis.speaking; try { speechSynthesis.cancel(); } catch (e) {} }
     speaking = false;
     if (els.stopSpeakBtn) els.stopSpeakBtn.classList.remove("show");
     if (!silent && was) { logLine("Speech interrupted.", "sys"); setStatus("ONLINE", "ALL SYSTEMS NOMINAL"); }
@@ -928,7 +872,6 @@
     return was;
   }
 
-  // ==================== STATUS / CHIPS ====================
   var statusResetTimer = null;
   function setStatus(text, sub) {
     if (els.statusText) els.statusText.textContent = text;
@@ -954,7 +897,6 @@
     var aiChip = els.aiChip, aiTxt = els.aiChipText;
     if (aiChip && aiTxt) {
       var k = effectiveApiKey();
-      var configured = aiConfigured();
       if (!k) { aiChip.className = "status-chip warn"; aiTxt.textContent = "AI: SET KEY"; }
       else if (!keyLooksValid(k)) { aiChip.className = "status-chip warn"; aiTxt.textContent = "AI: BAD KEY"; }
       else { aiChip.className = "status-chip ok"; aiTxt.textContent = "AI: " + (aiBusy ? "THINKING" : "READY"); }
@@ -971,10 +913,9 @@
       if (screenStream) { scChip.className = "status-chip on"; scTxt.textContent = "SCREEN: LIVE"; }
       else { scChip.className = "status-chip"; scTxt.textContent = "SCREEN: OFF"; }
     }
-    // Key badge
     if (els.keySourceBadge) {
       var k2 = effectiveApiKey();
-      if (!k2) { els.keySourceBadge.style.display = "none"; }
+      if (!k2) els.keySourceBadge.style.display = "none";
       else if (isUsingHardcodedKey()) {
         els.keySourceBadge.style.display = "inline-block";
         els.keySourceBadge.className = "key-badge";
@@ -982,12 +923,33 @@
       } else if (!keyLooksValid(k2)) {
         els.keySourceBadge.style.display = "inline-block";
         els.keySourceBadge.className = "key-badge warn";
-        els.keySourceBadge.textContent = "SUSPECT FORMAT";
+        els.keySourceBadge.textContent = "SUSPECT";
       } else {
         els.keySourceBadge.style.display = "inline-block";
         els.keySourceBadge.className = "key-badge ok";
-        els.keySourceBadge.textContent = "LOADED";
+        els.keySourceBadge.textContent = "OK";
       }
+    }
+    updateKeyLengthDisplay();
+  }
+
+  function updateKeyLengthDisplay() {
+    var d = els.keyLengthDisplay;
+    if (!d) return;
+    var fieldVal = els.setApiKey ? cleanKey(els.setApiKey.value) : "";
+    var eff = effectiveApiKey();
+    if (!fieldVal && !settings.apiKey && !HARDCODED_API_KEY) {
+      d.textContent = "Field is empty — no key set anywhere";
+      d.className = "key-length bad";
+    } else if (fieldVal) {
+      d.innerHTML = "Field: <b>" + fieldVal.length + " chars</b> · starts with " + fieldVal.slice(0, 10) + "… · effective key = field value";
+      d.className = keyLooksValid(fieldVal) ? "key-length" : "key-length bad";
+    } else if (settings.apiKey) {
+      d.innerHTML = "Field empty · using saved settings value: <b>" + settings.apiKey.length + " chars</b>";
+      d.className = "key-length";
+    } else {
+      d.innerHTML = "Field empty · using hardcoded key: <b>" + HARDCODED_API_KEY.length + " chars</b>";
+      d.className = "key-length";
     }
   }
 
@@ -1025,7 +987,6 @@
     if (aiBusy) energy = Math.max(energy, 0.8);
   }
 
-  // ==================== ARC REACTOR ====================
   var canvas = null, ctx = null, W = 0, H = 0;
   function resizeCanvas() {
     if (!canvas) return;
@@ -1049,12 +1010,10 @@
     if (R <= 0) return;
     var motion = settings.reducedMotion ? 0.15 : 1;
     var pulse = Math.sin(now / 900) * 0.5 + 0.5, e = energyCur;
-
     ctx.save(); ctx.translate(cx, cy); ctx.rotate(now / 26000 * motion);
     ctx.beginPath(); ctx.arc(0, 0, R * 0.97, 0, Math.PI * 2);
     ctx.setLineDash([2, 7]); ctx.lineWidth = 1.2; ctx.strokeStyle = "rgba(255,42,42,.35)"; ctx.stroke();
     ctx.restore();
-
     ctx.save(); ctx.translate(cx, cy); ctx.rotate(now / 60000 * motion);
     for (var i = 0; i < 72; i++) {
       var a = (i / 72) * Math.PI * 2, isLong = i % 6 === 0;
@@ -1066,7 +1025,6 @@
       ctx.lineWidth = isLong ? 1.6 : 1; ctx.stroke();
     }
     ctx.restore();
-
     var rotA = now / 5200 * motion, rotB = -now / 3600 * motion, rotC = now / 2400 * motion;
     arcSeg(cx, cy, rotA, R * 0.90, 0, Math.PI * 0.34, 2.4, "rgba(255,42,42,.95)", 16);
     arcSeg(cx, cy, rotA, R * 0.90, Math.PI * 0.62, Math.PI * 0.20, 2.4, "rgba(255,42,42,.55)", 10);
@@ -1074,26 +1032,21 @@
     arcSeg(cx, cy, rotB, R * 0.78, Math.PI * 0.78, Math.PI * 0.14, 3.2, "rgba(255,255,255,.45)", 10);
     arcSeg(cx, cy, rotC, R * 0.64, 0, Math.PI * 0.24, 1.8, "rgba(255,42,42,.7)", 12);
     arcSeg(cx, cy, rotC, R * 0.64, Math.PI * 0.45, Math.PI * 0.30, 1.8, "rgba(255,42,42,.4)", 8);
-
     var sweep = now / 1500 * motion;
     for (var k = 0; k < 14; k++) arcSeg(cx, cy, sweep - k * 0.045, R * 0.70, 0, 0.05, 6, "rgba(255,255,255," + ((1 - k / 14) * 0.4) + ")", 0);
-
     ctx.save(); ctx.translate(cx, cy);
     ctx.beginPath(); ctx.arc(0, 0, R * 0.52, 0, Math.PI * 2);
     ctx.lineWidth = 1; ctx.strokeStyle = "rgba(255,42,42," + (0.25 + e * 0.4) + ")"; ctx.stroke();
     ctx.restore();
-
     var coreR = R * 0.20 * (1 + 0.07 * pulse + 0.30 * e);
     var g = ctx.createRadialGradient(cx, cy, 0, cx, cy, coreR * 3.4);
     g.addColorStop(0, "rgba(255,255,255,1)"); g.addColorStop(0.18, "rgba(255,180,180,.9)");
     g.addColorStop(0.42, "rgba(255,42,42,.4)"); g.addColorStop(0.75, "rgba(180,0,0,.14)");
     g.addColorStop(1, "rgba(120,0,0,0)");
     ctx.fillStyle = g; ctx.beginPath(); ctx.arc(cx, cy, coreR * 3.4, 0, Math.PI * 2); ctx.fill();
-
     ctx.beginPath(); ctx.arc(cx, cy, coreR, 0, Math.PI * 2);
     ctx.lineWidth = 2; ctx.strokeStyle = "rgba(255,255,255,.95)";
     ctx.shadowBlur = 26; ctx.shadowColor = "rgba(255,42,42,.95)"; ctx.stroke(); ctx.shadowBlur = 0;
-
     if (!settings.reducedMotion) {
       for (var p = 0; p < 26; p++) {
         var seed = p * 137.508, ang = (seed + now / (2000 + (p % 7) * 400)) % (Math.PI * 2);
@@ -1114,7 +1067,6 @@
     requestAnimationFrame(loop);
   }
 
-  // ==================== SPEECH RECOGNITION ====================
   function setupRecognition() {
     var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
     micSupported = !!SR;
@@ -1122,7 +1074,6 @@
     recognition = new SR();
     recognition.continuous = true; recognition.interimResults = true;
     recognition.lang = settings.lang; recognition.maxAlternatives = 1;
-
     recognition.onstart = function () {
       listening = true;
       if (els.micBtn) els.micBtn.classList.add("listening");
@@ -1177,7 +1128,7 @@
     }, delay || 300);
   }
   function startListening() {
-    if (!micSupported) { logLine("Voice input isn't supported here.", "warn"); toast("Voice not supported", "warn"); return; }
+    if (!micSupported) { logLine("Voice input isn't supported.", "warn"); toast("Voice not supported", "warn"); return; }
     if ("speechSynthesis" in window && !settings.alwaysOn) speechSynthesis.cancel();
     wantListening = true;
     if (!listening) { try { recognition.start(); } catch (e) { scheduleRestart(500); } }
@@ -1231,10 +1182,12 @@
     if (els.memCount) els.memCount.textContent = Object.keys(settings.memories).length;
     if (els.histCount) els.histCount.textContent = Math.floor(conversationHistory.length / 2);
 
-    if (els.setApiKey) {
-      els.setApiKey.value = settings.apiKey || "";
-      els.setApiKey.placeholder = isUsingHardcodedKey() ? "(using hardcoded key)" : "sk-or-v1-…";
+    // IMPORTANT: only populate the API key field from settings on FIRST load
+    // (or when it's empty). Never overwrite what the user has typed/pasted.
+    if (els.setApiKey && !els.setApiKey.value && settings.apiKey) {
+      els.setApiKey.value = settings.apiKey;
     }
+
     if (els.setModel) els.setModel.value = settings.model || "";
     if (els.setVisionModel) els.setVisionModel.value = settings.visionModel || "";
     if (els.setUserName) els.setUserName.value = settings.userName || "";
@@ -1255,10 +1208,6 @@
     if (els.valRate) els.valRate.textContent = Number(settings.rate).toFixed(2);
     if (els.valPitch) els.valPitch.textContent = Number(settings.pitch).toFixed(2);
     if (els.valVolume) els.valVolume.textContent = Number(settings.volume).toFixed(2);
-
-    document.querySelectorAll(".model-chip").forEach(function (chip) {
-      chip.classList.toggle("active", chip.getAttribute("data-model") === settings.model);
-    });
 
     syncTtsDropdowns();
     updateChips(); updateMicAppearance();
@@ -1315,7 +1264,6 @@
     custom.value = "__custom__";
     custom.textContent = "Custom voice id…";
     voiceSel.appendChild(custom);
-
     var matched = false;
     for (var j = 0; j < list.length; j++) {
       if (list[j].id === (settings.ttsVoice || "")) { voiceSel.value = list[j].id; matched = true; break; }
@@ -1341,7 +1289,7 @@
   function updateTtsHelp(model) {
     var help = els.ttsVoiceHelp;
     if (!help) return;
-    if (!model) help.innerHTML = "No TTS provider selected — A.C.E. will use the browser's built-in voice.";
+    if (!model) help.innerHTML = "No TTS provider selected — using browser voice.";
     else if (model === "deepgram/flux-tts:free") help.innerHTML = "Deepgram Flux is free and the most human. <b>Cliff</b> or <b>Colin</b> match A.C.E.'s tone.";
     else if (model === "openai/gpt-4o-mini-tts") help.innerHTML = "OpenAI TTS — <b>onyx</b> and <b>fable</b> are closest to A.C.E.'s register.";
     else if (model === "x-ai/grok-voice-tts-1.0") help.innerHTML = "xAI Grok Voice — 20+ languages.";
@@ -1349,15 +1297,20 @@
     else help.innerHTML = "Custom provider — enter any voice id the model accepts.";
   }
 
-  function openSettings() { document.body.classList.add("settings-open"); if (els.settingsBtn) els.settingsBtn.classList.add("active"); }
-  function closeSettings() { document.body.classList.remove("settings-open"); if (els.settingsBtn) els.settingsBtn.classList.remove("active"); }
+  function openSettings() { document.body.classList.add("settings-open"); if (els.settingsBtn) els.settingsBtn.classList.add("active"); updateKeyLengthDisplay(); }
+  function closeSettings() {
+    // When closing, sync settings from the field one more time
+    if (els.setApiKey) {
+      settings.apiKey = cleanKey(els.setApiKey.value);
+      saveSettings();
+    }
+    document.body.classList.remove("settings-open");
+    if (els.settingsBtn) els.settingsBtn.classList.remove("active");
+  }
   function toggleSettings() { if (document.body.classList.contains("settings-open")) closeSettings(); else openSettings(); }
 
-  // ==================== SCREEN SHARING ====================
   async function startScreenShare() {
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
-      logLine("Screen capture isn't supported.", "warn"); toast("Unsupported", "warn"); return;
-    }
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) { logLine("Screen capture isn't supported.", "warn"); toast("Unsupported", "warn"); return; }
     try {
       screenStream = await navigator.mediaDevices.getDisplayMedia({ video: { cursor: "always", frameRate: 5 }, audio: false });
       screenVideo = document.createElement("video");
@@ -1423,7 +1376,6 @@
     } catch (err) { return { error: "Capture failed: " + (err && err.message || err) }; }
   }
 
-  // ==================== AI ENGINE ====================
   function aiConfigured() { return !!(effectiveApiKey() && settings.model); }
   function effectiveVisionModel() { return (settings.visionModel && settings.visionModel.trim()) || settings.model; }
   function buildSystemPrompt() {
@@ -1438,7 +1390,6 @@
     var messages = [{ role: "system", content: buildSystemPrompt() }];
     var hist = conversationHistory.slice(-12);
     for (var i = 0; i < hist.length; i++) messages.push(hist[i]);
-
     var userContent;
     if (imageDataUrl) {
       userContent = [
@@ -1447,7 +1398,6 @@
       ];
     } else userContent = userText;
     messages.push({ role: "user", content: userContent });
-
     var k = effectiveApiKey();
     var res = await fetch(OPENROUTER_ENDPOINT, {
       method: "POST",
@@ -1517,7 +1467,7 @@
       logLine("AI error: " + detail, "err");
       var userMsg = "I had trouble reaching the AI service. ";
       if (/401|403|auth/i.test(detail)) {
-        userMsg = "The API key was rejected by OpenRouter. Open settings and click 'Diagnose API key' to check what key is being used.";
+        userMsg = "OpenRouter rejected the API key. Run 'Verify key' in settings — it will tell you exactly what's wrong.";
         highlightKeyField();
       } else if (/404|model/i.test(detail) && imageDataUrl) userMsg = "The vision model rejected the request. Try a different Vision Model.";
       else if (/404|model/i.test(detail)) userMsg = "That model doesn't exist on OpenRouter. Check the slug in settings.";
@@ -1530,58 +1480,33 @@
     }
   }
 
-  // ==================== API KEY DIAGNOSTICS ====================
   function diagnoseKey() {
     userHasInteracted = true;
-    var stored = settings.apiKey || "";
-    var hard = HARDCODED_API_KEY || "";
+    var fieldVal = els.setApiKey ? cleanKey(els.setApiKey.value) : "";
+    var stored = cleanKey(settings.apiKey);
+    var hard = cleanKey(HARDCODED_API_KEY);
     var eff = effectiveApiKey();
 
     logLine("════ API KEY DIAGNOSTICS ════", "sys");
-    logLine("Settings key length: " + stored.length, "sys");
-    if (stored) logLine("  First 12: " + stored.slice(0, 12) + "…  Last 6: " + stored.slice(-6), "sys");
-    else logLine("  (empty)", "sys");
-    logLine("Hardcoded key length: " + hard.length, "sys");
-    if (hard) logLine("  First 12: " + hard.slice(0, 12) + "…  Last 6: " + hard.slice(-6), "sys");
-    else logLine("  (empty)", "sys");
-    logLine("Effective key length: " + eff.length, "sys");
-    if (eff) logLine("  Effective first 12: " + eff.slice(0, 12) + "…  Last 6: " + eff.slice(-6), "sys");
-    logLine("Source: " + (isUsingHardcodedKey() ? "hardcoded in script" : (stored ? "settings panel" : "NONE")), "sys");
+    logLine("Field value length: " + fieldVal.length + (fieldVal ? (" | starts: " + fieldVal.slice(0, 15) + "… | ends: …" + fieldVal.slice(-6)) : " (empty)"), "sys");
+    logLine("Saved settings length: " + stored.length + (stored ? (" | starts: " + stored.slice(0, 15) + "…") : " (empty)"), "sys");
+    logLine("Hardcoded length: " + hard.length, "sys");
+    logLine("► EFFECTIVE length: " + eff.length + " (this is what gets sent to OpenRouter)", "sys");
+    if (eff) logLine("► Effective starts with: " + eff.slice(0, 15) + "… | ends with …" + eff.slice(-6), "sys");
+    logLine("Source of effective key: " + (fieldVal ? "LIVE FIELD" : (stored ? "saved settings" : (hard ? "hardcoded" : "NONE"))), "sys");
 
-    // Whitespace / weird character check
-    var weird = eff && eff !== stored.trim() && eff !== hard.trim();
-    var spacesInside = /\s/.test(eff);
-    if (spacesInside) logLine("⚠ Key contains whitespace inside it — that's likely the problem.", "err");
-    if (eff && !/^sk-/.test(eff)) logLine("⚠ Key doesn't start with 'sk-' — check you copied the whole key.", "err");
-    if (eff && eff.length < 20) logLine("⚠ Key is shorter than 20 chars — probably truncated.", "err");
-    if (!eff) logLine("✗ No API key is set anywhere.", "err");
+    if (eff && !/^sk-/.test(eff)) logLine("✗ Key doesn't start with 'sk-'", "err");
+    if (eff && !/^sk-or-v1-/.test(eff)) logLine("⚠ Key doesn't start with 'sk-or-v1-' — OpenRouter keys always do.", "err");
+    if (eff && eff.length < 60) logLine("⚠ Key is " + eff.length + " chars — OpenRouter keys are typically 73 chars. Likely truncated.", "err");
+    if (eff && /\s/.test(eff)) logLine("✗ Key contains whitespace.", "err");
+    if (!eff) logLine("✗ No key anywhere.", "err");
 
-    // Storage check
-    try {
-      var test = "__ace_test__";
-      localStorage.setItem(test, "1");
-      localStorage.removeItem(test);
-      logLine("localStorage: available ✓", "ok");
-    } catch (e) {
-      logLine("✗ localStorage is blocked (private mode?). Your key won't persist across reloads.", "err");
-    }
+    try { localStorage.setItem("__ace_test__", "1"); localStorage.removeItem("__ace_test__"); logLine("localStorage: OK ✓", "ok"); }
+    catch (e) { logLine("✗ localStorage is BLOCKED — settings won't persist across reloads.", "err"); }
 
-    // Compare against what's actually in localStorage
-    try {
-      var raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) {
-        var parsed = JSON.parse(raw);
-        var storedInLs = parsed.apiKey || "";
-        logLine("localStorage saved key length: " + storedInLs.length, "sys");
-        if (storedInLs !== stored) logLine("⚠ Settings key in memory doesn't match what's in localStorage — try saving again.", "warn");
-      } else {
-        logLine("No settings saved in localStorage yet.", "sys");
-      }
-    } catch (e) {}
-
-    if (keyLooksValid(eff)) logLine("Format check: looks like a valid OpenRouter key ✓", "ok");
+    if (keyLooksValid(eff)) logLine("Format check: PASS ✓", "ok");
     logLine("════════════════════════════", "sys");
-    toast("Diagnostics written to log");
+    toast("Diagnostics in log", "ok");
   }
 
   async function verifyKey() {
@@ -1589,56 +1514,63 @@
     var k = effectiveApiKey();
     if (!k) { toast("No API key set", "warn"); logLine("Verify failed: no key.", "err"); return; }
 
-    logLine("Verifying key with OpenRouter…", "sys");
+    logLine("════ VERIFY ════", "sys");
+    logLine("Sending key of length " + k.length + " to OpenRouter…", "sys");
+    logLine("First 15 chars: " + k.slice(0, 15) + "…", "sys");
+    logLine("Last 6 chars: …" + k.slice(-6), "sys");
+
     setStatus("PROCESSING", "VERIFYING API KEY");
 
     try {
-      var res = await fetch(OPENROUTER_KEY_ENDPOINT, {
-        method: "GET",
+      var res = await fetch(OPENROUTER_ENDPOINT, {
+        method: "POST",
         headers: {
+          "Content-Type": "application/json",
           "Authorization": "Bearer " + k,
           "HTTP-Referer": OPENROUTER_REFERER,
           "X-Title": OPENROUTER_TITLE
-        }
+        },
+        body: JSON.stringify({
+          model: "openai/gpt-4o-mini",
+          messages: [{ role: "user", content: "Reply with the single word: ok" }],
+          max_tokens: 5
+        })
       });
       var body = "";
       try { body = await res.text(); } catch (e) {}
-
-      logLine("Verify response: HTTP " + res.status, res.ok ? "ok" : "err");
-      logLine("Raw body: " + body.slice(0, 500), res.ok ? "ok" : "err");
+      logLine("Response: HTTP " + res.status, res.ok ? "ok" : "err");
+      logLine("Body: " + body.slice(0, 500), res.ok ? "ok" : "err");
 
       if (res.ok) {
-        try {
-          var j = JSON.parse(body);
-          var d = j.data || j;
-          if (d.label) logLine("Key label: " + d.label, "ok");
-          if (d.limit !== undefined) logLine("Key limit: " + d.limit, "ok");
-          if (d.usage !== undefined) logLine("Key usage: " + d.usage, "ok");
-        } catch (e) {}
         toast("Key verified ✓", "ok");
-        respond("The API key is valid and OpenRouter accepted it.");
+        logLine("✓ Key accepted by OpenRouter. Chat is ready.", "ok");
+        respond("The API key is valid. Chat is ready.");
       } else if (res.status === 401) {
-        logLine("✗ OpenRouter rejected this key (401).", "err");
-        logLine("→ The key in your settings does not match a valid OpenRouter key.", "warn");
-        logLine("→ Try: copy it again from https://openrouter.ai/keys (use the copy button, don't type it).", "warn");
-        logLine("→ Also check you didn't accidentally paste the key with a leading space or an extra character.", "warn");
-        toast("Key rejected (401)", "warn");
+        logLine("✗ 401 Unauthorized — OpenRouter does not recognize this key.", "err");
+        logLine("Possible causes:", "warn");
+        logLine("  1. The key in the field is NOT the key you just made (check the diagnostics above).", "warn");
+        logLine("  2. The key was deleted or disabled on OpenRouter's dashboard.", "warn");
+        logLine("  3. The key was copied incompletely (truncated).", "warn");
+        toast("401 — key rejected", "warn");
         highlightKeyField();
+      } else if (res.status === 402) {
+        logLine("Key is valid but you have no credits. Add funds at openrouter.ai/credits", "warn");
+        toast("Key OK, no credits", "warn");
       } else {
-        logLine("Unexpected status from verify.", "warn");
+        logLine("Unexpected status. Raw body above.", "warn");
         toast("Verify failed", "warn");
       }
     } catch (err) {
       var m = err && err.message || String(err);
-      logLine("Verify network error: " + m, "err");
-      logLine("→ This usually means a CORS block, an ad-blocker, or you're offline.", "warn");
+      logLine("Network error: " + m, "err");
+      logLine("→ This is a CORS, ad-blocker, or offline issue — not an auth problem.", "warn");
       toast("Network error", "warn");
     } finally {
+      logLine("════════════════", "sys");
       if (!listening && !speaking) setStatus("ONLINE", "ALL SYSTEMS NOMINAL");
     }
   }
 
-  // ==================== LOCAL COMMANDS ====================
   function setTimer(seconds, label) {
     var id = setTimeout(function () {
       var msg = label ? ("Timer complete — " + label + ".") : "Your timer has finished.";
@@ -1700,7 +1632,6 @@
   function tryLocalCommand(raw) {
     var t = raw.toLowerCase().replace(/[?!.,]+$/g, "").trim();
     var m;
-
     if (/^(?:please\s+)?(?:be quiet|quiet|stop(?: talking)?|shut up|silence|shush|hush|mute|hold on|wait|pause|cancel|enough|that's enough|nevermind|never mind|stop it|shut it)(?:[\s.!?,]*)$/i.test(t)) {
       var was = stopSpeaking(false);
       if (!was) respond("I'm not speaking, but noted."); else beep(440, 0.09, 0.1);
@@ -1741,28 +1672,6 @@
       else respond("I don't have a memory for \"" + fk + "\".");
       return true;
     }
-    if (/^(?:list|show|what do you)(?: me)?(?: my)? memories/.test(t)) {
-      var keys = Object.keys(settings.memories);
-      if (!keys.length) { respond("I haven't stored any memories yet."); return true; }
-      var list = keys.map(function (k) { return k + ": " + settings.memories[k]; }).join(". ");
-      logLine("Memories — " + list, "sys");
-      respond("I remember " + keys.length + " things. " + list); return true;
-    }
-    if ((m = t.match(/^(?:take a note|note that|note down|add note|make a note|write down)\s*:?\s*(.+)$/))) {
-      settings.notes.push({ text: m[1].trim(), at: Date.now() }); saveSettings(); applySettings();
-      beep(880, 0.08, 0.08);
-      respond("Note saved. You have " + settings.notes.length + "."); return true;
-    }
-    if (/^(?:read|show|list|what are)(?: me)?(?: my)? notes?/.test(t)) {
-      if (!settings.notes.length) { respond("No notes."); return true; }
-      var nlist = settings.notes.map(function (n, i) { return (i + 1) + ". " + n.text; }).join(". ");
-      logLine("Notes — " + nlist, "sys");
-      respond("You have " + settings.notes.length + " note" + (settings.notes.length === 1 ? "" : "s") + ". " + nlist); return true;
-    }
-    if (/^(?:clear|delete|erase)(?: all)?(?: my)? notes?/.test(t)) {
-      var nc = settings.notes.length; settings.notes = []; saveSettings(); applySettings();
-      respond("All " + nc + " note" + (nc === 1 ? "" : "s") + " cleared."); return true;
-    }
     if (/\b(time|clock)\b/.test(t) && !/timetable|timer/.test(t) && !/set a timer/.test(t)) {
       respond("The current time is " + new Date().toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit", hour12: true }) + "."); return true;
     }
@@ -1772,7 +1681,7 @@
     if ((m = t.match(/^(?:set (?:a )?timer(?: for)?|timer for|remind me in|in)\s+(\d+(?:\.\d+)?)\s*(seconds?|secs?|s|minutes?|mins?|m|hours?|hrs?|h)\b(.*)$/))) {
       var tval = parseFloat(m[1]), tunit = m[2], secs = tval;
       if (/^m/.test(tunit)) secs = tval * 60; else if (/^h/.test(tunit)) secs = tval * 3600;
-      if (secs <= 0 || secs > 86400) { respond("Choose between 1 second and 24 hours."); return true; }
+      if (secs <= 0 || secs > 86400) { respond("Choose 1 sec – 24 hours."); return true; }
       var labelMatch = m[3].match(/(?:to|for|about|that)\s+(.+)$/);
       var label = labelMatch ? labelMatch[1].trim() : "";
       setTimer(secs, label);
@@ -1790,11 +1699,10 @@
       logLine("Requesting location and weather data…", "sys");
       getWeather().then(function (cur) {
         var desc = WX[cur.weather_code] || "indeterminate conditions";
-        respond("Currently " + Math.round(cur.temperature_2m) + " degrees Celsius with " + desc + ". It feels like " + Math.round(cur.apparent_temperature) + " degrees, with winds at " + Math.round(cur.wind_speed_10m) + " kilometres per hour.");
+        respond("Currently " + Math.round(cur.temperature_2m) + " degrees Celsius with " + desc + ". It feels like " + Math.round(cur.apparent_temperature) + " degrees.");
       }).catch(function (err) {
         if (err.message === "denied") respond("I require location permission.");
-        else if (err.message === "no-geo") respond("Geolocation unsupported.");
-        else respond("I can't reach the meteorological service.");
+        else respond("I can't reach the weather service.");
       });
       return true;
     }
@@ -1806,12 +1714,11 @@
       if (!screenStream) { respond("Screen vision isn't active. Click the screen icon in the header."); return true; }
       var cap = captureScreenFrame();
       if (cap.error) { logLine("Screen capture: " + cap.error, "warn"); respond("I couldn't capture your screen — " + cap.error); return true; }
-      logLine("Captured screen: " + cap.width + "×" + cap.height + ", ~" + bytes(Math.round(cap.bytes * 0.75)) + " JPEG", "sys");
+      logLine("Captured screen: " + cap.width + "×" + cap.height, "sys");
       handleWithAI(raw, cap.dataUrl); return true;
     }
     if (/^(?:share|start sharing|enable)(?: my| the)? screen/.test(t)) { startScreenShare(); return true; }
     if (/^(?:stop|end)(?: sharing| screen share| sharing my screen)/.test(t)) { stopScreenShare(); respond("Screen sharing stopped."); return true; }
-
     var openMatch = t.match(/^(?:open|launch|go to|navigate to|bring up)\s+(.+)$/);
     if (openMatch) {
       var target = openMatch[1].replace(/\s+(website|site|page|dot com|\.com)$/g, "").trim();
@@ -1834,10 +1741,6 @@
     }
     if (/\b(roll|throw)\b.*\b(dice|die|d6|d20)\b/.test(t) || /^roll a? (dice|die)/.test(t)) { respond("You rolled a " + (Math.floor(Math.random() * 6) + 1) + "."); return true; }
     if (/\b(flip|toss)\b.*\bcoin\b/.test(t)) { respond(Math.random() < 0.5 ? "Heads." : "Tails."); return true; }
-    if ((m = t.match(/random number(?: between)?\s*(\d+)\s*(?:and|to|-)\s*(\d+)/))) {
-      var r1 = parseInt(m[1], 10), r2 = parseInt(m[2], 10), lo = Math.min(r1, r2), hi = Math.max(r1, r2);
-      respond("Your random number is " + (Math.floor(Math.random() * (hi - lo + 1)) + lo) + "."); return true;
-    }
     if (looksLikeMath(t) && /^(?:calculate|compute|what(?:'s| is)|solve|evaluate|eval)\s+/i.test(t)) {
       var cleaned = t.replace(/^(?:calculate|compute|what(?:'s| is)|solve|evaluate|eval)\s+/i, "");
       var mres = safeEval(cleaned);
@@ -1879,7 +1782,6 @@
     }
   }
 
-  // ==================== BOOT ====================
   var BOOT_LINES = [
     ["INITIALISING A.C.E. CORE", "OK"],
     ["LOADING COGNITIVE RUNTIME", "OK"],
@@ -1904,10 +1806,8 @@
           if (settings.userName) logLine("Good to see you, " + settings.userName + ".", "ace");
           var k = effectiveApiKey();
           if (!k) logLine("⚠ No API key configured — open settings and add one.", "warn");
-          else if (!keyLooksValid(k)) logLine("⚠ API key is set but looks malformed. Open settings and click 'Diagnose API key'.", "warn");
           else logLine("API key loaded (" + k.length + " chars, from " + (isUsingHardcodedKey() ? "hardcoded script" : "settings") + ").", "ok");
           if (ttsConfigured()) logLine("TTS engine: " + settings.ttsModel + (settings.ttsVoice ? (" / " + settings.ttsVoice) : ""), "ok");
-          else logLine("No TTS model set — using browser voice.", "sys");
           if (settings.alwaysOn) {
             logLine("Always-listening mode active.", "ok");
             setTimeout(function () { if (userHasInteracted) startListening(); }, 500);
@@ -1929,7 +1829,6 @@
     return step();
   }
 
-  // ==================== ELEMENT CACHE ====================
   function cacheElements() {
     els = {
       boot: $("boot"), bootLog: $("bootLog"), bootBar: $("bootBar"),
@@ -1947,8 +1846,8 @@
       stopSpeakBtn: $("stopSpeakBtn"),
       setUserName: $("setUserName"),
       setApiKey: $("setApiKey"), toggleKeyBtn: $("toggleKeyBtn"), clearKeyBtn: $("clearKeyBtn"),
-      keySourceBadge: $("keySourceBadge"), keyHelp: $("keyHelp"),
-      diagnoseKeyBtn: $("diagnoseKeyBtn"), verifyKeyBtn: $("verifyKeyBtn"),
+      copyKeyBtn: $("copyKeyBtn"), keySourceBadge: $("keySourceBadge"), keyLengthDisplay: $("keyLengthDisplay"),
+      diagnoseKeyBtn: $("diagnoseKeyBtn"), verifyKeyBtn: $("verifyKeyBtn"), hardResetBtn: $("hardResetBtn"),
       setModel: $("setModel"), setVisionModel: $("setVisionModel"),
       setTtsModel: $("setTtsModel"), setTtsModelCustom: $("setTtsModelCustom"),
       setTtsVoice: $("setTtsVoice"), setTtsVoiceCustom: $("setTtsVoiceCustom"),
@@ -1969,7 +1868,6 @@
     if (canvas) ctx = canvas.getContext("2d");
   }
 
-  // ==================== EVENT BINDING ====================
   function bindCheckbox(id, key, onChange) {
     var el = els[id]; if (!el) return;
     el.addEventListener("change", function (e) {
@@ -2023,20 +1921,42 @@
       });
     }
 
-    // ---- API key ----
+    // ============ API KEY FIELD ============
     if (els.setApiKey) {
-      els.setApiKey.addEventListener("input", function (e) {
-        settings.apiKey = cleanKey(e.target.value);
-        saveSettings(); updateChips();
-      });
+      var syncKey = function () {
+        settings.apiKey = cleanKey(els.setApiKey.value);
+        saveSettings();
+        updateKeyLengthDisplay();
+        updateChips();
+      };
+      // Fires on every keystroke, paste via keyboard, cut, etc.
+      els.setApiKey.addEventListener("input", syncKey);
+      els.setApiKey.addEventListener("change", syncKey);
+      els.setApiKey.addEventListener("blur", syncKey);
+      // Programmatic paste (right-click, middle-click, etc.)
       els.setApiKey.addEventListener("paste", function () {
-        setTimeout(function () {
-          settings.apiKey = cleanKey(els.setApiKey.value);
-          saveSettings(); updateChips();
-          toast("Key pasted (" + settings.apiKey.length + " chars)");
-        }, 50);
+        setTimeout(syncKey, 0);
+        setTimeout(syncKey, 50);
+        setTimeout(syncKey, 200);
       });
+      els.setApiKey.addEventListener("cut", function () {
+        setTimeout(syncKey, 0);
+        setTimeout(syncKey, 50);
+      });
+      // Autofill — poll the field briefly in case the browser inserts a value
+      setInterval(function () {
+        if (document.activeElement === els.setApiKey) return; // user is typing
+        var fieldVal = cleanKey(els.setApiKey.value);
+        var savedVal = cleanKey(settings.apiKey);
+        if (fieldVal && fieldVal !== savedVal) {
+          // Something (browser autofill) put a value in the field that isn't in settings
+          settings.apiKey = fieldVal;
+          saveSettings();
+          updateKeyLengthDisplay();
+        }
+      }, 800);
     }
+
     if (els.toggleKeyBtn) {
       els.toggleKeyBtn.addEventListener("click", function () {
         var k = els.setApiKey; if (!k) return;
@@ -2044,34 +1964,49 @@
         else { k.type = "password"; els.toggleKeyBtn.textContent = "SHOW"; }
       });
     }
+    if (els.copyKeyBtn) {
+      els.copyKeyBtn.addEventListener("click", function () {
+        var v = els.setApiKey ? els.setApiKey.value : "";
+        if (!v) { toast("Field is empty", "warn"); return; }
+        try {
+          navigator.clipboard.writeText(v);
+          toast("Copied " + cleanKey(v).length + " chars to clipboard", "ok");
+          logLine("Copied field value to clipboard (length " + cleanKey(v).length + ").", "sys");
+        } catch (e) { toast("Copy failed", "warn"); }
+      });
+    }
     if (els.clearKeyBtn) {
       els.clearKeyBtn.addEventListener("click", function () {
-        settings.apiKey = "";
         if (els.setApiKey) els.setApiKey.value = "";
+        settings.apiKey = "";
         saveSettings(); updateChips();
-        logLine("API key cleared from settings.", "sys");
-        toast("Key cleared");
+        logLine("API key field cleared.", "sys");
+        toast("Field cleared");
       });
     }
     if (els.diagnoseKeyBtn) els.diagnoseKeyBtn.addEventListener("click", diagnoseKey);
     if (els.verifyKeyBtn) els.verifyKeyBtn.addEventListener("click", verifyKey);
+    if (els.hardResetBtn) {
+      els.hardResetBtn.addEventListener("click", function () {
+        if (!confirm("This clears ALL A.C.E. data from this browser (settings, key, memories, history) and reloads the page. Continue?")) return;
+        try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+        try {
+          // Nuke any old versions of the settings too
+          for (var i = 0; i < localStorage.length; i++) {
+            var k = localStorage.key(i);
+            if (k && k.indexOf("ace.settings.") === 0) localStorage.removeItem(k);
+          }
+        } catch (e) {}
+        logLine("Wiped. Reloading…", "sys");
+        setTimeout(function () { location.reload(); }, 400);
+      });
+    }
 
     if (els.setModel) {
-      els.setModel.addEventListener("input", function (e) {
-        settings.model = e.target.value.trim(); saveSettings(); updateChips();
-        document.querySelectorAll(".model-chip").forEach(function (chip) {
-          chip.classList.toggle("active", chip.getAttribute("data-model") === settings.model);
-        });
-      });
+      els.setModel.addEventListener("input", function (e) { settings.model = e.target.value.trim(); saveSettings(); updateChips(); });
       els.setModel.addEventListener("blur", function (e) {
         var cleaned = parseModelInput(e.target.value);
-        if (cleaned && cleaned !== e.target.value) {
-          e.target.value = cleaned; settings.model = cleaned; saveSettings(); updateChips();
-          document.querySelectorAll(".model-chip").forEach(function (chip) {
-            chip.classList.toggle("active", chip.getAttribute("data-model") === cleaned);
-          });
-          toast("Model slug cleaned up");
-        }
+        if (cleaned && cleaned !== e.target.value) { e.target.value = cleaned; settings.model = cleaned; saveSettings(); updateChips(); toast("Model cleaned up"); }
       });
     }
     if (els.setVisionModel) {
@@ -2081,7 +2016,6 @@
         if (cleaned && cleaned !== e.target.value) { e.target.value = cleaned; settings.visionModel = cleaned; saveSettings(); }
       });
     }
-
     if (els.setTtsModel) {
       els.setTtsModel.addEventListener("change", function (e) {
         var v = e.target.value;
@@ -2128,16 +2062,6 @@
       els.setTtsVoiceCustom.addEventListener("input", function (e) { settings.ttsVoice = e.target.value.trim(); saveSettings(); });
     }
 
-    document.querySelectorAll(".model-chip").forEach(function (chip) {
-      chip.addEventListener("click", function () {
-        var model = chip.getAttribute("data-model"); if (!model) return;
-        settings.model = model; saveSettings();
-        if (els.setModel) els.setModel.value = model;
-        document.querySelectorAll(".model-chip").forEach(function (c) { c.classList.toggle("active", c === chip); });
-        updateChips(); toast("Model set to " + model);
-      });
-    });
-
     if (els.testAiBtn) {
       els.testAiBtn.addEventListener("click", async function () {
         userHasInteracted = true;
@@ -2146,16 +2070,12 @@
         try {
           logLine("Chat test → " + settings.model + " | key length " + effectiveApiKey().length, "sys");
           var reply = await askAI("Say 'A.C.E. online' — nothing else.", null);
-          logLine("Chat OK — model: " + settings.model, "ok");
-          logLine("Reply: " + reply.slice(0, 100), "ace");
+          logLine("Chat OK. Reply: " + reply.slice(0, 100), "ok");
           toast("Chat connected", "ok"); speak("Chat connection verified.");
         } catch (err) {
           logLine("Chat error: " + (err && err.message || err), "err");
           toast("Chat failed", "warn");
-          if (/401|403|auth/i.test(String(err && err.message))) {
-            logLine("→ 401 means the API key was rejected. Click 'Diagnose API key' above.", "warn");
-            highlightKeyField();
-          }
+          if (/401|403|auth/i.test(String(err && err.message))) highlightKeyField();
         } finally {
           els.testAiBtn.textContent = "Test chat connection"; els.testAiBtn.disabled = false; updateChips();
         }
@@ -2170,7 +2090,7 @@
         try {
           if (Date.now() - screenWarmupAt < 500) await sleep(500);
           var cap = captureScreenFrame();
-          if (cap.error) { logLine("Vision test capture: " + cap.error, "err"); toast("Capture failed", "warn"); }
+          if (cap.error) { logLine("Vision capture: " + cap.error, "err"); toast("Capture failed", "warn"); }
           else {
             logLine("Vision test → " + effectiveVisionModel() + ", image " + cap.width + "×" + cap.height, "sys");
             var reply = await askAI("Describe in one sentence what is on this screen.", cap.dataUrl);
@@ -2192,7 +2112,6 @@
         speak("This is A.C.E., testing the voice engine. All systems are operating within normal parameters.");
       });
     }
-
     if (els.clearHistoryBtn) {
       els.clearHistoryBtn.addEventListener("click", function () {
         conversationHistory = [];
@@ -2272,6 +2191,7 @@
       settings.memories = {}; settings.notes = [];
       conversationHistory = [];
       saveSettings(); applySettings();
+      if (els.setApiKey) els.setApiKey.value = "";
       if (recognition) recognition.lang = settings.lang;
       stopListening(); stopScreenShare(); stopAudio();
       if (els.histCount) els.histCount.textContent = "0";
@@ -2281,13 +2201,18 @@
     window.addEventListener("resize", resizeCanvas);
   }
 
-  // ==================== INIT ====================
   function init() {
     cacheElements();
     bindAll();
     applySettings();
     setupRecognition();
     refreshVoices();
+
+    // Initial sync — make sure field value matches settings exactly on first load
+    if (els.setApiKey && !els.setApiKey.value && settings.apiKey) {
+      els.setApiKey.value = settings.apiKey;
+    }
+    updateKeyLengthDisplay();
 
     if ("speechSynthesis" in window) {
       speechSynthesis.onvoiceschanged = refreshVoices;
