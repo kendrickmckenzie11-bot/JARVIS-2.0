@@ -1,0 +1,755 @@
+html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>J.A.R.V.I.S. — AI Edition</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --c:#00e5ff;
+    --dim:rgba(0,229,255,.30);
+    --faint:rgba(0,229,255,.12);
+    --font:"SF Mono","Consolas","Menlo","Courier New",monospace;
+  }
+  html,body{height:100%}
+  body{
+    background:radial-gradient(circle at 50% 42%, #062331 0%, #041019 45%, #000 100%);
+    color:var(--c);font-family:var(--font);overflow:hidden;
+    display:grid;place-items:center;-webkit-font-smoothing:antialiased;
+  }
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+    background-image:
+      linear-gradient(rgba(0,229,255,.055) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,.055) 1px, transparent 1px);
+    background-size:44px 44px;
+    mask-image:radial-gradient(circle at 50% 45%, #000 20%, transparent 78%);
+    -webkit-mask-image:radial-gradient(circle at 50% 45%, #000 20%, transparent 78%);
+  }
+  body::after{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:5;
+    background:repeating-linear-gradient(to bottom, rgba(0,0,0,0) 0 2px, rgba(0,0,0,.18) 2px 4px);
+    opacity:.5;mix-blend-mode:multiply;
+  }
+
+  #boot{position:fixed;inset:0;z-index:50;background:#000;
+    display:grid;place-items:center;gap:20px;align-content:center;
+    transition:opacity .9s ease;}
+  #boot.done{opacity:0;pointer-events:none}
+  .boot-title{font-size:clamp(20px,4vw,38px);letter-spacing:.5em;text-shadow:0 0 24px var(--c)}
+  .boot-bar{width:min(360px,70vw);height:2px;background:var(--faint);overflow:hidden;position:relative}
+  .boot-bar i{position:absolute;inset:0;width:0;background:var(--c);
+    box-shadow:0 0 14px var(--c);animation:load 1.9s ease forwards}
+  @keyframes load{to{width:100%}}
+  .boot-sub{font-size:11px;letter-spacing:.3em;color:rgba(0,229,255,.55)}
+
+  .app{position:relative;z-index:2;width:min(1240px,96vw);height:min(840px,94vh);
+    display:grid;grid-template-rows:auto 1fr auto;gap:14px;}
+
+  header{display:flex;align-items:center;justify-content:space-between;gap:16px;
+    border-bottom:1px solid var(--faint);padding-bottom:10px}
+  .brand{display:flex;align-items:center;gap:12px}
+  .brand .dot{width:9px;height:9px;border-radius:50%;background:var(--c);
+    box-shadow:0 0 12px var(--c);animation:blink 2.4s infinite}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+  .brand h1{font-size:clamp(15px,2vw,20px);letter-spacing:.45em;font-weight:500;
+    text-shadow:0 0 18px rgba(0,229,255,.7)}
+  .brand small{display:block;font-size:9px;letter-spacing:.32em;color:rgba(0,229,255,.5);margin-top:4px}
+  .header-right{display:flex;align-items:center;gap:16px}
+  .key-btn{background:rgba(0,229,255,.08);border:1px solid var(--dim);
+    color:var(--c);font:inherit;font-size:10px;letter-spacing:.2em;
+    padding:6px 10px;border-radius:6px;cursor:pointer;transition:.2s}
+  .key-btn:hover{background:rgba(0,229,255,.2)}
+  .key-btn.ok{border-color:var(--c);box-shadow:0 0 12px rgba(0,229,255,.4)}
+  .clock{text-align:right;font-size:clamp(12px,1.6vw,15px);letter-spacing:.15em}
+  .clock span{display:block;font-size:10px;letter-spacing:.3em;color:rgba(0,229,255,.5);margin-top:4px}
+
+  .main{display:grid;grid-template-columns:1fr 340px;gap:16px;min-height:0}
+  .core-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;min-height:0}
+
+  .reactor{position:relative;width:min(46vh,340px);aspect-ratio:1;display:grid;place-items:center;flex-shrink:1}
+  .ring{position:absolute;border-radius:50%;border:1px solid var(--dim)}
+  .r1{inset:0;border-top-color:transparent;border-bottom-color:transparent;
+      box-shadow:inset 0 0 30px rgba(0,229,255,.16);animation:spin 9s linear infinite}
+  .r2{inset:9%;border-style:dashed;border-left-color:transparent;border-right-color:transparent;
+      animation:spin 14s linear infinite reverse}
+  .r3{inset:20%;border-color:rgba(0,229,255,.22);box-shadow:0 0 26px rgba(0,229,255,.18);animation:spin 24s linear infinite}
+  .ticks{position:absolute;inset:4%;border-radius:50%;opacity:.55;
+    background:repeating-conic-gradient(from 0deg, var(--c) 0deg .9deg, transparent .9deg 6deg);
+    -webkit-mask:radial-gradient(circle, transparent 63%, #000 64%, #000 70%, transparent 71%);
+    mask:radial-gradient(circle, transparent 63%, #000 64%, #000 70%, transparent 71%);
+    animation:spin 70s linear infinite}
+  .core{width:26%;aspect-ratio:1;border-radius:50%;
+    background:radial-gradient(circle at 50% 45%, #fff 0%, var(--c) 32%, rgba(0,229,255,.12) 72%);
+    box-shadow:0 0 26px var(--c),0 0 70px rgba(0,229,255,.55),inset 0 0 20px rgba(255,255,255,.6);
+    animation:pulse 2.6s ease-in-out infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes pulse{0%,100%{transform:scale(1);opacity:.92}50%{transform:scale(1.08);opacity:1}}
+
+  body.listening .r1{animation-duration:3s}
+  body.listening .r2{animation-duration:5s}
+  body.listening .core{animation-duration:.9s;box-shadow:0 0 40px var(--c),0 0 110px rgba(0,229,255,.8)}
+  body.thinking .core{animation-duration:.5s;box-shadow:0 0 40px #ff00e6,0 0 110px rgba(255,0,230,.6)}
+  body.thinking .r1{border-color:#ff00e6;animation-duration:2s}
+  body.speaking .core{animation-duration:1.3s}
+
+  .status{font-size:11px;letter-spacing:.45em;color:rgba(0,229,255,.75);text-transform:uppercase;
+    text-shadow:0 0 12px rgba(0,229,255,.6);min-height:14px;text-align:center}
+  #viz{width:min(560px,80%);height:70px;display:block;opacity:.95}
+
+  .log{border:1px solid var(--faint);border-radius:12px;
+    background:linear-gradient(180deg, rgba(0,40,55,.35), rgba(0,15,25,.45));
+    backdrop-filter:blur(6px);padding:14px;display:flex;flex-direction:column;gap:12px;
+    overflow-y:auto;min-height:0;scrollbar-width:thin;
+    scrollbar-color:rgba(0,229,255,.35) transparent}
+  .log::-webkit-scrollbar{width:5px}
+  .log::-webkit-scrollbar-thumb{background:rgba(0,229,255,.35);border-radius:4px}
+  .panel-title{font-size:9px;letter-spacing:.4em;color:rgba(0,229,255,.45);
+    border-bottom:1px solid var(--faint);padding-bottom:8px;
+    display:flex;justify-content:space-between;align-items:center}
+  .panel-title button{background:none;border:1px solid var(--faint);color:rgba(0,229,255,.5);
+    font:inherit;font-size:8px;letter-spacing:.2em;padding:3px 6px;border-radius:4px;cursor:pointer}
+  .panel-title button:hover{color:var(--c);border-color:var(--dim)}
+
+  .msg{display:flex;flex-direction:column;gap:4px;animation:fade .35s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .msg .tag{font-size:8.5px;letter-spacing:.32em;color:rgba(0,229,255,.55)}
+  .msg p{font-size:13px;line-height:1.55;color:#bff4ff;
+    font-family:system-ui,-apple-system,"Segoe UI",sans-serif;white-space:pre-wrap}
+  .msg.user .tag{color:rgba(255,255,255,.45)}
+  .msg.user p{color:#eafcff}
+  .msg.jarvis p{color:#8fe9ff}
+  .msg.thinking p{color:#ff9df0;font-style:italic;opacity:.8}
+
+  .bar{display:flex;align-items:center;gap:10px;
+    border:1px solid var(--dim);border-radius:44px;padding:7px 7px 7px 20px;
+    background:rgba(0,30,42,.45);backdrop-filter:blur(6px);
+    box-shadow:0 0 30px rgba(0,229,255,.08) inset}
+  .bar input{flex:1;background:none;border:0;outline:0;color:#d8fbff;
+    font:inherit;font-size:14px;letter-spacing:.05em}
+  .bar input::placeholder{color:rgba(0,229,255,.35)}
+  .mic{width:46px;height:46px;flex-shrink:0;border-radius:50%;cursor:pointer;
+    border:1px solid var(--dim);background:rgba(0,229,255,.08);color:var(--c);
+    font-size:19px;display:grid;place-items:center;position:relative;transition:.25s}
+  .mic:hover{background:rgba(0,229,255,.18);box-shadow:0 0 20px rgba(0,229,255,.35)}
+  .mic.on{background:var(--c);color:#001a22;box-shadow:0 0 24px var(--c)}
+  .mic.on::after{content:"";position:absolute;inset:-6px;border-radius:50%;
+    border:1px solid var(--c);animation:ripple 1.3s ease-out infinite}
+  @keyframes ripple{from{transform:scale(.9);opacity:.9}to{transform:scale(1.35);opacity:0}}
+
+  .wake-toggle{display:flex;align-items:center;gap:6px;font-size:9px;letter-spacing:.2em;
+    color:rgba(0,229,255,.55);cursor:pointer;user-select:none;flex-shrink:0}
+  .wake-toggle input{accent-color:var(--c)}
+
+  /* Modal for API key */
+  .modal{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:100;
+    display:none;place-items:center;backdrop-filter:blur(4px)}
+  .modal.show{display:grid}
+  .modal-box{background:#04141d;border:1px solid var(--dim);border-radius:12px;
+    padding:24px;width:min(460px,90vw);
+    box-shadow:0 0 60px rgba(0,229,255,.2)}
+  .modal-box h3{font-size:12px;letter-spacing:.35em;margin-bottom:14px;color:var(--c)}
+  .modal-box p{font-size:11px;line-height:1.7;color:rgba(0,229,255,.65);margin-bottom:14px;
+    font-family:system-ui,sans-serif}
+  .modal-box input{width:100%;background:rgba(0,30,42,.6);border:1px solid var(--dim);
+    border-radius:6px;padding:10px 12px;color:#d8fbff;font:inherit;font-size:12px;outline:0;
+    margin-bottom:14px}
+  .modal-box input:focus{border-color:var(--c);box-shadow:0 0 12px rgba(0,229,255,.3)}
+  .modal-actions{display:flex;gap:10px;justify-content:flex-end}
+  .modal-actions button{font:inherit;font-size:10px;letter-spacing:.2em;padding:8px 16px;
+    border-radius:6px;cursor:pointer;border:1px solid var(--dim);background:none;color:var(--c);
+    transition:.2s}
+  .modal-actions button:hover{background:rgba(0,229,255,.15)}
+  .modal-actions button.primary{background:var(--c);color:#001a22;border-color:var(--c)}
+  .modal-actions button.primary:hover{box-shadow:0 0 16px var(--c)}
+  .modal-box a{color:var(--c);text-decoration:none;border-bottom:1px dotted var(--c)}
+  .modal-box code{background:rgba(0,229,255,.1);padding:1px 5px;border-radius:3px;font-size:10px}
+
+  @media (max-width:900px){
+    .main{grid-template-columns:1fr;grid-template-rows:1fr auto}
+    .log{max-height:30vh}
+    #viz{height:52px}
+    .app{height:96vh}
+    .brand small{display:none}
+  }
+</style>
+</head>
+<body>
+
+<div id="boot">
+  <div class="boot-title">J A R V I S</div>
+  <div class="boot-bar"><i></i></div>
+  <div class="boot-sub">INITIALIZING AI CORE…</div>
+</div>
+
+<!-- API Key Modal -->
+<div class="modal" id="keyModal">
+  <div class="modal-box">
+    <h3>AI CORE CONFIGURATION</h3>
+    <p>
+      JARVIS uses a free AI API for real conversation. Paste your
+      <a href="https://openrouter.ai/keys" target="_blank" rel="noopener">OpenRouter</a>
+      API key below (starts with <code>sk-or-</code>).
+      It is stored only in this browser's <code>localStorage</code> and never sent anywhere except OpenRouter.
+    </p>
+    <input type="password" id="keyInput" placeholder="sk-or-v1-..." autocomplete="off" spellcheck="false">
+    <div class="modal-actions">
+      <button id="keyCancel">CANCEL</button>
+      <button class="primary" id="keySave">SAVE KEY</button>
+    </div>
+  </div>
+</div>
+
+<div class="app">
+  <header>
+    <div class="brand">
+      <div class="dot"></div>
+      <div>
+        <h1>J.A.R.V.I.S.</h1>
+        <small>JUST A RATHER VERY INTELLIGENT SYSTEM</small>
+      </div>
+    </div>
+    <div class="header-right">
+      <button class="key-btn" id="keyBtn">⚙ AI KEY</button>
+      <div class="clock">
+        <div id="time">--:--:--</div>
+        <span id="date">---</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="main">
+    <section class="core-wrap">
+      <div class="reactor">
+        <div class="ring r1"></div>
+        <div class="ring r2"></div>
+        <div class="ring r3"></div>
+        <div class="ticks"></div>
+        <div class="core"></div>
+      </div>
+      <div class="status" id="status">SYSTEM ONLINE</div>
+      <canvas id="viz"></canvas>
+    </section>
+
+    <aside class="log" id="log">
+      <div class="panel-title">
+        <span>SYSTEM LOG</span>
+        <button id="clearLog">CLEAR</button>
+      </div>
+    </aside>
+  </div>
+
+  <div class="bar">
+    <label class="wake-toggle" title="Say 'Jarvis' to activate">
+      <input type="checkbox" id="wakeToggle"> WAKE
+    </label>
+    <input id="cmd" type="text" placeholder="Ask JARVIS anything…" autocomplete="off">
+    <button class="mic" id="mic" title="Voice input">🎙</button>
+  </div>
+</div>
+
+<script>
+(() => {
+  "use strict";
+
+  /* ============ CONFIG ============ */
+  const API_URL = 'https://openrouter.ai/api/v1/chat/completions';
+  const MODEL   = 'meta-llama/llama-3.3-70b-instruct:free'; // free tier
+  const SYSTEM_PROMPT =
+    'You are JARVIS, Tony Stark\'s AI assistant. Address the user as "sir". ' +
+    'Be concise, witty, and British. Keep replies under 3 sentences unless asked for detail. ' +
+    'Never use markdown, emojis, or asterisks — this is spoken aloud.';
+
+  const MEMORY_KEY  = 'jarvis_memory_v1';
+  const API_KEY_KEY = 'jarvis_api_key';
+
+  /* ============ ELEMENTS ============ */
+  const logEl    = document.getElementById('log');
+  const inputEl  = document.getElementById('cmd');
+  const micBtn   = document.getElementById('mic');
+  const statusEl = document.getElementById('status');
+  const timeEl   = document.getElementById('time');
+  const dateEl   = document.getElementById('date');
+  const canvas   = document.getElementById('viz');
+  const ctx      = canvas.getContext('2d');
+  const keyModal = document.getElementById('keyModal');
+  const keyInput = document.getElementById('keyInput');
+  const keyBtn   = document.getElementById('keyBtn');
+  const wakeTog  = document.getElementById('wakeToggle');
+
+  let state = 'idle';
+  let history = [];        // conversation history for AI
+  let lastUserMsg = '';
+
+  /* ============ UTILITIES ============ */
+  const esc = s => String(s).replace(/[&<>"']/g, c =>
+    ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+  function addMsg(who, text, cls = '') {
+    const d = document.createElement('div');
+    d.className = 'msg ' + who + (cls ? ' ' + cls : '');
+    d.innerHTML = `<span class="tag">${who === 'user' ? 'YOU' : 'JARVIS'}</span><p>${esc(text)}</p>`;
+    logEl.appendChild(d);
+    logEl.scrollTop = logEl.scrollHeight;
+    return d;
+  }
+
+  const setStatus = t => statusEl.textContent = t;
+
+  function setState(s) {
+    state = s;
+    document.body.classList.toggle('listening', s === 'listening');
+    document.body.classList.toggle('speaking',  s === 'speaking');
+    document.body.classList.toggle('thinking',  s === 'thinking');
+    if (s === 'listening')      setStatus('LISTENING…');
+    else if (s === 'speaking')  setStatus('SPEAKING');
+    else if (s === 'thinking')  setStatus('PROCESSING');
+    else                        setStatus('SYSTEM ONLINE');
+  }
+
+  /* ============ CLOCK ============ */
+  function tick() {
+    const n = new Date();
+    timeEl.textContent = n.toLocaleTimeString('en-GB');
+    dateEl.textContent = n.toLocaleDateString('en-GB',
+      { weekday:'short', day:'2-digit', month:'short', year:'numeric' }).toUpperCase();
+  }
+  tick(); setInterval(tick, 1000);
+
+  /* ============ PERSISTENT MEMORY ============ */
+  function loadMemory() {
+    try {
+      const m = JSON.parse(localStorage.getItem(MEMORY_KEY) || '[]');
+      history = Array.isArray(m) ? m.slice(-20) : [];
+    } catch { history = []; }
+  }
+  function saveMemory() {
+    try {
+      // Keep last 20 turns to stay within context & storage limits
+      const trimmed = history.slice(-20);
+      localStorage.setItem(MEMORY_KEY, JSON.stringify(trimmed));
+    } catch {}
+  }
+  loadMemory();
+
+  /* ============ VOICE OUTPUT ============ */
+  const synth = window.speechSynthesis;
+  let voice = null;
+
+  function pickVoice() {
+    if (!synth) return;
+    const vs = synth.getVoices();
+    if (!vs.length) return;
+    voice =
+      vs.find(v => /Google UK English Male|Daniel|George|Arthur/i.test(v.name)) ||
+      vs.find(v => v.lang === 'en-GB') ||
+      vs.find(v => v.lang && v.lang.startsWith('en')) ||
+      vs[0];
+  }
+  if (synth) { pickVoice(); synth.onvoiceschanged = pickVoice; }
+
+  function speak(text) {
+    if (!synth) { setState('idle'); return; }
+    synth.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    if (voice) u.voice = voice;
+    u.rate = 1.0; u.pitch = 0.85; u.volume = 1;
+    u.onstart = () => setState('speaking');
+    u.onend   = () => setState('idle');
+    u.onerror = () => setState('idle');
+    setState('speaking');
+    synth.speak(u);
+  }
+
+  /* ============ AI CALL ============ */
+  function getApiKey() { return localStorage.getItem(API_KEY_KEY) || ''; }
+
+  function openKeyModal() {
+    keyInput.value = getApiKey();
+    keyModal.classList.add('show');
+    setTimeout(() => keyInput.focus(), 100);
+  }
+  function closeKeyModal() { keyModal.classList.remove('show'); }
+
+  keyBtn.addEventListener('click', openKeyModal);
+  document.getElementById('keyCancel').addEventListener('click', closeKeyModal);
+  document.getElementById('keySave').addEventListener('click', () => {
+    const k = keyInput.value.trim();
+    if (k) localStorage.setItem(API_KEY_KEY, k);
+    else localStorage.removeItem(API_KEY_KEY);
+    closeKeyModal();
+    updateKeyBtn();
+    addMsg('jarvis', k ? 'AI core key saved. I am fully operational now, sir.'
+                       : 'API key removed. I will fall back to basic commands.');
+  });
+  keyModal.addEventListener('click', e => { if (e.target === keyModal) closeKeyModal(); });
+
+  function updateKeyBtn() {
+    const has = !!getApiKey();
+    keyBtn.classList.toggle('ok', has);
+    keyBtn.textContent = has ? '● AI KEY' : '⚙ AI KEY';
+  }
+  updateKeyBtn();
+
+  async function askAI(userText) {
+    const key = getApiKey();
+    if (!key) return null;
+
+    const messages = [
+      { role: 'system', content: SYSTEM_PROMPT },
+      ...history.slice(-12),
+      { role: 'user', content: userText }
+    ];
+
+    try {
+      const res = await fetch(API_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + key,
+          'HTTP-Referer': location.origin || 'https://localhost',
+          'X-Title': 'JARVIS Web Interface'
+        },
+        body: JSON.stringify({
+          model: MODEL,
+          messages,
+          max_tokens: 200,
+          temperature: 0.8
+        })
+      });
+
+      if (!res.ok) {
+        const err = await res.text();
+        console.warn('AI error', res.status, err);
+        if (res.status === 401) return '[AI key invalid. Please update it via the AI KEY button.]';
+        if (res.status === 429) return '[AI is rate-limited right now, sir. Try again in a moment.]';
+        return null;
+      }
+
+      const data = await res.json();
+      const reply = data?.choices?.[0]?.message?.content?.trim();
+      if (!reply) return null;
+
+      // Save to memory
+      history.push({ role: 'user', content: userText });
+      history.push({ role: 'assistant', content: reply });
+      saveMemory();
+
+      return reply;
+    } catch (e) {
+      console.warn('AI fetch failed', e);
+      return null;
+    }
+  }
+
+  /* ============ LOCAL COMMAND BRAIN (fallback + fast paths) ============ */
+  const JOKES = [
+    'Why did the developer go broke? Because he used up all his cache.',
+    'I would tell you a UDP joke, but you might not get it.',
+    'There are only two hard things in computing: cache invalidation, naming things, and off-by-one errors.',
+    'Why do programmers prefer dark mode? Because light attracts bugs.'
+  ];
+
+  function calculate(expr) {
+    if (!/^[\d\s+\-*/().%]+$/.test(expr)) return null;
+    try {
+      const r = Function('"use strict";return (' + expr + ')')();
+      return (typeof r === 'number' && isFinite(r)) ? r : null;
+    } catch { return null; }
+  }
+
+  function handleLocal(q) {
+    if (/^(hi|hey|hello|yo|greetings)\b/.test(q) || /good (morning|afternoon|evening)/.test(q)) {
+      const h = new Date().getHours();
+      const part = h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening';
+      return `${part}, sir. All systems are operational.`;
+    }
+    if (/\b(time|clock)\b/.test(q))
+      return `The current time is ${new Date().toLocaleTimeString('en-GB')}, sir.`;
+    if (/\b(date|day|today)\b/.test(q))
+      return `Today is ${new Date().toLocaleDateString('en-GB',
+        { weekday:'long', day:'numeric', month:'long', year:'numeric' })}.`;
+    if (/(your name|who are you|what are you)/.test(q))
+      return 'I am JARVIS — Just A Rather Very Intelligent System.';
+    if (/\bjoke\b/.test(q))
+      return JOKES[Math.floor(Math.random() * JOKES.length)];
+    if (/(status|systems? check|how are you)/.test(q))
+      return 'All systems nominal, sir.';
+    if (/(thank|thanks|cheers)/.test(q))
+      return 'Always a pleasure, sir.';
+    if (/^open\s+(.+)/.test(q)) {
+      const t = q.match(/^open\s+(.+)/)[1].trim();
+      const sites = { google:'https://google.com', youtube:'https://youtube.com',
+        github:'https://github.com', wikipedia:'https://wikipedia.org',
+        gmail:'https://mail.google.com', maps:'https://maps.google.com',
+        twitter:'https://twitter.com', reddit:'https://reddit.com',
+        spotify:'https://open.spotify.com', netflix:'https://netflix.com' };
+      const url = sites[t] || ('https://' + t.replace(/\s+/g,'') + '.com');
+      window.open(url, '_blank', 'noopener');
+      return `Opening ${t}, sir.`;
+    }
+    if (/^(search|google|look up)\s+(for\s+)?(.+)/.test(q)) {
+      const term = q.match(/^(?:search|google|look up)\s+(?:for\s+)?(.+)/)[1];
+      window.open('https://www.google.com/search?q=' + encodeURIComponent(term), '_blank', 'noopener');
+      return `Searching for "${term}".`;
+    }
+    if (/^(calculate|compute|what is|what's)\s+(.+)/.test(q)) {
+      const expr = q.match(/^(?:calculate|compute|what is|what's)\s+(.+)/)[1]
+        .replace(/plus/g,'+').replace(/minus/g,'-')
+        .replace(/times|multiplied by/g,'*').replace(/divided by/g,'/')
+        .replace(/[^0-9+\-*/().%\s]/g,'');
+      const r = calculate(expr);
+      if (r !== null) return `That would be ${r}.`;
+    }
+    if (/(clear|wipe) (the )?(log|screen|console)/.test(q)) {
+      logEl.innerHTML = '<div class="panel-title"><span>SYSTEM LOG</span>' +
+        '<button id="clearLog">CLEAR</button></div>';
+      document.getElementById('clearLog').onclick = clearLog;
+      return 'Log cleared, sir.';
+    }
+    if (/(forget|clear memory|reset memory)/.test(q)) {
+      history = [];
+      saveMemory();
+      return 'Memory wiped, sir. A fresh start.';
+    }
+    if (/full ?screen/.test(q)) {
+      if (!document.fullscreenElement) document.documentElement.requestFullscreen?.();
+      else document.exitFullscreen?.();
+      return 'Adjusting display mode.';
+    }
+    return null;
+  }
+
+  /* ============ MAIN COMMAND HANDLER ============ */
+  async function handleCommand(raw) {
+    const q = raw.toLowerCase().trim().replace(/[?!.]+$/, '');
+    if (!q) return;
+
+    lastUserMsg = raw;
+    addMsg('user', raw);
+
+    // Try local fast-path first
+    const local = handleLocal(q);
+    if (local) { speak(local); return; }
+
+    // Otherwise go to AI
+    const key = getApiKey();
+    if (!key) {
+      speak('I need an AI key to answer that, sir. ' +
+            'Click the AI KEY button in the top right to configure one.');
+      return;
+    }
+
+    const thinking = addMsg('jarvis', '…processing…', 'thinking');
+    setState('thinking');
+
+    const reply = await askAI(raw);
+    thinking.remove();
+
+    if (reply) speak(reply);
+    else {
+      speak("I'm having trouble reaching my AI core right now, sir. Please try again.");
+    }
+  }
+
+  /* ============ VOICE INPUT ============ */
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  let recog = null;
+
+  if (SR) {
+    recog = new SR();
+    recog.continuous = false;
+    recog.interimResults = true;
+    recog.lang = 'en-US';
+
+    recog.onstart = () => setState('listening');
+
+    recog.onresult = e => {
+      let interim = '', final = '';
+      for (let i = e.resultIndex; i < e.results.length; i++) {
+        const t = e.results[i][0].transcript;
+        if (e.results[i].isFinal) final += t; else interim += t;
+      }
+      inputEl.value = final || interim;
+      if (final.trim()) {
+        inputEl.value = '';
+        handleCommand(final.trim());
+      }
+    };
+
+    recog.onerror = e => {
+      setState('idle');
+      if (e.error === 'not-allowed' || e.error === 'service-not-allowed')
+        addMsg('jarvis', 'Microphone access was denied. Type your command instead.');
+    };
+
+    recog.onend = () => { if (state === 'listening') setState('idle'); };
+  }
+
+  function startListening() {
+    if (!recog) {
+      addMsg('jarvis', 'Voice input is not supported in this browser.');
+      return;
+    }
+    if (synth) synth.cancel();
+    try { recog.start(); } catch (_) {}
+  }
+
+  micBtn.addEventListener('click', () => {
+    if (state === 'listening') { recog && recog.stop(); setState('idle'); }
+    else startListening();
+  });
+
+  /* ============ WAKE WORD (continuous listening) ============ */
+  let wakeRecog = null;
+  let wakeActive = false;
+
+  function startWake() {
+    if (!SR) { alert('Wake word requires Chrome or Edge.'); wakeTog.checked = false; return; }
+    if (wakeRecog) return;
+
+    wakeRecog = new SR();
+    wakeRecog.continuous = true;
+    wakeRecog.interimResults = true;
+    wakeRecog.lang = 'en-US';
+
+    wakeRecog.onresult = e => {
+      for (let i = e.resultIndex; i < e.results.length; i++) {
+        const t = e.results[i][0].transcript.toLowerCase();
+        if (/\bjarvis\b/.test(t)) {
+          wakeRecog.stop();
+          setState('idle');
+          addMsg('jarvis', 'Yes sir?');
+          speak('Yes sir?');
+          // After wake, listen for the actual command
+          setTimeout(() => {
+            if (recog && state !== 'speaking') startListening();
+          }, 1800);
+          return;
+        }
+      }
+    };
+
+    wakeRecog.onend = () => {
+      if (wakeActive) {
+        // Restart to keep listening
+        try { wakeRecog.start(); } catch (_) {}
+      }
+    };
+
+    wakeRecog.onerror = e => {
+      if (e.error === 'not-allowed') {
+        addMsg('jarvis', 'Wake word needs microphone permission.');
+        wakeActive = false;
+        wakeTog.checked = false;
+      }
+    };
+
+    try { wakeRecog.start(); wakeActive = true; }
+    catch (_) { wakeTog.checked = false; }
+  }
+
+  function stopWake() {
+    wakeActive = false;
+    if (wakeRecog) { try { wakeRecog.stop(); } catch (_) {} }
+    wakeRecog = null;
+  }
+
+  wakeTog.addEventListener('change', () => {
+    if (wakeTog.checked) {
+      addMsg('jarvis', 'Wake word enabled. Say "Jarvis" to activate me, sir.');
+      startWake();
+    } else {
+      stopWake();
+      addMsg('jarvis', 'Wake word disabled.');
+    }
+  });
+
+  /* ============ INPUT EVENTS ============ */
+  inputEl.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && inputEl.value.trim()) {
+      const v = inputEl.value.trim();
+      inputEl.value = '';
+      handleCommand(v);
+    }
+  });
+
+  function clearLog() {
+    logEl.innerHTML = '<div class="panel-title"><span>SYSTEM LOG</span>' +
+      '<button id="clearLog">CLEAR</button></div>';
+    document.getElementById('clearLog').onclick = clearLog;
+  }
+  document.getElementById('clearLog').onclick = clearLog;
+
+  /* ============ VISUALIZER ============ */
+  const BARS = 56;
+  const bars = new Array(BARS).fill(0);
+  let dpr = 1;
+
+  function resizeCanvas() {
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const w = canvas.clientWidth, h = canvas.clientHeight;
+    canvas.width  = Math.max(1, Math.floor(w * dpr));
+    canvas.height = Math.max(1, Math.floor(h * dpr));
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+
+  function draw() {
+    const w = canvas.clientWidth, h = canvas.clientHeight;
+    ctx.clearRect(0, 0, w, h);
+    const now = performance.now();
+    const gap = w / BARS;
+
+    for (let i = 0; i < BARS; i++) {
+      let target;
+      if (state === 'listening')      target = Math.random() * 0.85 + 0.15;
+      else if (state === 'speaking')  target = (Math.sin(now/95 + i*0.55)*0.5+0.5)*0.8+0.15;
+      else if (state === 'thinking')  target = (Math.sin(now/180 + i*0.9)*0.5+0.5)*0.6+0.2;
+      else                            target = (Math.sin(now/620 + i*0.32)*0.5+0.5)*0.13+0.03;
+      bars[i] += (target - bars[i]) * 0.22;
+
+      const bh = Math.max(2, bars[i] * h * 0.92);
+      const x  = i * gap + gap * 0.22;
+      const bw = gap * 0.56;
+      const y  = (h - bh) / 2;
+
+      const isThink = state === 'thinking';
+      const grad = ctx.createLinearGradient(0, y, 0, y + bh);
+      grad.addColorStop(0,   isThink ? 'rgba(255,0,230,0.15)' : 'rgba(0,229,255,0.15)');
+      grad.addColorStop(0.5, isThink ? 'rgba(255,0,230,0.95)' : 'rgba(0,229,255,0.95)');
+      grad.addColorStop(1,   isThink ? 'rgba(255,0,230,0.15)' : 'rgba(0,229,255,0.15)');
+
+      ctx.fillStyle = grad;
+      ctx.shadowColor = isThink ? 'rgba(255,0,230,0.75)' : 'rgba(0,229,255,0.75)';
+      ctx.shadowBlur = state === 'idle' ? 6 : 14;
+      ctx.fillRect(x, y, bw, bh);
+    }
+    ctx.shadowBlur = 0;
+    requestAnimationFrame(draw);
+  }
+  requestAnimationFrame(draw);
+
+  /* ============ BOOT ============ */
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      document.getElementById('boot').classList.add('done');
+      setTimeout(() => {
+        const hasKey = !!getApiKey();
+        const greeting = hasKey
+          ? 'Systems online. AI core linked. Good to see you again, sir.'
+          : 'Systems online. Please configure an AI key to unlock full capabilities, sir.';
+        addMsg('jarvis', greeting);
+        setState('idle');
+        speak(greeting);
+        if (!hasKey) setTimeout(openKeyModal, 2500);
+      }, 600);
+    }, 2100);
+  });
+})();
+</script>
+</body>
+</html>
