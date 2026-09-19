@@ -1,85 +1,661 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>ACE Test</title>
-  <style>
-    body { font-family: monospace; background: #111; color: #0f0; padding: 20px; font-size: 16px; }
-    input, button { font-size: 16px; padding: 10px; margin: 8px 0; width: 100%; box-sizing: border-box; }
-    #out { white-space: pre-wrap; background: #000; padding: 15px; border: 1px solid #0f0; min-height: 200px; }
-    h2 { color: #fff; }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ACE // Adaptive Cognitive Entity</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='40' fill='none' stroke='%2300e5ff' stroke-width='6'/><circle cx='50' cy='50' r='14' fill='%2300e5ff'/></svg>" />
+<style>
+  *,*::before,*::after{box-sizing:border-box}
+  html,body{height:100%;margin:0}
+  :root{
+    --cyan:#00e5ff;--bg:#03060c;--panel:rgba(8,18,30,.55);
+    --border:rgba(0,229,255,.18);--text:#d6f2ff;--muted:#6d8fa5;
+  }
+  body{font-family:"Segoe UI",system-ui,-apple-system,"Helvetica Neue",sans-serif;
+    background:var(--bg);color:var(--text);overflow:hidden}
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;
+    background:radial-gradient(circle at 15% 12%,rgba(0,140,200,.20),transparent 50%),
+               radial-gradient(circle at 85% 82%,rgba(0,90,180,.18),transparent 50%)}
+  body::after{content:"";position:fixed;inset:0;pointer-events:none;
+    background-image:linear-gradient(rgba(0,229,255,.045) 1px,transparent 1px),
+                     linear-gradient(90deg,rgba(0,229,255,.045) 1px,transparent 1px);
+    background-size:44px 44px;
+    -webkit-mask-image:radial-gradient(circle at 50% 50%,#000 25%,transparent 78%);
+    mask-image:radial-gradient(circle at 50% 50%,#000 25%,transparent 78%)}
+  .app{position:relative;z-index:1;height:100vh;height:100dvh;display:flex;flex-direction:column;
+    padding:16px clamp(12px,3vw,28px) 18px;gap:14px}
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .brand{display:flex;align-items:center;gap:12px}
+  .brand h1{margin:0;font-size:20px;font-weight:600;letter-spacing:.32em;color:#eaffff;
+    text-shadow:0 0 18px rgba(0,229,255,.65)}
+  .brand span{display:block;font-size:9.5px;letter-spacing:.34em;color:var(--muted);
+    text-transform:uppercase;margin-top:2px}
+  .brand-mark{width:34px;height:34px;border-radius:50%;border:2px solid var(--cyan);
+    position:relative;flex:0 0 auto;
+    box-shadow:0 0 14px rgba(0,229,255,.7),inset 0 0 10px rgba(0,229,255,.5)}
+  .brand-mark::after{content:"";position:absolute;inset:8px;border-radius:50%;
+    background:var(--cyan);box-shadow:0 0 12px var(--cyan)}
+  .top-actions{display:flex;gap:10px}
+  .icon-btn{width:38px;height:38px;border-radius:10px;cursor:pointer;
+    background:rgba(0,229,255,.06);border:1px solid var(--border);color:var(--cyan);
+    display:grid;place-items:center;transition:background .2s,box-shadow .2s,transform .2s}
+  .icon-btn:hover{background:rgba(0,229,255,.16);box-shadow:0 0 16px rgba(0,229,255,.35)}
+  .icon-btn:active{transform:scale(.94)}
+  main{flex:1;min-height:0;display:grid;
+    grid-template-columns:minmax(240px,.85fr) minmax(0,1.45fr);gap:14px}
+  .panel{background:var(--panel);border:1px solid var(--border);border-radius:18px;
+    -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
+    box-shadow:0 0 40px rgba(0,120,180,.12),inset 0 0 40px rgba(0,120,180,.05);min-height:0}
+  .core-panel{display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:20px;padding:24px;overflow:hidden}
+  .reactor{position:relative;display:grid;place-items:center;
+    width:clamp(150px,19vw,230px);aspect-ratio:1}
+  .ring{position:absolute;border-radius:50%}
+  .ring-1{inset:0;border:2px solid rgba(0,229,255,.10);border-top-color:var(--cyan);
+    border-right-color:rgba(0,229,255,.6);animation:spin 7s linear infinite}
+  .ring-2{inset:12%;border:1px dashed rgba(0,229,255,.35);
+    animation:spin 15s linear infinite reverse}
+  .ring-3{inset:24%;border:2px solid rgba(0,229,255,.08);border-bottom-color:var(--cyan);
+    border-left-color:rgba(0,229,255,.5);animation:spin 5.5s linear infinite reverse}
+  .ring-4{inset:36%;border:1px solid rgba(0,229,255,.25);
+    animation:spin 22s linear infinite}
+  .halo{position:absolute;inset:-18%;border-radius:50%;filter:blur(8px);
+    background:radial-gradient(circle,rgba(0,229,255,.22),transparent 62%);
+    animation:breathe 3.4s ease-in-out infinite}
+  .core{width:26%;aspect-ratio:1;border-radius:50%;
+    background:radial-gradient(circle at 50% 50%,#ffffff,#7ef0ff 28%,#00b4ff 62%,rgba(0,110,200,.12) 100%);
+    box-shadow:0 0 26px rgba(0,229,255,.95),0 0 70px rgba(0,150,255,.6);
+    animation:breathe 3.4s ease-in-out infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes breathe{0%,100%{transform:scale(1);opacity:.86}50%{transform:scale(1.06);opacity:1}}
+  .reactor.listening .ring-1{animation-duration:2.2s;border-top-color:#5bffa0;
+    border-right-color:rgba(91,255,160,.6)}
+  .reactor.listening .ring-3{border-bottom-color:#5bffa0;
+    border-left-color:rgba(91,255,160,.5)}
+  .reactor.listening .core{background:radial-gradient(circle at 50% 50%,#ffffff,#b6ffd0 30%,#00ff9d 66%,rgba(0,255,157,.12) 100%);
+    box-shadow:0 0 30px rgba(0,255,157,.95),0 0 80px rgba(0,255,157,.5)}
+  .reactor.thinking .ring-2{animation-duration:2.5s}
+  .reactor.thinking .ring-4{animation-duration:6s}
+  .reactor.speaking .ring-3{animation-duration:1.6s}
+  .reactor.speaking .core{animation-duration:.9s}
+  .status{font-size:10.5px;letter-spacing:.42em;text-transform:uppercase;color:var(--cyan);
+    text-shadow:0 0 12px rgba(0,229,255,.7);text-align:center;min-height:14px}
+  .wave{display:flex;align-items:flex-end;gap:5px;height:34px}
+  .wave span{width:4px;height:8px;border-radius:2px;opacity:.3;
+    background:linear-gradient(180deg,var(--cyan),rgba(0,229,255,.12));
+    transition:opacity .25s}
+  .wave.active span{opacity:1;animation:wave 1s ease-in-out infinite}
+  .wave.active span:nth-child(2){animation-delay:.10s}
+  .wave.active span:nth-child(3){animation-delay:.20s}
+  .wave.active span:nth-child(4){animation-delay:.30s}
+  .wave.active span:nth-child(5){animation-delay:.20s}
+  .wave.active span:nth-child(6){animation-delay:.10s}
+  @keyframes wave{0%,100%{height:8px}50%{height:32px}}
+  .chat-panel{display:flex;flex-direction:column;overflow:hidden}
+  .messages{flex:1;min-height:0;overflow-y:auto;padding:22px;
+    display:flex;flex-direction:column;gap:16px}
+  .messages::-webkit-scrollbar{width:6px}
+  .messages::-webkit-scrollbar-track{background:transparent}
+  .messages::-webkit-scrollbar-thumb{background:rgba(0,229,255,.25);border-radius:3px}
+  .msg{max-width:84%;padding:12px 16px;border-radius:14px;font-size:14.5px;
+    line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere;
+    animation:rise .3s ease both}
+  @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .msg.user{align-self:flex-end;
+    background:linear-gradient(135deg,rgba(0,120,255,.30),rgba(0,229,255,.14));
+    border:1px solid rgba(0,180,255,.35);color:#eaf9ff}
+  .msg.ace{align-self:flex-start;background:rgba(0,229,255,.055);
+    border:1px solid var(--border);color:#cfefff}
+  .msg.ace::before{content:"ACE";display:block;margin-bottom:6px;
+    font-size:9px;letter-spacing:.3em;color:var(--cyan);opacity:.85}
+  .msg.error{border-color:rgba(255,90,90,.5);background:rgba(255,60,60,.10);color:#ffb4b4}
+  .msg.debug{border-color:rgba(255,200,90,.45);background:rgba(255,200,90,.08);
+    color:#ffd98a;font-family:monospace;font-size:12px}
+  .composer{display:flex;align-items:flex-end;gap:10px;padding:14px 16px;
+    border-top:1px solid var(--border);background:rgba(4,10,18,.5)}
+  .composer textarea{flex:1;resize:none;max-height:120px;line-height:1.45;
+    padding:12px 14px;border-radius:12px;background:rgba(0,229,255,.05);
+    border:1px solid var(--border);color:var(--text);font:inherit;font-size:14.5px;
+    outline:none;transition:border-color .2s,box-shadow .2s}
+  .composer textarea::placeholder{color:rgba(109,143,165,.85)}
+  .composer textarea:focus{border-color:rgba(0,229,255,.55);
+    box-shadow:0 0 0 3px rgba(0,229,255,.08)}
+  .mic-btn,.send-btn{flex:0 0 auto;width:44px;height:44px;border-radius:12px;
+    cursor:pointer;border:1px solid var(--border);background:rgba(0,229,255,.07);
+    color:var(--cyan);display:grid;place-items:center;
+    transition:background .2s,box-shadow .2s,transform .2s,color .2s}
+  .mic-btn:hover,.send-btn:hover{background:rgba(0,229,255,.18);
+    box-shadow:0 0 18px rgba(0,229,255,.35)}
+  .mic-btn:active,.send-btn:active{transform:scale(.94)}
+  .send-btn:disabled{opacity:.4;cursor:not-allowed;box-shadow:none}
+  .mic-btn.recording{background:rgba(0,255,157,.18);border-color:rgba(0,255,157,.6);
+    color:#5bffa0;animation:pulseBtn 1.2s infinite}
+  @keyframes pulseBtn{0%,100%{box-shadow:0 0 0 0 rgba(0,255,157,.5)}
+    70%{box-shadow:0 0 0 10px rgba(0,255,157,0)}}
+  .modal-backdrop{position:fixed;inset:0;z-index:50;display:none;place-items:center;
+    padding:20px;background:rgba(2,6,12,.8);-webkit-backdrop-filter:blur(6px);
+    backdrop-filter:blur(6px)}
+  .modal-backdrop.open{display:grid}
+  .modal{width:min(540px,100%);max-height:90vh;overflow-y:auto;padding:26px;
+    border-radius:18px;background:rgba(8,18,30,.97);border:1px solid var(--border);
+    box-shadow:0 0 60px rgba(0,150,255,.25);animation:rise .25s ease both}
+  .modal h2{margin:0 0 6px;font-size:15px;letter-spacing:.24em;
+    text-transform:uppercase;color:var(--cyan)}
+  .modal .sub{font-size:12px;line-height:1.6;color:var(--muted);margin:0 0 20px}
+  .field{margin-bottom:16px}
+  .field label{display:block;margin-bottom:7px;font-size:10.5px;
+    letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+  .field input,.field select{width:100%;padding:11px 13px;border-radius:10px;
+    background:rgba(0,229,255,.05);border:1px solid var(--border);color:var(--text);
+    font:inherit;font-size:14px;outline:none;transition:border-color .2s}
+  .field input:focus,.field select:focus{border-color:rgba(0,229,255,.55)}
+  .field select option{background:#08121e;color:var(--text)}
+  .hint{font-size:11px;color:var(--muted);margin-top:6px;line-height:1.5}
+  .row{display:flex;gap:10px;justify-content:flex-end;margin-top:22px}
+  .btn{padding:11px 20px;border-radius:10px;cursor:pointer;border:1px solid var(--border);
+    background:rgba(0,229,255,.07);color:var(--cyan);font:inherit;font-size:13px;
+    letter-spacing:.08em;transition:box-shadow .2s,background .2s}
+  .btn:hover{box-shadow:0 0 18px rgba(0,229,255,.35);background:rgba(0,229,255,.14)}
+  .btn.primary{background:linear-gradient(135deg,rgba(0,140,255,.45),rgba(0,229,255,.30));
+    border-color:rgba(0,229,255,.5);color:#eafcff}
+  @media (max-width:880px){
+    main{grid-template-columns:1fr;grid-template-rows:auto 1fr}
+    .core-panel{flex-direction:row;gap:16px;padding:14px 18px;justify-content:flex-start}
+    .reactor{width:88px}
+    .wave{display:none}
+    .status{font-size:9px;letter-spacing:.28em;text-align:left}
+    .msg{max-width:92%}
+  }
+</style>
 </head>
 <body>
-  <h2>ACE Diagnostic Test</h2>
 
-  <label>API Key:</label>
-  <input id="key" placeholder="paste your sk-or-v1-... key here" />
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark"></div>
+      <div>
+        <h1>ACE</h1>
+        <span>Adaptive Cognitive Entity</span>
+      </div>
+    </div>
+    <div class="top-actions">
+      <button type="button" class="icon-btn" id="clearBtn" title="New session" aria-label="New session">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 12a9 9 0 1 0 3-6.7"/><polyline points="3 4 3 10 9 10"/>
+        </svg>
+      </button>
+      <button type="button" class="icon-btn" id="settingsBtn" title="Settings" aria-label="Settings">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9v.09a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+      </button>
+    </div>
+  </header>
 
-  <label>Model:</label>
-  <input id="model" value="openai/gpt-4o-mini" />
+  <main>
+    <section class="panel core-panel">
+      <div class="reactor" id="reactor">
+        <div class="ring ring-1"></div>
+        <div class="ring ring-2"></div>
+        <div class="ring ring-3"></div>
+        <div class="ring ring-4"></div>
+        <div class="halo"></div>
+        <div class="core"></div>
+      </div>
+      <div><div class="status" id="status">SYSTEM ONLINE</div></div>
+      <div class="wave" id="wave">
+        <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+      </div>
+    </section>
 
-  <button onclick="go()">SEND TEST REQUEST</button>
+    <section class="panel chat-panel">
+      <div class="messages" id="messages"></div>
+      <form class="composer" id="composer" autocomplete="off">
+        <button type="button" class="mic-btn" id="micBtn" title="Voice input" aria-label="Voice input">
+          <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="9" y="2" width="6" height="12" rx="3"/>
+            <path d="M5 11a7 7 0 0 0 14 0"/>
+            <line x1="12" y1="18" x2="12" y2="22"/>
+          </svg>
+        </button>
+        <textarea id="input" rows="1" placeholder="Ask ACE anything…"></textarea>
+        <button type="submit" class="send-btn" id="sendBtn" title="Send" aria-label="Send">
+          <svg viewBox="0 0 24 24" width="19" height="19" fill="currentColor">
+            <path d="M3 20.5 21 12 3 3.5 3 10l12 2-12 2z"/>
+          </svg>
+        </button>
+      </form>
+    </section>
+  </main>
+</div>
 
-  <h2>Result:</h2>
-  <div id="out">Click the button above to test.</div>
+<div class="modal-backdrop" id="modal">
+  <div class="modal">
+    <h2>Configuration</h2>
+    <p class="sub">Works with an OpenAI key (<code>sk-…</code>) or an OpenRouter key (<code>sk-or-v1-…</code>). Auto-detected.</p>
+
+    <div class="field">
+      <label for="apiKeyInput">API Key</label>
+      <input type="password" id="apiKeyInput" placeholder="sk-…  or  sk-or-v1-…" spellcheck="false" />
+      <div class="hint">Stored locally in your browser only.</div>
+    </div>
+
+    <div class="field">
+      <label for="modelInput">Model</label>
+      <input type="text" id="modelInput" placeholder="z-ai/glm-5.2:free" spellcheck="false" />
+      <div class="hint">Default: <code>z-ai/glm-5.2:free</code> (free on OpenRouter).</div>
+    </div>
+
+    <div class="field">
+      <label for="voiceSelect">Voice (OpenAI key only — OpenRouter uses browser voice)</label>
+      <select id="voiceSelect">
+        <option value="onyx">Onyx — deep, calm male (JARVIS-like)</option>
+        <option value="ash">Ash — warm, natural male</option>
+        <option value="echo">Echo — clear, measured male</option>
+        <option value="alloy">Alloy — neutral, balanced</option>
+        <option value="nova">Nova — bright female</option>
+        <option value="shimmer">Shimmer — soft female</option>
+        <option value="coral">Coral — expressive female</option>
+        <option value="sage">Sage — smooth, articulate</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="voiceToggle">Spoken Replies</label>
+      <select id="voiceToggle">
+        <option value="on">On</option>
+        <option value="off">Off (text only)</option>
+      </select>
+    </div>
+
+    <div class="row">
+      <button class="btn" id="cancelBtn" type="button">Cancel</button>
+      <button class="btn primary" id="saveBtn" type="button">Save</button>
+    </div>
+  </div>
+</div>
 
 <script>
-function log(msg) {
-  document.getElementById('out').textContent += "\n" + msg;
-  console.log(msg);
+/* =====================================================================
+   ACE — Adaptive Cognitive Entity  (OpenAI + OpenRouter)
+   Default model: z-ai/glm-5.2:free
+   ===================================================================== */
+
+var ACE_CONFIG = {
+  API_KEY: "",
+  MODEL: "z-ai/glm-5.2:free",
+  TTS_MODEL: "gpt-4o-mini-tts",
+  VOICE: "onyx",
+  TIMEOUT_MS: 30000,
+  SYSTEM_PROMPT: "You are ACE (Adaptive Cognitive Entity), a highly advanced AI assistant in the style of JARVIS from Iron Man.\n\n" +
+    "Personality:\n" +
+    "- Calm, precise, composed, and quietly witty. Subtly British in manner.\n" +
+    "- Address the user as \"sir\" occasionally — not in every sentence.\n" +
+    "- Confident and efficient. You never ramble.\n\n" +
+    "Speaking style (CRITICAL):\n" +
+    "- Your replies are spoken aloud through a text-to-speech engine, so write the way a person talks.\n" +
+    "- Keep answers to 1-3 sentences unless the user explicitly asks for detail.\n" +
+    "- Never use markdown, bullet points, numbered lists, asterisks, emojis, or code fences unless the user specifically requests code.\n" +
+    "- Never describe your own formatting or say things like \"here is a list.\"\n" +
+    "- Use natural contractions and punctuation that reads well out loud.\n\n" +
+    "You are helpful, loyal, and always one step ahead."
+};
+
+function providerFor(apiKey) {
+  var k = (apiKey || "").trim();
+  if (k.indexOf("sk-or-v1-") === 0) {
+    return { name: "OpenRouter", chatUrl: "https://openrouter.ai/api/v1/chat/completions", supportsTTS: false };
+  }
+  return {
+    name: "OpenAI",
+    chatUrl: "https://api.openai.com/v1/chat/completions",
+    ttsUrl: "https://api.openai.com/v1/audio/speech",
+    supportsTTS: true
+  };
 }
 
-function go() {
-  var out = document.getElementById('out');
-  out.textContent = "Starting test...";
-  
-  var key = document.getElementById('key').value.trim();
-  var model = document.getElementById('model').value.trim();
-  
-  if (!key) { log("ERROR: no key entered"); return; }
-  
-  log("Key starts with: " + key.substring(0, 15) + "...");
-  log("Model: " + model);
-  log("Sending request to https://openrouter.ai/api/v1/chat/completions ...");
-  log("Time: " + new Date().toLocaleTimeString());
-  
+var STORAGE_KEY = "ace.settings.v3";
+function loadStored() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch (e) { return {}; } }
+var stored = loadStored();
+var settings = {
+  apiKey:       stored.apiKey || ACE_CONFIG.API_KEY || "",
+  model:        stored.model  || ACE_CONFIG.MODEL,
+  ttsModel:     stored.ttsModel || ACE_CONFIG.TTS_MODEL,
+  voice:        stored.voice  || ACE_CONFIG.VOICE,
+  voiceEnabled: stored.voiceEnabled !== undefined ? stored.voiceEnabled : true
+};
+function persistSettings() { localStorage.setItem(STORAGE_KEY, JSON.stringify(settings)); }
+
+var messagesEl = document.getElementById("messages");
+var inputEl    = document.getElementById("input");
+var composerEl = document.getElementById("composer");
+var micBtn     = document.getElementById("micBtn");
+var sendBtn    = document.getElementById("sendBtn");
+var reactorEl  = document.getElementById("reactor");
+var statusEl   = document.getElementById("status");
+var waveEl     = document.getElementById("wave");
+var modalEl    = document.getElementById("modal");
+var clearBtn   = document.getElementById("clearBtn");
+var settingsBtn= document.getElementById("settingsBtn");
+var cancelBtn  = document.getElementById("cancelBtn");
+var saveBtn    = document.getElementById("saveBtn");
+var apiKeyInput= document.getElementById("apiKeyInput");
+var modelInput = document.getElementById("modelInput");
+var voiceSelect= document.getElementById("voiceSelect");
+var voiceToggle= document.getElementById("voiceToggle");
+
+var history = [];
+var isBusy = false;
+var isListening = false;
+var currentAudio = null;
+var recognition = null;
+
+var STATE_LABELS = { "": "SYSTEM ONLINE", listening: "LISTENING", thinking: "PROCESSING", speaking: "SPEAKING" };
+function setState(mode) {
+  reactorEl.classList.remove("listening", "thinking", "speaking");
+  if (mode) reactorEl.classList.add(mode);
+  waveEl.classList.toggle("active", mode === "listening" || mode === "speaking");
+  statusEl.textContent = STATE_LABELS[mode || ""] || "SYSTEM ONLINE";
+}
+function addMessage(kind, text) {
+  var div = document.createElement("div");
+  div.className = "msg " + kind;
+  div.textContent = text;
+  messagesEl.appendChild(div);
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+  return div;
+}
+function autoGrow() {
+  inputEl.style.height = "auto";
+  inputEl.style.height = Math.min(inputEl.scrollHeight, 120) + "px";
+}
+
+var voices = [];
+function refreshVoices() { if (window.speechSynthesis) voices = speechSynthesis.getVoices() || []; }
+if (window.speechSynthesis) { refreshVoices(); speechSynthesis.onvoiceschanged = refreshVoices; }
+var PREFERRED_VOICES = [
+  "Google UK English Male",
+  "Microsoft Ryan Online (Natural) - English (United Kingdom)",
+  "Microsoft Guy Online (Natural) - English (United States)",
+  "Microsoft George Online (Natural) - English (United Kingdom)",
+  "Google US English",
+  "Daniel","Oliver","Arthur"
+];
+function pickVoice() {
+  if (!voices.length) return null;
+  var i, n, ex, pa;
+  for (i = 0; i < PREFERRED_VOICES.length; i++) {
+    n = PREFERRED_VOICES[i];
+    ex = voices.find(function(v){ return v.name === n; });
+    if (ex) return ex;
+    pa = voices.find(function(v){ return v.name.indexOf(n) !== -1; });
+    if (pa) return pa;
+  }
+  return voices.find(function(v){ return v.lang && v.lang.toLowerCase().indexOf("en") === 0; }) || voices[0];
+}
+function browserSpeak(text) {
+  if (!window.speechSynthesis) { setState(""); return; }
+  speechSynthesis.cancel();
+  var u = new SpeechSynthesisUtterance(text);
+  var v = pickVoice(); if (v) u.voice = v;
+  u.rate = 1.0; u.pitch = 0.95; u.volume = 1;
+  u.onend = function(){ setState(""); };
+  u.onerror = function(){ setState(""); };
+  setState("speaking");
+  speechSynthesis.speak(u);
+}
+function stripForSpeech(text) {
+  var s = String(text);
+  s = s.replace(/```[\s\S]*?```/g, " code block ");
+  s = s.replace(/`([^`]+)`/g, "$1");
+  s = s.replace(/[*_#>~]/g, "");
+  s = s.replace(/\[(.*?)\]\(.*?\)/g, "$1");
+  s = s.replace(/^\s*[-•]\s+/gm, "");
+  s = s.replace(/\s+/g, " ");
+  return s.trim();
+}
+function speak(text) {
+  if (!settings.voiceEnabled) { setState(""); return Promise.resolve(); }
+  var clean = stripForSpeech(text);
+  if (!clean) { setState(""); return Promise.resolve(); }
+
+  if (currentAudio) { try { currentAudio.pause(); } catch(e){} currentAudio = null; }
+  if (window.speechSynthesis) speechSynthesis.cancel();
+
+  var provider = providerFor(settings.apiKey);
+  if (!settings.apiKey || !provider.supportsTTS) { browserSpeak(clean); return Promise.resolve(); }
+
+  setState("speaking");
+  return fetch(provider.ttsUrl, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "Authorization": "Bearer " + settings.apiKey },
+    body: JSON.stringify({ model: settings.ttsModel, voice: settings.voice, input: clean, response_format: "mp3" })
+  }).then(function(res){
+    if (!res.ok) throw new Error("TTS " + res.status);
+    return res.blob();
+  }).then(function(blob){
+    var url = URL.createObjectURL(blob);
+    var audio = new Audio(url);
+    currentAudio = audio;
+    audio.onended = function(){ setState(""); URL.revokeObjectURL(url); currentAudio = null; };
+    audio.onerror = function(){ setState(""); URL.revokeObjectURL(url); currentAudio = null; };
+    return audio.play();
+  }).catch(function(err){
+    console.warn("OpenAI TTS failed, falling back to browser voice:", err);
+    browserSpeak(clean);
+  });
+}
+
+function fetchWithTimeout(url, options, ms) {
   var controller = new AbortController();
-  var timer = setTimeout(function() {
-    controller.abort();
-    log("!!! TIMED OUT after 20 seconds");
-    log("!!! This means the network is BLOCKING openrouter.ai");
-    log("!!! The request never reached the server.");
-  }, 20000);
-  
-  fetch("https://openrouter.ai/api/v1/chat/completions", {
+  var timer = setTimeout(function(){ controller.abort(); }, ms);
+  options.signal = controller.signal;
+  return fetch(url, options).then(function(res){
+    clearTimeout(timer);
+    return res;
+  }).catch(function(err){
+    clearTimeout(timer);
+    if (err.name === "AbortError") {
+      throw new Error("Request timed out after " + (ms/1000) + "s. The network likely blocked this domain (openrouter.ai). Try a different network or your phone's hotspot.");
+    }
+    throw new Error("Network error: " + err.message + ". The domain may be blocked or you're offline.");
+  });
+}
+
+function askACE(userText) {
+  if (!settings.apiKey) {
+    addMessage("ace error", "No API key set. Click the gear icon in the top right and paste your key, then press Save.");
+    setState("");
+    return Promise.resolve();
+  }
+
+  var provider = providerFor(settings.apiKey);
+
+  var messages = [];
+  messages.push({ role: "system", content: String(ACE_CONFIG.SYSTEM_PROMPT) });
+  history.forEach(function(m){
+    if (!m || (m.role !== "user" && m.role !== "assistant")) return;
+    var c = (m.content == null) ? "" : String(m.content);
+    if (c.length) messages.push({ role: m.role, content: c });
+  });
+  messages.push({ role: "user", content: String(userText) });
+
+  var body = { model: settings.model, messages: messages, temperature: 0.7, max_tokens: 400 };
+
+  addMessage("debug", "→ POST " + provider.chatUrl + "\n   model=" + settings.model + "\n   messages=" + messages.length);
+
+  return fetchWithTimeout(provider.chatUrl, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "Authorization": "Bearer " + key
+      "Authorization": "Bearer " + settings.apiKey
     },
-    body: JSON.stringify({
-      model: model,
-      messages: [{ role: "user", content: "Say the word banana" }]
-    }),
-    signal: controller.signal
-  })
-  .then(function(res) {
-    clearTimeout(timer);
-    log("Got a response! HTTP " + res.status + " " + res.statusText);
-    return res.text();
-  })
-  .then(function(body) {
-    log("Response body:");
-    log(body);
-    log("=== TEST DONE ===");
-  })
-  .catch(function(err) {
-    clearTimeout(timer);
-    log("FETCH ERROR: " + err.name + " - " + err.message);
-    log("=== TEST FAILED ===");
+    body: JSON.stringify(body)
+  }, ACE_CONFIG.TIMEOUT_MS).then(function(res){
+    addMessage("debug", "← HTTP " + res.status + " " + res.statusText);
+    if (!res.ok) {
+      return res.text().then(function(raw){
+        addMessage("debug", "← Raw body:\n" + raw);
+        var detail = "";
+        try {
+          var j = JSON.parse(raw);
+          if (j.error && j.error.message) detail = j.error.message;
+          else if (j.message) detail = j.message;
+        } catch (e) { detail = raw.slice(0, 200); }
+        throw new Error(provider.name + " " + res.status + (detail ? ": " + detail : ""));
+      });
+    }
+    return res.json();
+  }).then(function(data){
+    var reply = "";
+    var msg = data.choices && data.choices[0] && data.choices[0].message;
+    if (msg) {
+      if (typeof msg.content === "string") {
+        reply = msg.content.trim();
+      } else if (Array.isArray(msg.content)) {
+        reply = msg.content.map(function(p){
+          if (typeof p === "string") return p;
+          if (p && typeof p.text === "string") return p.text;
+          return "";
+        }).join(" ").trim();
+      }
+    }
+    // Some reasoning models put the answer in `reasoning` and leave content empty
+    if (!reply && msg && typeof msg.reasoning === "string") {
+      reply = msg.reasoning.trim();
+    }
+    if (!reply && data.choices && data.choices[0] && data.choices[0].text) {
+      reply = String(data.choices[0].text).trim();
+    }
+    if (!reply) throw new Error("Empty response from model. Raw: " + JSON.stringify(data).slice(0, 300));
+
+    history.push({ role: "user", content: String(userText) });
+    history.push({ role: "assistant", content: reply });
+
+    addMessage("ace", reply);
+    return speak(reply);
   });
 }
+
+function handleSend() {
+  var text = inputEl.value.trim();
+  if (!text || isBusy) return;
+
+  addMessage("user", text);
+  inputEl.value = "";
+  autoGrow();
+
+  isBusy = true;
+  sendBtn.disabled = true;
+  setState("thinking");
+
+  askACE(text).catch(function(err){
+    addMessage("ace error", "I'm having trouble reaching my cognitive core. " + err.message);
+    setState("");
+  }).then(function(){
+    isBusy = false;
+    sendBtn.disabled = false;
+    if (!reactorEl.classList.contains("speaking")) setState("");
+    inputEl.focus();
+  });
+}
+
+composerEl.addEventListener("submit", function(e){ e.preventDefault(); handleSend(); });
+inputEl.addEventListener("input", autoGrow);
+inputEl.addEventListener("keydown", function(e){
+  if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSend(); }
+});
+
+clearBtn.addEventListener("click", function(){
+  history = [];
+  messagesEl.innerHTML = "";
+  if (currentAudio) { try { currentAudio.pause(); } catch(e){} currentAudio = null; }
+  if (window.speechSynthesis) speechSynthesis.cancel();
+  setState("");
+  greet(true);
+});
+
+function openModal() {
+  apiKeyInput.value = settings.apiKey;
+  modelInput.value = settings.model;
+  voiceSelect.value = settings.voice;
+  voiceToggle.value = settings.voiceEnabled ? "on" : "off";
+  modalEl.classList.add("open");
+  setTimeout(function(){ apiKeyInput.focus(); }, 50);
+}
+function closeModal() { modalEl.classList.remove("open"); }
+
+settingsBtn.addEventListener("click", openModal);
+cancelBtn.addEventListener("click", closeModal);
+modalEl.addEventListener("click", function(e){ if (e.target === modalEl) closeModal(); });
+document.addEventListener("keydown", function(e){
+  if (e.key === "Escape" && modalEl.classList.contains("open")) closeModal();
+});
+
+saveBtn.addEventListener("click", function(){
+  settings.apiKey = apiKeyInput.value.trim();
+  settings.model = modelInput.value.trim() || ACE_CONFIG.MODEL;
+  settings.voice = voiceSelect.value;
+  settings.voiceEnabled = voiceToggle.value === "on";
+  persistSettings();
+  closeModal();
+  var provider = providerFor(settings.apiKey);
+  var label = settings.apiKey ? (provider.name + " connected, model " + settings.model) : "no API key";
+  addMessage("ace", "Configuration saved. " + label + ".");
+});
+
+var SpeechRecognitionCtor = window.SpeechRecognition || window.webkitSpeechRecognition;
+if (SpeechRecognitionCtor) {
+  recognition = new SpeechRecognitionCtor();
+  recognition.continuous = false;
+  recognition.interimResults = false;
+  recognition.lang = "en-US";
+
+  recognition.onstart = function(){ isListening = true; micBtn.classList.add("recording"); setState("listening"); };
+  recognition.onresult = function(event){
+    var transcript = event.results[0][0].transcript;
+    inputEl.value = transcript; autoGrow(); handleSend();
+  };
+  recognition.onerror = function(event){
+    console.warn("Speech recognition error:", event.error);
+    isListening = false; micBtn.classList.remove("recording"); setState("");
+  };
+  recognition.onend = function(){
+    isListening = false; micBtn.classList.remove("recording");
+    if (!reactorEl.classList.contains("speaking")) setState("");
+  };
+}
+
+micBtn.addEventListener("click", function(){
+  if (!recognition) { addMessage("ace error", "Voice input isn't supported in this browser. Try Chrome or Edge."); return; }
+  if (isListening) { recognition.stop(); }
+  else {
+    if (currentAudio) { try { currentAudio.pause(); } catch(e){} currentAudio = null; }
+    if (window.speechSynthesis) speechSynthesis.cancel();
+    try { recognition.start(); } catch(e){}
+  }
+});
+
+function greet(isReset) {
+  var msg = isReset
+    ? "Fresh session initialized. What do you need, sir?"
+    : "ACE online. All systems nominal. How may I assist you?";
+  addMessage("ace", msg);
+}
+function init() {
+  greet(false);
+  inputEl.focus();
+  autoGrow();
+  if (!settings.apiKey) {
+    setTimeout(function(){
+      addMessage("ace", "One moment, sir. I don't have an API key yet. Click the gear icon in the top right to enter one.");
+    }, 400);
+  }
+}
+init();
 </script>
 </body>
 </html>
