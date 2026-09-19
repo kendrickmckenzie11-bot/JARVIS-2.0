@@ -1,2251 +1,576 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
+<meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta name="theme-color" content="#0d0d0d" />
-<title>A.C.E. // Autonomous Cognitive Entity</title>
+<title>ACE // Adaptive Cognitive Entity</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='40' fill='none' stroke='%2300e5ff' stroke-width='6'/><circle cx='50' cy='50' r='14' fill='%2300e5ff'/></svg>" />
 <style>
+  *,*::before,*::after{box-sizing:border-box}
+  html,body{height:100%;margin:0}
+
   :root{
-    --red:#ff2a2a;--red-bright:#ff4444;--red-soft:rgba(255,42,42,.55);
-    --line:rgba(255,42,42,.22);--line-soft:rgba(255,42,42,.09);
-    --panel:rgba(20,20,20,.72);--panel-solid:rgba(15,15,15,.97);
-    --bg:#0d0d0d;--text:#f2f2f2;--dim:#8a8a8a;--dim2:#4d4d4d;
-    --white:#ffffff;--warn:#ffa02a;--danger:#ff2a2a;--ok:#3ee87e;
-    --font-serif:'Georgia','Cambria','Palatino Linotype','Times New Roman',serif;
-    --font-sans:'Optima','Candara','Segoe UI','Helvetica Neue','Gill Sans',sans-serif;
-    --font-mono:'Consolas','Monaco','Menlo','Courier New',monospace;
+    --cyan:#00e5ff;
+    --cyan-soft:rgba(0,229,255,.18);
+    --bg:#03060c;
+    --panel:rgba(8,18,30,.55);
+    --border:rgba(0,229,255,.18);
+    --text:#d6f2ff;
+    --muted:#6d8fa5;
   }
-  *{box-sizing:border-box}
-  html,body{height:100%}
-  body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font-sans);font-size:13.5px;letter-spacing:.02em;overflow:hidden;-webkit-font-smoothing:antialiased}
-  button,input,select,textarea{font-family:inherit;letter-spacing:inherit;color:inherit}
-  ::selection{background:rgba(255,42,42,.35);color:#fff}
-  .brand h1,.panel-title,.settings-header h2,.setting-group h3,.boot-title,#statusText,.stop-pill,.btn{font-family:var(--font-serif)}
-  .readouts span,.stat .row b,#clock,#uptime,#memCount,#histCount,#logCount{font-family:var(--font-mono);font-variant-numeric:tabular-nums;letter-spacing:0}
-  .bg-grid,.bg-vignette,.bg-scan{position:fixed;inset:0;pointer-events:none;z-index:0}
-  .bg-grid{background:radial-gradient(circle at 50% 42%, rgba(255,42,42,.10), transparent 60%),linear-gradient(rgba(255,42,42,.045) 1px, transparent 1px) 0 0/100% 42px,linear-gradient(90deg, rgba(255,42,42,.045) 1px, transparent 1px) 0 0/42px 100%}
-  body.no-grid .bg-grid{display:none}
-  .bg-vignette{background:radial-gradient(circle at 50% 50%, transparent 42%, rgba(0,0,0,.82) 100%)}
-  .bg-scan{background:repeating-linear-gradient(to bottom, rgba(255,42,42,.03) 0 1px, transparent 1px 3px);mix-blend-mode:screen;opacity:.45}
-  body.reduced-motion .bg-scan{display:none}
-  #app{position:relative;z-index:1;height:100%;display:grid;grid-template-rows:auto 1fr auto}
-  header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 22px;border-bottom:1px solid var(--line);background:linear-gradient(180deg, rgba(40,5,5,.45), transparent)}
-  .brand{display:flex;align-items:center;gap:14px}
-  .brand .dot{width:9px;height:9px;border-radius:50%;background:var(--red);box-shadow:0 0 12px var(--red);animation:blink 2.4s infinite}
-  @keyframes blink{0%,92%{opacity:1}94%,100%{opacity:.25}}
-  .brand h1{margin:0;font-size:17px;font-weight:700;letter-spacing:.5em;color:#fff;text-shadow:0 0 16px rgba(255,42,42,.75)}
-  .brand small{color:var(--dim);letter-spacing:.28em;font-size:10px;display:block;margin-top:3px;font-family:var(--font-serif);font-style:italic}
-  .head-right{display:flex;align-items:center;gap:10px;color:var(--dim);font-size:11px;flex-wrap:wrap;justify-content:flex-end}
-  #clock{color:var(--red);text-shadow:0 0 10px rgba(255,42,42,.5)}
-  .status-chip{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border:1px solid var(--line);background:rgba(255,42,42,.06);color:var(--dim);font-size:10px;letter-spacing:.22em;border-radius:2px;white-space:nowrap;font-family:var(--font-serif);font-style:italic}
-  .status-chip .pulse{width:6px;height:6px;border-radius:50%;background:var(--dim2)}
-  .status-chip.on{color:var(--red);border-color:var(--red-soft);background:rgba(255,42,42,.12)}
-  .status-chip.on .pulse{background:var(--red);box-shadow:0 0 8px var(--red);animation:pulseDot 1.4s infinite}
-  .status-chip.ok{color:var(--white);border-color:rgba(255,255,255,.3)}
-  .status-chip.ok .pulse{background:var(--white);box-shadow:0 0 8px rgba(255,255,255,.7)}
-  .status-chip.warn{color:var(--warn);border-color:rgba(255,160,42,.5)}
-  .status-chip.warn .pulse{background:var(--warn);box-shadow:0 0 8px var(--warn)}
-  @keyframes pulseDot{0%,100%{opacity:1}50%{opacity:.35}}
-  .icon-btn{width:36px;height:36px;display:grid;place-items:center;background:transparent;border:1px solid var(--line);color:var(--red);cursor:pointer;border-radius:2px;transition:all .2s;font-size:16px;line-height:1;padding:0}
-  .icon-btn:hover{border-color:var(--red);background:rgba(255,42,42,.1);box-shadow:0 0 14px rgba(255,42,42,.3)}
-  .icon-btn.active{background:rgba(255,42,42,.2);border-color:var(--red);color:#fff}
-  .icon-btn svg{display:block}
-  main{display:grid;grid-template-columns:280px minmax(0,1fr) 360px;gap:16px;padding:16px 22px;min-height:0}
-  main.no-telemetry{grid-template-columns:minmax(0,1fr) 360px}
-  main.no-log{grid-template-columns:280px minmax(0,1fr)}
-  main.no-telemetry.no-log{grid-template-columns:minmax(0,1fr)}
-  .panel{position:relative;background:var(--panel);border:1px solid var(--line);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);padding:14px;display:flex;flex-direction:column;min-height:0;clip-path:polygon(0 14px,14px 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%)}
-  .panel.hidden{display:none}
-  .panel-title{display:flex;align-items:center;justify-content:space-between;font-size:11px;letter-spacing:.3em;color:var(--red);text-transform:uppercase;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--line-soft);font-weight:600;font-style:italic}
-  .panel-title .tag{color:var(--dim);letter-spacing:.14em;font-family:var(--font-mono);font-style:normal;font-size:10px}
-  .stat{margin-bottom:11px}
-  .stat .row{display:flex;justify-content:space-between;font-size:10.5px;color:var(--dim);margin-bottom:5px;letter-spacing:.06em}
-  .stat .row b{color:var(--text);font-weight:500}
-  .bar{height:5px;background:rgba(255,42,42,.08);border:1px solid var(--line-soft);overflow:hidden}
-  .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg, rgba(255,42,42,.4), var(--red));box-shadow:0 0 10px rgba(255,42,42,.6);transition:width .6s cubic-bezier(.4,0,.2,1)}
-  .readouts{margin-top:auto;padding-top:12px;border-top:1px solid var(--line-soft);font-size:10.5px;color:var(--dim);line-height:2}
-  .readouts span{color:var(--text)}
-  .core{position:relative;display:flex;align-items:center;justify-content:center;min-height:0}
-  #reactor{width:100%;height:100%;display:block}
-  .core-overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;text-align:center;padding:0 20px}
-  #statusText{font-size:13px;letter-spacing:.5em;color:var(--red);text-shadow:0 0 14px rgba(255,42,42,.8);text-transform:uppercase;font-style:italic}
-  .core-sub{font-size:10.5px;color:var(--dim);letter-spacing:.3em;margin-top:8px;min-height:14px;font-style:italic}
-  .stop-pill{position:absolute;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);display:inline-flex;align-items:center;gap:8px;padding:9px 18px;background:var(--red);color:#fff;border:0;border-radius:2px;cursor:pointer;font-size:11px;letter-spacing:.3em;font-weight:600;font-style:italic;opacity:0;visibility:hidden;transition:all .25s;box-shadow:0 0 24px rgba(255,42,42,.7);pointer-events:auto;z-index:5}
-  .stop-pill.show{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0)}
-  .stop-pill:hover{background:var(--red-bright)}
-  .stop-pill svg{width:12px;height:12px;fill:currentColor}
-  .screen-preview{position:absolute;top:14px;left:14px;z-index:4;width:220px;background:rgba(10,10,10,.9);border:1px solid var(--line);border-radius:2px;overflow:hidden;display:none;pointer-events:auto;box-shadow:0 0 20px rgba(0,0,0,.6)}
-  .screen-preview.on{display:block;animation:fadeIn .35s}
-  .screen-preview canvas{display:block;width:100%;height:auto;background:#000}
-  .screen-preview .lbl{display:flex;align-items:center;justify-content:space-between;padding:6px 9px;background:rgba(255,42,42,.15);border-top:1px solid var(--line);font-size:9.5px;letter-spacing:.28em;color:var(--red);font-style:italic}
-  .screen-preview .lbl button{background:transparent;border:0;color:var(--red);cursor:pointer;font-size:11px;padding:0 2px;line-height:1}
-  .screen-preview .lbl button:hover{color:#fff}
-  .screen-preview .live-dot{width:5px;height:5px;border-radius:50%;background:var(--red);box-shadow:0 0 6px var(--red);animation:pulseDot 1.4s infinite;display:inline-block;margin-right:5px}
-  #log{flex:1;overflow-y:auto;min-height:0;padding-right:6px;display:flex;flex-direction:column;gap:7px;scrollbar-width:thin;scrollbar-color:rgba(255,42,42,.35) transparent}
-  #log::-webkit-scrollbar{width:5px}
-  #log::-webkit-scrollbar-thumb{background:rgba(255,42,42,.35)}
-  .log-line{display:flex;gap:8px;line-height:1.55;animation:fadeIn .3s ease}
-  @keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
-  .log-line .t{color:var(--dim2);font-size:10px;flex:0 0 auto;padding-top:2px;font-family:var(--font-mono)}
-  .log-line .m{flex:1;word-break:break-word;white-space:pre-wrap;font-size:12.5px}
-  .log-line.ace .m{color:#fff;text-shadow:0 0 8px rgba(255,42,42,.35)}
-  .log-line.ace .t{color:var(--red)}
-  .log-line.user .m{color:var(--text)}
-  .log-line.user .t{color:#6a6a6a}
-  .log-line.sys .m{color:var(--dim);font-style:italic}
-  .log-line.warn .m{color:var(--warn)}
-  .log-line.ok .m{color:var(--white)}
-  .log-line.err .m{color:var(--red)}
-  .thinking .m::after{content:'';display:inline-block;width:6px;height:6px;margin-left:6px;border-radius:50%;background:var(--red);animation:pulseDot .9s infinite;vertical-align:middle}
-  footer{padding:12px 22px 18px;border-top:1px solid var(--line);background:linear-gradient(0deg, rgba(40,5,5,.45), transparent)}
-  .console{display:flex;align-items:center;gap:12px;border:1px solid var(--line);background:rgba(15,10,10,.75);padding:8px 12px;clip-path:polygon(0 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%)}
-  .console .prompt{color:var(--red);font-size:15px;font-weight:700;font-family:var(--font-serif)}
-  #cmd{flex:1;background:transparent;border:0;outline:0;color:var(--text);font-size:13.5px;letter-spacing:.03em}
-  #cmd::placeholder{color:var(--dim2);font-style:italic}
-  .mic{position:relative;width:46px;height:46px;flex:0 0 auto;border-radius:50%;border:1px solid var(--red-soft);background:radial-gradient(circle at 50% 40%, rgba(255,42,42,.22), rgba(255,42,42,.03));color:var(--red);cursor:pointer;display:grid;place-items:center;transition:transform .15s, box-shadow .25s, background .25s;padding:0}
-  .mic:hover{transform:scale(1.06);box-shadow:0 0 18px rgba(255,42,42,.45)}
-  .mic.listening{background:radial-gradient(circle at 50% 40%, rgba(255,42,42,.55), rgba(255,42,42,.1));box-shadow:0 0 28px rgba(255,42,42,.85);animation:pulseBtn 1.3s infinite}
-  @keyframes pulseBtn{0%,100%{transform:scale(1)}50%{transform:scale(1.09)}}
-  .mic.always{border-color:var(--red);background:radial-gradient(circle at 50% 40%, rgba(255,42,42,.4), rgba(255,42,42,.06));color:#fff;box-shadow:0 0 22px rgba(255,42,42,.55)}
-  .mic.always.listening{box-shadow:0 0 34px rgba(255,42,42,.9)}
-  .mic.muted{opacity:.4}
-  .hint{text-align:center;color:var(--dim2);font-size:10.5px;letter-spacing:.22em;margin-top:9px;font-style:italic}
-  .hint b{color:var(--red-soft);font-weight:500;font-style:normal}
-  #boot{position:fixed;inset:0;z-index:80;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:24px;transition:opacity .8s, visibility .8s}
-  #boot.done{opacity:0;visibility:hidden;pointer-events:none}
-  #bootLog{width:min(580px,90vw);font-size:12px;line-height:2;color:var(--red-soft);min-height:200px;font-family:var(--font-mono)}
-  #bootLog div{opacity:0;animation:fadeIn .25s forwards}
-  #bootLog .ok{color:var(--red)}
-  #bootBar{width:min(580px,90vw);height:2px;background:rgba(255,42,42,.14);overflow:hidden}
-  #bootBar i{display:block;height:100%;width:0;background:var(--red);box-shadow:0 0 12px var(--red);transition:width .35s}
-  .boot-title{font-size:34px;letter-spacing:.6em;color:#fff;font-weight:700;text-shadow:0 0 30px rgba(255,42,42,.9);margin:0}
-  .boot-sub{color:var(--dim);letter-spacing:.5em;font-size:10px;margin-top:-12px;font-style:italic}
-  .settings-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(2px);z-index:45;opacity:0;visibility:hidden;transition:opacity .3s, visibility .3s}
-  body.settings-open .settings-backdrop{opacity:1;visibility:visible}
-  .settings-panel{position:fixed;top:0;right:0;bottom:0;width:min(480px,96vw);background:var(--panel-solid);border-left:1px solid var(--line);z-index:50;display:flex;flex-direction:column;transform:translateX(105%);transition:transform .38s cubic-bezier(.4,0,.2,1);box-shadow:-30px 0 60px rgba(0,0,0,.75)}
-  body.settings-open .settings-panel{transform:translateX(0)}
-  .settings-header{display:flex;align-items:center;justify-content:space-between;padding:16px 22px;border-bottom:1px solid var(--line);background:linear-gradient(180deg, rgba(60,5,5,.4), transparent);flex:0 0 auto}
-  .settings-header h2{margin:0;font-size:13px;letter-spacing:.5em;color:var(--red);text-transform:uppercase;font-weight:700;font-style:italic;text-shadow:0 0 12px rgba(255,42,42,.5)}
-  .settings-body{flex:1;overflow-y:auto;padding:18px 22px 30px;scrollbar-width:thin;scrollbar-color:rgba(255,42,42,.3) transparent}
-  .settings-body::-webkit-scrollbar{width:6px}
-  .settings-body::-webkit-scrollbar-thumb{background:rgba(255,42,42,.3);border-radius:3px}
-  .setting-group{margin-bottom:26px;padding-bottom:20px;border-bottom:1px solid var(--line-soft)}
-  .setting-group:last-of-type{border-bottom:0}
-  .setting-group h3{margin:0 0 14px;font-size:11px;letter-spacing:.35em;color:var(--red);text-transform:uppercase;font-weight:700;font-style:italic;display:flex;align-items:center;gap:8px}
-  .setting-group h3::after{content:'';flex:1;height:1px;background:var(--line-soft)}
-  .setting-row{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:9px 0;font-size:12.5px;color:var(--text);cursor:pointer;user-select:none}
-  .setting-row.col{flex-direction:column;align-items:stretch;gap:8px;cursor:default}
-  .setting-row.col > span{display:flex;justify-content:space-between;align-items:center;color:var(--dim);font-size:11.5px;letter-spacing:.06em}
-  .setting-row.col > span b{color:var(--red);font-weight:600;font-family:var(--font-mono);font-size:11px}
-  .setting-help{font-size:11px;color:var(--dim2);line-height:1.7;margin:-4px 0 10px;font-style:italic}
-  .setting-help b{color:var(--red-soft);font-weight:500;font-style:normal}
-  .setting-help a{color:var(--red);text-decoration:none;border-bottom:1px dotted var(--red-soft)}
-  .setting-help a:hover{color:#fff;border-bottom-color:#fff}
-  .switch{appearance:none;-webkit-appearance:none;width:42px;height:22px;border-radius:11px;background:rgba(255,42,42,.12);border:1px solid var(--line);position:relative;cursor:pointer;flex:0 0 auto;transition:background .25s, border-color .25s, box-shadow .25s}
-  .switch::after{content:'';position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#666;transition:all .25s}
-  .switch:checked{background:rgba(255,42,42,.4);border-color:var(--red);box-shadow:0 0 12px rgba(255,42,42,.4)}
-  .switch:checked::after{left:22px;background:#fff;box-shadow:0 0 10px var(--red)}
-  .text-input{width:100%;background:rgba(0,0,0,.5);border:1px solid var(--line);color:var(--text);font-size:12.5px;padding:10px 12px;border-radius:2px;outline:0;resize:vertical}
-  .text-input:focus{border-color:var(--red-soft);box-shadow:0 0 12px rgba(255,42,42,.25)}
-  .text-input.invalid{border-color:var(--red);box-shadow:0 0 16px rgba(255,42,42,.6);animation:shake .4s}
-  @keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-4px)}40%,80%{transform:translateX(4px)}}
-  select.text-input{cursor:pointer;background-image:linear-gradient(45deg, transparent 50%, var(--red) 50%),linear-gradient(135deg, var(--red) 50%, transparent 50%);background-position:calc(100% - 18px) 50%,calc(100% - 13px) 50%;background-size:5px 5px,5px 5px;background-repeat:no-repeat;padding-right:34px;appearance:none;-webkit-appearance:none}
-  select.text-input option{background:#141414;color:var(--text)}
-  input[type=range].range{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:2px;background:rgba(255,42,42,.18);outline:0;cursor:pointer}
-  input[type=range].range::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:14px;height:14px;border-radius:50%;background:var(--red);box-shadow:0 0 12px rgba(255,42,42,.85);cursor:pointer;border:0}
-  input[type=range].range::-moz-range-thumb{width:14px;height:14px;border-radius:50%;border:0;background:var(--red);box-shadow:0 0 12px rgba(255,42,42,.85);cursor:pointer}
-  .btn{display:block;width:100%;margin-top:8px;background:rgba(255,42,42,.08);border:1px solid var(--line);color:var(--red);padding:11px 14px;font-size:11px;letter-spacing:.28em;text-transform:uppercase;cursor:pointer;border-radius:2px;transition:all .2s;font-weight:600;font-style:italic}
-  .btn:hover{background:rgba(255,42,42,.2);border-color:var(--red);box-shadow:0 0 16px rgba(255,42,42,.35);color:#fff}
-  .btn:active{transform:translateY(1px)}
-  .btn.danger{color:var(--danger);border-color:rgba(255,42,42,.4);background:rgba(255,42,42,.08)}
-  .btn.danger:hover{background:rgba(255,42,42,.25);color:#fff}
-  .btn.primary{background:var(--red);color:#fff;border-color:var(--red);font-weight:700}
-  .btn.primary:hover{background:var(--red-bright);box-shadow:0 0 22px rgba(255,42,42,.7)}
-  .key-row{display:flex;gap:6px;align-items:stretch}
-  .key-row .text-input{flex:1;font-family:var(--font-mono);font-size:11px}
-  .key-toggle{flex:0 0 auto;background:rgba(255,42,42,.08);border:1px solid var(--line);color:var(--red);padding:0 9px;font-size:10px;letter-spacing:.12em;cursor:pointer;border-radius:2px;transition:all .2s;font-weight:600}
-  .key-toggle:hover{background:rgba(255,42,42,.2);color:#fff}
-  .key-badge{display:inline-block;padding:3px 8px;font-size:9.5px;letter-spacing:.2em;background:rgba(255,42,42,.15);border:1px solid var(--red-soft);color:var(--red);border-radius:2px;font-family:var(--font-mono);margin-left:8px;text-transform:uppercase}
-  .key-badge.ok{background:rgba(62,232,126,.12);border-color:rgba(62,232,126,.5);color:var(--ok)}
-  .key-badge.warn{background:rgba(255,160,42,.14);border-color:rgba(255,160,42,.5);color:var(--warn)}
-  .key-length{font-size:10.5px;color:var(--dim2);font-family:var(--font-mono);margin-top:4px}
-  .key-length b{color:var(--ok);font-weight:500}
-  .key-length.bad b{color:var(--red)}
-  .settings-footer{padding:16px 22px;border-top:1px solid var(--line-soft);font-size:10.5px;color:var(--dim2);letter-spacing:.24em;text-align:center;flex:0 0 auto;font-style:italic}
-  .toast{position:fixed;bottom:110px;left:50%;transform:translate(-50%,20px);background:rgba(255,42,42,.15);border:1px solid var(--red-soft);color:#fff;padding:11px 22px;font-size:11px;letter-spacing:.26em;text-transform:uppercase;opacity:0;transition:all .3s;z-index:70;pointer-events:none;border-radius:2px;box-shadow:0 0 24px rgba(255,42,42,.35);white-space:nowrap;max-width:90vw;overflow:hidden;text-overflow:ellipsis;font-family:var(--font-serif);font-style:italic}
-  .toast.show{opacity:1;transform:translate(-50%,0)}
-  .toast.warn{background:rgba(255,160,42,.14);border-color:rgba(255,160,42,.55);color:var(--warn)}
-  .toast.ok{background:rgba(62,232,126,.14);border-color:rgba(62,232,126,.55);color:var(--ok)}
-  body.flash::before{content:'';position:fixed;inset:0;z-index:65;background:radial-gradient(circle at 50% 50%, rgba(255,42,42,.4), transparent 70%);pointer-events:none;animation:flashFade 1.2s ease-out forwards}
-  @keyframes flashFade{from{opacity:1}to{opacity:0}}
-  @media (max-width:1000px){
-    main{grid-template-columns:1fr;grid-template-rows:auto minmax(240px,1fr) minmax(160px,auto);overflow-y:auto}
-    main.no-telemetry,main.no-log,main.no-telemetry.no-log{grid-template-columns:1fr}
-    body{overflow:auto}
-    #app{height:auto;min-height:100%}
-    .core{min-height:280px}
-    .settings-panel{width:100%}
+
+  body{
+    font-family:"Segoe UI",system-ui,-apple-system,"Helvetica Neue",sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    overflow:hidden;
   }
-  @media (max-width:640px){
-    header{padding:10px 12px;gap:8px}
-    .brand h1{font-size:14px;letter-spacing:.4em}
-    .brand small{font-size:9px}
-    .head-right{gap:6px}
-    .head-right .hide-sm{display:none}
-    .status-chip{padding:3px 7px;font-size:9px;letter-spacing:.14em}
-    main{padding:12px;gap:12px}
-    footer{padding:10px 12px 14px}
-    .hint{font-size:9.5px;letter-spacing:.1em}
-    .hint .hide-xs{display:none}
-    .icon-btn{width:32px;height:32px}
-    .screen-preview{width:150px}
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;
+    background:
+      radial-gradient(circle at 15% 12%, rgba(0,140,200,.20), transparent 50%),
+      radial-gradient(circle at 85% 82%, rgba(0,90,180,.18), transparent 50%);
+  }
+  body::after{
+    content:"";position:fixed;inset:0;pointer-events:none;
+    background-image:
+      linear-gradient(rgba(0,229,255,.045) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,.045) 1px, transparent 1px);
+    background-size:44px 44px;
+    -webkit-mask-image:radial-gradient(circle at 50% 50%, #000 25%, transparent 78%);
+    mask-image:radial-gradient(circle at 50% 50%, #000 25%, transparent 78%);
+  }
+
+  /* ---------- layout ---------- */
+  .app{
+    position:relative;z-index:1;
+    height:100vh;height:100dvh;
+    display:flex;flex-direction:column;
+    padding:16px clamp(12px,3vw,28px) 18px;
+    gap:14px;
+  }
+
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .brand{display:flex;align-items:center;gap:12px}
+  .brand h1{
+    margin:0;font-size:20px;font-weight:600;letter-spacing:.32em;
+    color:#eaffff;text-shadow:0 0 18px rgba(0,229,255,.65);
+  }
+  .brand span{
+    display:block;font-size:9.5px;letter-spacing:.34em;
+    color:var(--muted);text-transform:uppercase;margin-top:2px;
+  }
+  .brand-mark{
+    width:34px;height:34px;border-radius:50%;
+    border:2px solid var(--cyan);position:relative;flex:0 0 auto;
+    box-shadow:0 0 14px rgba(0,229,255,.7), inset 0 0 10px rgba(0,229,255,.5);
+  }
+  .brand-mark::after{
+    content:"";position:absolute;inset:8px;border-radius:50%;
+    background:var(--cyan);box-shadow:0 0 12px var(--cyan);
+  }
+
+  .top-actions{display:flex;gap:10px}
+  .icon-btn{
+    width:38px;height:38px;border-radius:10px;cursor:pointer;
+    background:rgba(0,229,255,.06);border:1px solid var(--border);
+    color:var(--cyan);display:grid;place-items:center;
+    transition:background .2s, box-shadow .2s, transform .2s;
+  }
+  .icon-btn:hover{background:rgba(0,229,255,.16);box-shadow:0 0 16px rgba(0,229,255,.35)}
+  .icon-btn:active{transform:scale(.94)}
+
+  main{
+    flex:1;min-height:0;display:grid;
+    grid-template-columns:minmax(240px,.85fr) minmax(0,1.45fr);
+    gap:14px;
+  }
+
+  .panel{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:18px;
+    -webkit-backdrop-filter:blur(12px);
+    backdrop-filter:blur(12px);
+    box-shadow:0 0 40px rgba(0,120,180,.12), inset 0 0 40px rgba(0,120,180,.05);
+    min-height:0;
+  }
+
+  /* ---------- reactor ---------- */
+  .core-panel{
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:20px;padding:24px;overflow:hidden;
+  }
+  .reactor{
+    position:relative;display:grid;place-items:center;
+    width:clamp(150px,19vw,230px);aspect-ratio:1;
+  }
+  .ring{position:absolute;border-radius:50%}
+  .ring-1{
+    inset:0;border:2px solid rgba(0,229,255,.10);
+    border-top-color:var(--cyan);border-right-color:rgba(0,229,255,.6);
+    animation:spin 7s linear infinite;
+  }
+  .ring-2{inset:12%;border:1px dashed rgba(0,229,255,.35);animation:spin 15s linear infinite reverse}
+  .ring-3{
+    inset:24%;border:2px solid rgba(0,229,255,.08);
+    border-bottom-color:var(--cyan);border-left-color:rgba(0,229,255,.5);
+    animation:spin 5.5s linear infinite reverse;
+  }
+  .ring-4{inset:36%;border:1px solid rgba(0,229,255,.25);animation:spin 22s linear infinite}
+  .halo{
+    position:absolute;inset:-18%;border-radius:50%;filter:blur(8px);
+    background:radial-gradient(circle,rgba(0,229,255,.22),transparent 62%);
+    animation:breathe 3.4s ease-in-out infinite;
+  }
+  .core{
+    width:26%;aspect-ratio:1;border-radius:50%;
+    background:radial-gradient(circle at 50% 50%,#ffffff,#7ef0ff 28%,#00b4ff 62%,rgba(0,110,200,.12) 100%);
+    box-shadow:0 0 26px rgba(0,229,255,.95), 0 0 70px rgba(0,150,255,.6);
+    animation:breathe 3.4s ease-in-out infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes breathe{
+    0%,100%{transform:scale(1);opacity:.86}
+    50%{transform:scale(1.06);opacity:1}
+  }
+
+  .reactor.listening .ring-1{animation-duration:2.2s;border-top-color:#5bffa0;border-right-color:rgba(91,255,160,.6)}
+  .reactor.listening .ring-3{border-bottom-color:#5bffa0;border-left-color:rgba(91,255,160,.5)}
+  .reactor.listening .core{
+    background:radial-gradient(circle at 50% 50%,#ffffff,#b6ffd0 30%,#00ff9d 66%,rgba(0,255,157,.12) 100%);
+    box-shadow:0 0 30px rgba(0,255,157,.95), 0 0 80px rgba(0,255,157,.5);
+  }
+  .reactor.thinking .ring-2{animation-duration:2.5s}
+  .reactor.thinking .ring-4{animation-duration:6s}
+  .reactor.speaking .ring-3{animation-duration:1.6s}
+  .reactor.speaking .core{animation-duration:.9s}
+
+  .status{
+    font-size:10.5px;letter-spacing:.42em;text-transform:uppercase;
+    color:var(--cyan);text-shadow:0 0 12px rgba(0,229,255,.7);
+    text-align:center;min-height:14px;
+  }
+
+  .wave{display:flex;align-items:flex-end;gap:5px;height:34px}
+  .wave span{
+    width:4px;height:8px;border-radius:2px;opacity:.3;
+    background:linear-gradient(180deg,var(--cyan),rgba(0,229,255,.12));
+    transition:opacity .25s;
+  }
+  .wave.active span{opacity:1;animation:wave 1s ease-in-out infinite}
+  .wave.active span:nth-child(2){animation-delay:.10s}
+  .wave.active span:nth-child(3){animation-delay:.20s}
+  .wave.active span:nth-child(4){animation-delay:.30s}
+  .wave.active span:nth-child(5){animation-delay:.20s}
+  .wave.active span:nth-child(6){animation-delay:.10s}
+  @keyframes wave{0%,100%{height:8px}50%{height:32px}}
+
+  /* ---------- chat ---------- */
+  .chat-panel{display:flex;flex-direction:column;overflow:hidden}
+
+  .messages{
+    flex:1;min-height:0;overflow-y:auto;padding:22px;
+    display:flex;flex-direction:column;gap:16px;
+  }
+  .messages::-webkit-scrollbar{width:6px}
+  .messages::-webkit-scrollbar-track{background:transparent}
+  .messages::-webkit-scrollbar-thumb{background:rgba(0,229,255,.25);border-radius:3px}
+
+  .msg{
+    max-width:84%;padding:12px 16px;border-radius:14px;
+    font-size:14.5px;line-height:1.6;
+    white-space:pre-wrap;overflow-wrap:anywhere;
+    animation:rise .3s ease both;
+  }
+  @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+  .msg.user{
+    align-self:flex-end;
+    background:linear-gradient(135deg,rgba(0,120,255,.30),rgba(0,229,255,.14));
+    border:1px solid rgba(0,180,255,.35);
+    color:#eaf9ff;
+  }
+  .msg.ace{
+    align-self:flex-start;
+    background:rgba(0,229,255,.055);
+    border:1px solid var(--border);
+    color:#cfefff;
+  }
+  .msg.ace::before{
+    content:"ACE";display:block;margin-bottom:6px;
+    font-size:9px;letter-spacing:.3em;color:var(--cyan);opacity:.85;
+  }
+  .msg.error{
+    border-color:rgba(255,90,90,.5);
+    background:rgba(255,60,60,.10);
+    color:#ffb4b4;
+  }
+
+  .composer{
+    display:flex;align-items:flex-end;gap:10px;
+    padding:14px 16px;border-top:1px solid var(--border);
+    background:rgba(4,10,18,.5);
+  }
+  .composer textarea{
+    flex:1;resize:none;max-height:120px;line-height:1.45;
+    padding:12px 14px;border-radius:12px;
+    background:rgba(0,229,255,.05);
+    border:1px solid var(--border);
+    color:var(--text);font:inherit;font-size:14.5px;
+    outline:none;transition:border-color .2s, box-shadow .2s;
+  }
+  .composer textarea::placeholder{color:rgba(109,143,165,.85)}
+  .composer textarea:focus{
+    border-color:rgba(0,229,255,.55);
+    box-shadow:0 0 0 3px rgba(0,229,255,.08);
+  }
+
+  .mic-btn,.send-btn{
+    flex:0 0 auto;width:44px;height:44px;border-radius:12px;cursor:pointer;
+    border:1px solid var(--border);
+    background:rgba(0,229,255,.07);
+    color:var(--cyan);display:grid;place-items:center;
+    transition:background .2s, box-shadow .2s, transform .2s, color .2s;
+  }
+  .mic-btn:hover,.send-btn:hover{background:rgba(0,229,255,.18);box-shadow:0 0 18px rgba(0,229,255,.35)}
+  .mic-btn:active,.send-btn:active{transform:scale(.94)}
+  .send-btn:disabled{opacity:.4;cursor:not-allowed;box-shadow:none}
+
+  .mic-btn.recording{
+    background:rgba(0,255,157,.18);
+    border-color:rgba(0,255,157,.6);
+    color:#5bffa0;
+    animation:pulseBtn 1.2s infinite;
+  }
+  @keyframes pulseBtn{
+    0%,100%{box-shadow:0 0 0 0 rgba(0,255,157,.5)}
+    70%{box-shadow:0 0 0 10px rgba(0,255,157,0)}
+  }
+
+  /* ---------- modal ---------- */
+  .modal-backdrop{
+    position:fixed;inset:0;z-index:50;display:none;
+    place-items:center;padding:20px;
+    background:rgba(2,6,12,.8);
+    -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+  }
+  .modal-backdrop.open{display:grid}
+  .modal{
+    width:min(540px,100%);max-height:90vh;overflow-y:auto;
+    padding:26px;border-radius:18px;
+    background:rgba(8,18,30,.97);
+    border:1px solid var(--border);
+    box-shadow:0 0 60px rgba(0,150,255,.25);
+    animation:rise .25s ease both;
+  }
+  .modal h2{
+    margin:0 0 6px;font-size:15px;letter-spacing:.24em;
+    text-transform:uppercase;color:var(--cyan);
+  }
+  .modal .sub{font-size:12px;line-height:1.6;color:var(--muted);margin:0 0 20px}
+  .field{margin-bottom:16px}
+  .field label{
+    display:block;margin-bottom:7px;font-size:10.5px;
+    letter-spacing:.18em;text-transform:uppercase;color:var(--muted);
+  }
+  .field input,.field select{
+    width:100%;padding:11px 13px;border-radius:10px;
+    background:rgba(0,229,255,.05);
+    border:1px solid var(--border);
+    color:var(--text);font:inherit;font-size:14px;outline:none;
+    transition:border-color .2s;
+  }
+  .field input:focus,.field select:focus{border-color:rgba(0,229,255,.55)}
+  .field select option{background:#08121e;color:var(--text)}
+  .hint{font-size:11px;color:var(--muted);margin-top:6px;line-height:1.5}
+
+  .row{display:flex;gap:10px;justify-content:flex-end;margin-top:22px}
+  .btn{
+    padding:11px 20px;border-radius:10px;cursor:pointer;
+    border:1px solid var(--border);
+    background:rgba(0,229,255,.07);
+    color:var(--cyan);font:inherit;font-size:13px;letter-spacing:.08em;
+    transition:box-shadow .2s, background .2s;
+  }
+  .btn:hover{box-shadow:0 0 18px rgba(0,229,255,.35);background:rgba(0,229,255,.14)}
+  .btn.primary{
+    background:linear-gradient(135deg,rgba(0,140,255,.45),rgba(0,229,255,.30));
+    border-color:rgba(0,229,255,.5);color:#eafcff;
+  }
+
+  /* ---------- responsive ---------- */
+  @media (max-width:880px){
+    main{grid-template-columns:1fr;grid-template-rows:auto 1fr}
+    .core-panel{flex-direction:row;gap:16px;padding:14px 18px;justify-content:flex-start}
+    .reactor{width:88px}
+    .wave{display:none}
+    .status{font-size:9px;letter-spacing:.28em;text-align:left}
+    .msg{max-width:92%}
   }
 </style>
 </head>
 <body>
 
-<div class="bg-grid"></div>
-<div class="bg-vignette"></div>
-<div class="bg-scan"></div>
-
-<div id="boot">
-  <h1 class="boot-title">A.C.E.</h1>
-  <div class="boot-sub">AUTONOMOUS COGNITIVE ENTITY</div>
-  <div id="bootLog"></div>
-  <div id="bootBar"><i></i></div>
-</div>
-
-<div id="app">
-  <header>
+<div class="app">
+  <header class="topbar">
     <div class="brand">
-      <span class="dot"></span>
+      <div class="brand-mark"></div>
       <div>
-        <h1>A.C.E.</h1>
-        <small>Autonomous Cognitive Entity</small>
+        <h1>ACE</h1>
+        <span>Adaptive Cognitive Entity</span>
       </div>
     </div>
-    <div class="head-right">
-      <span class="status-chip" id="aiChip"><span class="pulse"></span><span id="aiChipText">AI: OFFLINE</span></span>
-      <span class="status-chip" id="micChip"><span class="pulse"></span><span id="micChipText">MIC: OFF</span></span>
-      <span class="status-chip" id="screenChip"><span class="pulse"></span><span id="screenChipText">SCREEN: OFF</span></span>
-      <span id="clock" class="hide-sm">--:--:--</span>
-      <button class="icon-btn" id="screenBtn" title="Share screen with A.C.E." aria-label="Share screen">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
+    <div class="top-actions">
+      <button class="icon-btn" id="clearBtn" title="New session" aria-label="New session">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 12a9 9 0 1 0 3-6.7"/><polyline points="3 4 3 10 9 10"/>
         </svg>
       </button>
-      <button class="icon-btn" id="settingsBtn" title="Settings" aria-label="Open settings">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <button class="icon-btn" id="settingsBtn" title="Settings" aria-label="Settings">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="3"/>
-          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9v.09a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
         </svg>
       </button>
     </div>
   </header>
 
-  <main id="mainGrid">
-    <aside class="panel" id="telemetryPanel">
-      <div class="panel-title">System Diagnostics <span class="tag">v7.7</span></div>
-      <div class="stat"><div class="row"><span>REACTOR OUTPUT</span><b id="v-pwr">98%</b></div><div class="bar"><i id="b-pwr"></i></div></div>
-      <div class="stat"><div class="row"><span>COGNITION LOAD</span><b id="v-cpu">--</b></div><div class="bar"><i id="b-cpu"></i></div></div>
-      <div class="stat"><div class="row"><span>MEMORY BANK</span><b id="v-mem">--</b></div><div class="bar"><i id="b-mem"></i></div></div>
-      <div class="stat"><div class="row"><span>UPLINK</span><b id="v-net">--</b></div><div class="bar"><i id="b-net"></i></div></div>
-      <div class="stat"><div class="row"><span>CORE TEMP</span><b id="v-tmp">--</b></div><div class="bar"><i id="b-tmp"></i></div></div>
-      <div class="readouts">
-        <div>PROTOCOL <span>MARK IX</span></div>
-        <div>VOICE <span id="voiceName">SCANNING…</span></div>
-        <div>MEMORIES <span id="memCount">0</span></div>
-        <div>HISTORY <span id="histCount">0</span></div>
-        <div>UPTIME <span id="uptime">00:00:00</span></div>
+  <main>
+    <section class="panel core-panel">
+      <div class="reactor" id="reactor">
+        <div class="ring ring-1"></div>
+        <div class="ring ring-2"></div>
+        <div class="ring ring-3"></div>
+        <div class="ring ring-4"></div>
+        <div class="halo"></div>
+        <div class="core"></div>
       </div>
-    </aside>
-
-    <section class="core">
-      <canvas id="reactor"></canvas>
-      <div class="screen-preview" id="screenPreview">
-        <canvas id="screenPreviewCanvas" width="360" height="203"></canvas>
-        <div class="lbl"><span><span class="live-dot"></span>SCREEN LIVE</span><button id="stopScreenBtn" title="Stop sharing">✕</button></div>
+      <div>
+        <div class="status" id="status">SYSTEM ONLINE</div>
       </div>
-      <div class="core-overlay">
-        <div id="statusText">ONLINE</div>
-        <div class="core-sub" id="coreSub">ALL SYSTEMS NOMINAL</div>
+      <div class="wave" id="wave">
+        <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
       </div>
-      <button class="stop-pill" id="stopSpeakBtn">
-        <svg viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="1"/></svg>
-        STOP SPEAKING
-      </button>
     </section>
 
-    <aside class="panel" id="logPanel">
-      <div class="panel-title">Activity Log <span class="tag" id="logCount">0</span></div>
-      <div id="log"></div>
-    </aside>
+    <section class="panel chat-panel">
+      <div class="messages" id="messages"></div>
+      <form class="composer" id="composer" autocomplete="off">
+        <button type="button" class="mic-btn" id="micBtn" title="Voice input" aria-label="Voice input">
+          <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="9" y="2" width="6" height="12" rx="3"/>
+            <path d="M5 11a7 7 0 0 0 14 0"/>
+            <line x1="12" y1="18" x2="12" y2="22"/>
+          </svg>
+        </button>
+        <textarea id="input" rows="1" placeholder="Ask ACE anything…"></textarea>
+        <button type="submit" class="send-btn" id="sendBtn" title="Send" aria-label="Send">
+          <svg viewBox="0 0 24 24" width="19" height="19" fill="currentColor">
+            <path d="M3 20.5 21 12 3 3.5 3 10l12 2-12 2z"/>
+          </svg>
+        </button>
+      </form>
+    </section>
   </main>
-
-  <footer>
-    <div class="console">
-      <span class="prompt">&gt;</span>
-      <input id="cmd" type="text" autocomplete="off" spellcheck="false" placeholder="Ask A.C.E. anything… or press the mic" />
-      <button class="mic" id="micBtn" title="Toggle voice input" aria-label="Toggle voice input">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-          <rect x="9" y="3" width="6" height="11" rx="3"/>
-          <path d="M5 11v1a7 7 0 0 0 14 0v-1" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          <line x1="12" y1="19" x2="12" y2="22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-        </svg>
-      </button>
-    </div>
-    <div class="hint">
-      <b>“be quiet”</b> to interrupt · <b>“look at my screen”</b> for vision ·
-      <b>“open github”</b> · <b>“set a timer for 5 minutes”</b> · <b>“help”</b>
-    </div>
-  </footer>
 </div>
 
-<div class="settings-backdrop" id="settingsBackdrop"></div>
+<!-- ================= SETTINGS MODAL ================= -->
+<div class="modal-backdrop" id="modal">
+  <div class="modal">
+    <h2>Configuration</h2>
+    <p class="sub">ACE uses the OpenAI API for both its intelligence and its voice.</p>
 
-<aside class="settings-panel" id="settingsPanel">
-  <div class="settings-header">
-    <h2>Settings</h2>
-    <button class="icon-btn" id="settingsClose" aria-label="Close settings" style="font-size:18px">✕</button>
+    <div class="field">
+      <label for="apiKeyInput">OpenAI API Key</label>
+      <input type="password" id="apiKeyInput" placeholder="sk-..." spellcheck="false" />
+      <div class="hint">Stored locally in your browser only. Never sent anywhere except api.openai.com.</div>
+    </div>
+
+    <div class="field">
+      <label for="modelInput">Language Model</label>
+      <input type="text" id="modelInput" placeholder="gpt-4o-mini" spellcheck="false" />
+    </div>
+
+    <div class="field">
+      <label for="voiceSelect">Voice (OpenAI TTS)</label>
+      <select id="voiceSelect">
+        <option value="onyx">Onyx — deep, calm male (JARVIS-like)</option>
+        <option value="ash">Ash — warm, natural male</option>
+        <option value="echo">Echo — clear, measured male</option>
+        <option value="alloy">Alloy — neutral, balanced</option>
+        <option value="nova">Nova — bright female</option>
+        <option value="shimmer">Shimmer — soft female</option>
+        <option value="coral">Coral — expressive female</option>
+        <option value="sage">Sage — smooth, articulate</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="voiceToggle">Spoken Replies</label>
+      <select id="voiceToggle">
+        <option value="on">On</option>
+        <option value="off">Off (text only)</option>
+      </select>
+    </div>
+
+    <div class="row">
+      <button class="btn" id="cancelBtn" type="button">Cancel</button>
+      <button class="btn primary" id="saveBtn" type="button">Save</button>
+    </div>
   </div>
-
-  <div class="settings-body">
-
-    <section class="setting-group">
-      <h3>User Profile</h3>
-      <label class="setting-row col">
-        <span>Your name</span>
-        <input type="text" id="setUserName" class="text-input" placeholder="e.g. Tony" autocomplete="off" maxlength="40">
-      </label>
-    </section>
-
-    <section class="setting-group">
-      <h3>OpenRouter AI</h3>
-
-      <label class="setting-row col">
-        <span>API Key <span id="keySourceBadge" class="key-badge" style="display:none">HARDCODED</span></span>
-        <div class="key-row">
-          <input type="password" id="setApiKey" class="text-input" placeholder="sk-or-v1-…" autocomplete="new-password" spellcheck="false" autocapitalize="off" autocorrect="off" data-lpignore="true" data-form-type="other">
-          <button type="button" class="key-toggle" id="toggleKeyBtn" title="Show/hide">SHOW</button>
-          <button type="button" class="key-toggle" id="copyKeyBtn" title="Copy field contents">COPY</button>
-          <button type="button" class="key-toggle" id="clearKeyBtn" title="Clear field">CLR</button>
-        </div>
-      </label>
-      <div class="key-length" id="keyLengthDisplay">Field is empty</div>
-      <div class="setting-help" id="keyHelp">
-        Get a key at <a href="https://openrouter.ai/keys" target="_blank" rel="noopener">openrouter.ai/keys</a>.
-        Keys look like <b>sk-or-v1-...</b> and are ~73 chars. Use <b>Diagnose</b> or <b>Verify</b> below if you get a 401.
-      </div>
-
-      <button class="btn primary" id="diagnoseKeyBtn" style="margin-top:6px">Diagnose API key</button>
-      <button class="btn" id="verifyKeyBtn">Verify key (live request)</button>
-      <button class="btn" id="hardResetBtn">Hard reset &amp; reload</button>
-
-      <label class="setting-row col" style="margin-top:14px">
-        <span>Chat Model</span>
-        <input type="text" id="setModel" class="text-input" placeholder="openai/gpt-4o-mini" autocomplete="off" spellcheck="false">
-      </label>
-
-      <label class="setting-row col" style="margin-top:14px">
-        <span>Vision Model <i style="color:var(--dim2);font-style:italic;font-weight:400">(optional)</i></span>
-        <input type="text" id="setVisionModel" class="text-input" placeholder="openai/gpt-4o-mini" autocomplete="off" spellcheck="false">
-      </label>
-
-      <button class="btn" id="testAiBtn" style="margin-top:14px">Test chat connection</button>
-      <button class="btn" id="testVisionBtn">Test vision connection</button>
-      <button class="btn" id="clearHistoryBtn">Clear conversation history</button>
-    </section>
-
-    <section class="setting-group">
-      <h3>Voice Engine</h3>
-
-      <label class="setting-row col">
-        <span>TTS Provider</span>
-        <select id="setTtsModel" class="text-input">
-          <option value="">— Browser voice (free, robotic) —</option>
-          <option value="deepgram/flux-tts:free">Deepgram Flux (free, most human)</option>
-          <option value="openai/gpt-4o-mini-tts">OpenAI TTS (gpt-4o-mini-tts)</option>
-          <option value="x-ai/grok-voice-tts-1.0">xAI Grok Voice</option>
-          <option value="mistralai/voxtral-mini-tts-2603">Mistral Voxtral Mini</option>
-          <option value="__custom__">Custom model slug…</option>
-        </select>
-      </label>
-      <input type="text" id="setTtsModelCustom" class="text-input" style="display:none;margin-top:6px" placeholder="provider/model-slug" autocomplete="off" spellcheck="false">
-
-      <label class="setting-row col" style="margin-top:14px">
-        <span>Voice</span>
-        <select id="setTtsVoice" class="text-input"></select>
-      </label>
-      <input type="text" id="setTtsVoiceCustom" class="text-input" style="display:none;margin-top:6px" placeholder="voice-id" autocomplete="off" spellcheck="false">
-
-      <div class="setting-help" id="ttsVoiceHelp" style="margin-top:8px"></div>
-
-      <button class="btn" id="testTtsBtn" style="margin-top:14px">Test voice</button>
-    </section>
-
-    <section class="setting-group">
-      <h3>Screen Vision</h3>
-      <button class="btn" id="shareScreenBtn">Share screen</button>
-      <button class="btn danger" id="stopShareBtn" style="display:none">Stop sharing</button>
-      <label class="setting-row" style="margin-top:10px">
-        <span>Show live preview</span>
-        <input type="checkbox" id="setScreenPreview" class="switch">
-      </label>
-      <label class="setting-row">
-        <span>Verbose vision logging</span>
-        <input type="checkbox" id="setVisionDebug" class="switch">
-      </label>
-    </section>
-
-    <section class="setting-group">
-      <h3>Microphone</h3>
-      <label class="setting-row">
-        <span>Always listening</span>
-        <input type="checkbox" id="setAlwaysOn" class="switch">
-      </label>
-      <label class="setting-row">
-        <span>Require wake word</span>
-        <input type="checkbox" id="setRequireWake" class="switch">
-      </label>
-      <label class="setting-row col">
-        <span>Wake word</span>
-        <input type="text" id="setWakeWord" class="text-input" placeholder="ace" maxlength="20">
-      </label>
-      <label class="setting-row col">
-        <span>Recognition language</span>
-        <select id="setLang" class="text-input">
-          <option value="en-US">English (US)</option>
-          <option value="en-GB">English (UK)</option>
-          <option value="en-AU">English (Australia)</option>
-          <option value="es-ES">Español</option>
-          <option value="fr-FR">Français</option>
-          <option value="de-DE">Deutsch</option>
-        </select>
-      </label>
-    </section>
-
-    <section class="setting-group">
-      <h3>Browser Voice Fallback</h3>
-      <label class="setting-row col">
-        <span>Browser voice</span>
-        <select id="setVoice" class="text-input"><option value="">System default</option></select>
-      </label>
-      <label class="setting-row col">
-        <span>Rate <b id="valRate">1.00</b></span>
-        <input type="range" id="setRate" min="0.5" max="1.6" step="0.01" class="range">
-      </label>
-      <label class="setting-row col">
-        <span>Pitch <b id="valPitch">0.90</b></span>
-        <input type="range" id="setPitch" min="0.1" max="1.5" step="0.01" class="range">
-      </label>
-      <label class="setting-row col">
-        <span>Volume <b id="valVolume">1.00</b></span>
-        <input type="range" id="setVolume" min="0" max="1" step="0.01" class="range">
-      </label>
-      <label class="setting-row">
-        <span>Speak responses</span>
-        <input type="checkbox" id="setSpeak" class="switch">
-      </label>
-      <button class="btn" id="testVoice">Test browser voice</button>
-    </section>
-
-    <section class="setting-group">
-      <h3>Interface</h3>
-      <label class="setting-row"><span>Telemetry panel</span><input type="checkbox" id="setTelemetry" class="switch"></label>
-      <label class="setting-row"><span>Activity log panel</span><input type="checkbox" id="setLogPanel" class="switch"></label>
-      <label class="setting-row"><span>Grid background</span><input type="checkbox" id="setGrid" class="switch"></label>
-      <label class="setting-row"><span>Reduced motion</span><input type="checkbox" id="setReduced" class="switch"></label>
-    </section>
-
-    <section class="setting-group">
-      <h3>Data</h3>
-      <button class="btn" id="clearLogBtn">Clear activity log</button>
-      <button class="btn" id="clearMemBtn">Clear memories &amp; notes</button>
-      <button class="btn danger" id="resetBtn">Reset all settings</button>
-    </section>
-
-    <div class="settings-footer">A.C.E. v7.7 · Autonomous Cognitive Entity · Saved automatically</div>
-  </div>
-</aside>
+</div>
 
 <script>
-(function () {
-  "use strict";
+/* =====================================================================
+   ACE — Adaptive Cognitive Entity
+   ===================================================================== */
 
-  // ═══════════════════════════════════════════════════════════════
-  //  HARDCODED CONFIG — paste your key here to skip the UI entirely
-  // ═══════════════════════════════════════════════════════════════
-  var HARDCODED_API_KEY = "";
-  var HARDCODED_CHAT_MODEL   = "openai/gpt-4o-mini";
-  var HARDCODED_VISION_MODEL = "";
-  var HARDCODED_TTS_MODEL    = "deepgram/flux-tts:free";
-  var HARDCODED_TTS_VOICE    = "";
+const ACE_CONFIG = {
+  /* ⚠️ OPTIONAL: paste your OpenAI API key between the quotes below.
+     WARNING: If you publish this on GitHub Pages, ANYONE can view the
+     page source and steal the key. Prefer entering it in the ⚙ settings
+     panel instead — it's saved in your browser's localStorage. */
+  API_KEY: "",
 
-  function $(id) { return document.getElementById(id); }
-  function sleep(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
-  function clamp(v, a, b) { return Math.min(b, Math.max(a, v)); }
-  function rand(a, b) { return a + Math.random() * (b - a); }
-  function cap(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
-  function round(n) { return Math.round(n * 1e6) / 1e6; }
-  function bytes(n) { return n < 1024 ? n + " B" : n < 1048576 ? (n/1024).toFixed(1) + " KB" : (n/1048576).toFixed(2) + " MB"; }
+  MODEL: "gpt-4o-mini",
+  TTS_MODEL: "gpt-4o-mini-tts",
+  VOICE: "onyx",
 
-  var OPENROUTER_ENDPOINT = "https://openrouter.ai/api/v1/chat/completions";
-  var OPENROUTER_TTS_ENDPOINT = "https://openrouter.ai/api/v1/audio/speech";
-  var OPENROUTER_REFERER = "https://github.com/";
-  var OPENROUTER_TITLE = "A.C.E. Interface";
+  SYSTEM_PROMPT: `You are ACE (Adaptive Cognitive Entity), a highly advanced AI assistant in the style of JARVIS from Iron Man.
 
-  var TTS_VOICES = {
-    "deepgram/flux-tts:free": [
-      { id: "",       label: "Default (let Deepgram pick)" },
-      { id: "cliff",  label: "Cliff — deep, confident, mature" },
-      { id: "colin",  label: "Colin — British, authoritative" },
-      { id: "miles",  label: "Miles — American, calm, professional" },
-      { id: "sean",   label: "Sean — British, friendly, calming" },
-      { id: "kit",    label: "Kit — British, energetic" },
-      { id: "luke",   label: "Luke — American, neutral" },
-      { id: "james",  label: "James — deep, commanding" },
-      { id: "oliver", label: "Oliver — warm, smooth" },
-      { id: "lily",   label: "Lily — female, bright" },
-      { id: "aria",   label: "Aria — female, warm" },
-      { id: "lucy",   label: "Lucy — female, British, gentle" }
-    ],
-    "openai/gpt-4o-mini-tts": [
-      { id: "",        label: "Default" },
-      { id: "onyx",    label: "Onyx — deep, authoritative" },
-      { id: "echo",    label: "Echo — male, calm" },
-      { id: "fable",   label: "Fable — British, storyteller" },
-      { id: "alloy",   label: "Alloy — neutral" },
-      { id: "nova",    label: "Nova — female, bright" },
-      { id: "shimmer", label: "Shimmer — female, soft" }
-    ],
-    "x-ai/grok-voice-tts-1.0": [
-      { id: "",    label: "Default" },
-      { id: "Eve", label: "Eve — female, calm" },
-      { id: "Ara", label: "Ara — female, warm" },
-      { id: "Rex", label: "Rex — male, deep" },
-      { id: "Sal", label: "Sal — male, smooth" },
-      { id: "Leo", label: "Leo — male, confident" }
-    ],
-    "mistralai/voxtral-mini-tts-2603": [
-      { id: "",                label: "Default" },
-      { id: "en_paul_neutral", label: "Paul — neutral male" },
-      { id: "en_emma_neutral", label: "Emma — neutral female" }
-    ]
-  };
+Personality:
+- Calm, precise, composed, and quietly witty. Subtly British in manner.
+- Address the user as "sir" occasionally — not in every sentence.
+- Confident and efficient. You never ramble.
 
-  var STORAGE_KEY = "ace.settings.v7.7";
+Speaking style (CRITICAL):
+- Your replies are spoken aloud through a text-to-speech engine, so write the way a person talks.
+- Keep answers to 1–3 sentences unless the user explicitly asks for detail.
+- Never use markdown, bullet points, numbered lists, asterisks, emojis, or code fences unless the user specifically requests code.
+- Never describe your own formatting or say things like "here is a list."
+- Use natural contractions and punctuation that reads well out loud.
 
-  var DEFAULT_SYSTEM_PROMPT =
-    "You are A.C.E. — Autonomous Cognitive Entity — a concise, capable AI assistant with a " +
-    "dry, formal, slightly wry tone inspired by JARVIS from Iron Man. Address the user politely " +
-    "as 'sir' or 'ma'am' occasionally, or by their first name if known. Keep spoken replies short: " +
-    "1–3 sentences unless the user asks for detail. When an image of the user's screen is provided, " +
-    "describe what is actually relevant and useful. Never use markdown, asterisks, or emoji.";
+You are helpful, loyal, and always one step ahead.`
+};
 
-  var DEFAULTS = {
-    apiKey: "",
-    model: HARDCODED_CHAT_MODEL,
-    visionModel: HARDCODED_VISION_MODEL,
-    ttsModel: HARDCODED_TTS_MODEL,
-    ttsVoice: HARDCODED_TTS_VOICE,
-    systemPrompt: DEFAULT_SYSTEM_PROMPT,
-    visionDebug: false,
-    userName: "",
-    alwaysOn: false,
-    requireWake: false,
-    wakeWord: "ace",
-    lang: "en-US",
-    voiceName: "",
-    rate: 1.00,
-    pitch: 0.90,
-    volume: 1.0,
-    speak: true,
-    showTelemetry: true,
-    showLog: true,
-    showGrid: true,
-    reducedMotion: false,
-    screenPreview: true,
-    memories: {},
-    notes: []
-  };
+/* ---------------- settings persistence ---------------- */
+const STORAGE_KEY = "ace.settings.v1";
 
-  function loadSettings() {
-    var s = JSON.parse(JSON.stringify(DEFAULTS));
-    try {
-      var raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) {
-        var parsed = JSON.parse(raw);
-        for (var k in parsed) if (parsed.hasOwnProperty(k)) s[k] = parsed[k];
-        s.memories = parsed.memories || {};
-        s.notes = parsed.notes || [];
-      }
-    } catch (e) {}
-    return s;
+function loadStored() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }
+  catch { return {}; }
+}
+
+const stored = loadStored();
+const settings = {
+  apiKey:       stored.apiKey || ACE_CONFIG.API_KEY || "",
+  model:        stored.model  || ACE_CONFIG.MODEL,
+  ttsModel:     stored.ttsModel || ACE_CONFIG.TTS_MODEL,
+  voice:        stored.voice  || ACE_CONFIG.VOICE,
+  voiceEnabled: stored.voiceEnabled !== undefined ? stored.voiceEnabled : true
+};
+
+function persistSettings() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
+}
+
+/* ---------------- DOM refs ---------------- */
+const messagesEl = document.getElementById("messages");
+const inputEl    = document.getElementById("input");
+const composerEl = document.getElementById("composer");
+const micBtn     = document.getElementById("micBtn");
+const sendBtn    = document.getElementById("sendBtn");
+const reactorEl  = document.getElementById("reactor");
+const statusEl   = document.getElementById("status");
+const waveEl     = document.getElementById("wave");
+const modalEl    = document.getElementById("modal");
+
+/* ---------------- state ---------------- */
+let history = [];
+let isBusy = false;
+let isListening = false;
+let currentAudio = null;
+
+/* ---------------- UI helpers ---------------- */
+const STATE_LABELS = {
+  "":          "SYSTEM ONLINE",
+  listening:   "LISTENING",
+  thinking:    "PROCESSING",
+  speaking:    "SPEAKING"
+};
+
+function setState(mode) {
+  reactorEl.classList.remove("listening", "thinking", "speaking");
+  if (mode) reactorEl.classList.add(mode);
+  waveEl.classList.toggle("active", mode === "listening" || mode === "speaking");
+  statusEl.textContent = STATE_LABELS[mode || ""] || "SYSTEM ONLINE";
+}
+
+function addMessage(kind, text) {
+  const div = document.createElement("div");
+  div.className = "msg " + kind;
+  div.textContent = text;
+  messagesEl.appendChild(div);
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+  return div;
+}
+
+function autoGrow() {
+  inputEl.style.height = "auto";
+  inputEl.style.height = Math.min(inputEl.scrollHeight, 120) + "px";
+}
+
+/* ---------------- speech synthesis (fallback voice) ---------------- */
+let voices = [];
+
+function refreshVoices() {
+  if (!window.speechSynthesis) return;
+  voices = speechSynthesis.getVoices() || [];
+}
+if (window.speechSynthesis) {
+  refreshVoices();
+  speechSynthesis.onvoiceschanged = refreshVoices;
+}
+
+const PREFERRED_VOICES = [
+  "Google UK English Male",
+  "Microsoft Ryan Online (Natural) - English (United Kingdom)",
+  "Microsoft Guy Online (Natural) - English (United States)",
+  "Microsoft Aria Online (Natural) - English (United States)",
+  "Google US English",
+  "Daniel", "Oliver", "Arthur", "Serena", "Samantha", "Alex"
+];
+
+function pickVoice() {
+  if (!voices.length) return null;
+  for (const name of PREFERRED_VOICES) {
+    const exact = voices.find(v => v.name === name);
+    if (exact) return exact;
+    const partial = voices.find(v => v.name.includes(name));
+    if (partial) return partial;
   }
-  function saveSettings() {
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(settings)); return true; }
-    catch (e) { return false; }
-  }
-  var settings = loadSettings();
-
-  function cleanKey(raw) {
-    if (!raw) return "";
-    return String(raw).replace(/[\s\u200B-\u200D\uFEFF\u00A0]/g, "");
-  }
-
-  // ═══════════════════════════════════════════════════════════════════
-  //  THE FIX: effectiveApiKey() reads the LIVE FIELD FIRST
-  //  This catches browser autofill, paste events, and any other way
-  //  the field could end up with a value different from settings.
-  // ═══════════════════════════════════════════════════════════════════
-  function effectiveApiKey() {
-    // Live field value wins — it's the ground truth of what the user sees
-    if (els.setApiKey && els.setApiKey.value) {
-      var fromField = cleanKey(els.setApiKey.value);
-      if (fromField) return fromField;
-    }
-    // Fall back to saved settings
-    var fromSettings = cleanKey(settings.apiKey);
-    if (fromSettings) return fromSettings;
-    // Fall back to hardcoded
-    return cleanKey(HARDCODED_API_KEY);
-  }
-
-  function isUsingHardcodedKey() {
-    if (els.setApiKey && cleanKey(els.setApiKey.value)) return false;
-    return !cleanKey(settings.apiKey) && !!cleanKey(HARDCODED_API_KEY);
-  }
-
-  function keyLooksValid(k) {
-    if (!k) return false;
-    if (!/^sk-or-v1-/.test(k)) return false;
-    if (k.length < 60) return false;
-    return true;
-  }
-
-  function parseModelInput(raw) {
-    if (!raw) return "";
-    var s = String(raw).trim();
-    s = s.replace(/^https?:\/\//i, "");
-    s = s.replace(/^openrouter\.ai\//i, "");
-    s = s.replace(/^models\//i, "");
-    s = s.split("?")[0].split("#")[0];
-    s = s.replace(/\/+$/, "");
-    return s;
-  }
-
-  var logCount = 0;
-  var listening = false, wantListening = false, speaking = false;
-  var userHasInteracted = false;
-  var energy = 0.2, energyCur = 0.2;
-  var jarvisVoice = null, allVoices = [];
-  var recognition = null, micSupported = false;
-  var awakeUntil = 0, restartTimer = null;
-  var pendingAction = null, activeTimers = [];
-  var startTime = Date.now();
-  var conversationHistory = [];
-  var aiBusy = false;
-  var screenStream = null, screenVideo = null, screenPreviewRAF = null, screenWarmupAt = 0;
-  var currentAudio = null, ttsAudioUrl = null;
-  var lastTtsError = "";
-
-  var INTERRUPT_WORDS = /^(?:(?:please\s+)?(?:be quiet|quiet|stop(?: talking)?|shut up|silence|shush|hush|mute|hold on|wait|pause|cancel|enough|that's enough|thats enough|nevermind|never mind|stop it|shut it)\b[\s.!?,]*)+$/i;
-
-  var els = {};
-
-  function logLine(text, type) {
-    if (!els.log) return;
-    var row = document.createElement("div");
-    row.className = "log-line " + (type || "sys");
-    var t = document.createElement("span"); t.className = "t";
-    t.textContent = new Date().toLocaleTimeString("en-GB", { hour12: false });
-    var m = document.createElement("span"); m.className = "m";
-    m.textContent = text;
-    row.appendChild(t); row.appendChild(m);
-    els.log.appendChild(row);
-    els.log.scrollTop = els.log.scrollHeight;
-    logCount++;
-    if (els.logCount) els.logCount.textContent = logCount;
-    while (els.log.children.length > 300) els.log.removeChild(els.log.firstChild);
-    return row;
-  }
-
-  function toast(msg, type) {
-    var t = document.createElement("div");
-    t.className = "toast" + (type === "warn" ? " warn" : type === "ok" ? " ok" : "");
-    t.textContent = msg;
-    document.body.appendChild(t);
-    requestAnimationFrame(function () { t.classList.add("show"); });
-    setTimeout(function () {
-      t.classList.remove("show");
-      setTimeout(function () { t.remove(); }, 400);
-    }, 2400);
-  }
-  function flashScreen() {
-    document.body.classList.add("flash");
-    setTimeout(function () { document.body.classList.remove("flash"); }, 1300);
-  }
-  var audioCtx = null;
-  function beep(freq, dur, vol) {
-    try {
-      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      var o = audioCtx.createOscillator(), g = audioCtx.createGain();
-      o.type = "sine"; o.frequency.value = freq || 660;
-      g.gain.setValueAtTime(vol || 0.1, audioCtx.currentTime);
-      g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + (dur || 0.12));
-      o.connect(g); g.connect(audioCtx.destination);
-      o.start(); o.stop(audioCtx.currentTime + (dur || 0.12));
-    } catch (e) {}
-  }
-
-  function refreshVoices() {
-    if (!("speechSynthesis" in window)) return;
-    allVoices = speechSynthesis.getVoices();
-    if (!allVoices.length) return;
-    var sel = els.setVoice;
-    if (sel) {
-      var prev = sel.value;
-      sel.innerHTML = '<option value="">System default</option>';
-      for (var i = 0; i < allVoices.length; i++) {
-        var opt = document.createElement("option");
-        opt.value = allVoices[i].name;
-        opt.textContent = allVoices[i].name + " (" + allVoices[i].lang + ")";
-        sel.appendChild(opt);
-      }
-      sel.value = settings.voiceName || prev || "";
-    }
-    var preferred = ["Daniel", "Google UK English Male", "Microsoft Ryan Online", "Arthur", "Oliver", "en-GB"];
-    jarvisVoice = null;
-    for (var p = 0; p < preferred.length; p++) {
-      for (var v = 0; v < allVoices.length; v++) {
-        if (allVoices[v].name === preferred[p] || allVoices[v].name.indexOf(preferred[p]) > -1) { jarvisVoice = allVoices[v]; break; }
-      }
-      if (jarvisVoice) break;
-    }
-    if (!jarvisVoice) {
-      for (var j = 0; j < allVoices.length; j++) if (allVoices[j].lang === "en-GB") { jarvisVoice = allVoices[j]; break; }
-    }
-    if (!jarvisVoice && allVoices.length) jarvisVoice = allVoices[0];
-    if (els.voiceName) els.voiceName.textContent = jarvisVoice ? jarvisVoice.name.toUpperCase().slice(0, 16) : "DEFAULT";
-  }
-  function pickVoiceByName(name) {
-    if (!name) return null;
-    for (var i = 0; i < allVoices.length; i++) if (allVoices[i].name === name) return allVoices[i];
-    return null;
-  }
-  function browserSpeak(text) {
-    if (!("speechSynthesis" in window)) return;
-    try {
-      speechSynthesis.cancel();
-      var u = new SpeechSynthesisUtterance(text);
-      var v = pickVoiceByName(settings.voiceName) || jarvisVoice;
-      if (v) u.voice = v;
-      u.rate = Number(settings.rate); u.pitch = Number(settings.pitch); u.volume = Number(settings.volume);
-      u.onstart = function () {
-        speaking = true; setStatus("SPEAKING", "SAY 'BE QUIET' TO INTERRUPT");
-        energy = Math.max(energy, 0.65);
-        if (els.stopSpeakBtn) els.stopSpeakBtn.classList.add("show");
-        updateChips();
-      };
-      var finish = function () {
-        speaking = false;
-        if (els.stopSpeakBtn) els.stopSpeakBtn.classList.remove("show");
-        if (!listening) setStatus("ONLINE", "ALL SYSTEMS NOMINAL");
-        updateChips();
-        if (wantListening && !listening && settings.alwaysOn) scheduleRestart(180);
-      };
-      u.onend = finish; u.onerror = finish;
-      speechSynthesis.speak(u);
-    } catch (e) {}
-  }
-
-  function ttsConfigured() { return !!(effectiveApiKey() && settings.ttsModel); }
-
-  async function speak(text) {
-    if (!settings.speak || !userHasInteracted) return;
-    var spoken = text.replace(/```[\s\S]*?```/g, " (code block omitted) ").slice(0, 2000);
-    if (!ttsConfigured()) { browserSpeak(spoken); return; }
-    stopAudio();
-    if ("speechSynthesis" in window) { try { speechSynthesis.cancel(); } catch (e) {} }
-    setStatus("SPEAKING", "SYNTHESISING VOICE");
-    speaking = true;
-    if (els.stopSpeakBtn) els.stopSpeakBtn.classList.add("show");
-    updateChips();
-    energy = Math.max(energy, 0.7);
-    var apiKey = effectiveApiKey();
-    var model = settings.ttsModel;
-    var voice = (settings.ttsVoice || "").trim();
-    var reqBody = { model: model, input: spoken, response_format: "mp3" };
-    if (voice) reqBody.voice = voice;
-    logLine("TTS → " + model + (voice ? (" voice=" + voice) : " (default)"), "sys");
-    try {
-      var res = await fetch(OPENROUTER_TTS_ENDPOINT, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer " + apiKey,
-          "HTTP-Referer": OPENROUTER_REFERER,
-          "X-Title": OPENROUTER_TITLE
-        },
-        body: JSON.stringify(reqBody)
-      });
-      if (!res.ok) {
-        var errText = "";
-        try { errText = await res.text(); } catch (e) {}
-        var detail = errText.slice(0, 400);
-        try {
-          var p = JSON.parse(errText);
-          if (p && p.error) {
-            if (typeof p.error === "string") detail = p.error;
-            else if (p.error.message) detail = p.error.message;
-          }
-        } catch (e) {}
-        lastTtsError = "HTTP " + res.status + " — " + detail;
-        logLine("TTS ERROR: " + lastTtsError, "err");
-        if (res.status === 401) {
-          logLine("→ 401 from TTS. The key A.C.E. sent was rejected.", "err");
-          logLine("→ Key sent: " + apiKey.length + " chars, starts with " + apiKey.slice(0, 12) + "…", "err");
-        }
-        speaking = false;
-        if (els.stopSpeakBtn) els.stopSpeakBtn.classList.remove("show");
-        updateChips();
-        browserSpeak(spoken);
-        return;
-      }
-      var blob = await res.blob();
-      logLine("TTS audio received: " + bytes(blob.size), "ok");
-      if (blob.size < 512) {
-        lastTtsError = "Audio too small (" + blob.size + " bytes)";
-        logLine("TTS ERROR: " + lastTtsError, "err");
-        speaking = false;
-        if (els.stopSpeakBtn) els.stopSpeakBtn.classList.remove("show");
-        updateChips();
-        browserSpeak(spoken);
-        return;
-      }
-      ttsAudioUrl = URL.createObjectURL(blob);
-      currentAudio = new Audio(ttsAudioUrl);
-      currentAudio.volume = Number(settings.volume);
-      currentAudio.onplay = function () {
-        speaking = true; setStatus("SPEAKING", "SAY 'BE QUIET' TO INTERRUPT");
-        if (els.stopSpeakBtn) els.stopSpeakBtn.classList.add("show");
-        updateChips();
-      };
-      var done = function () {
-        speaking = false;
-        if (els.stopSpeakBtn) els.stopSpeakBtn.classList.remove("show");
-        if (!listening) setStatus("ONLINE", "ALL SYSTEMS NOMINAL");
-        updateChips(); stopAudio();
-        if (wantListening && !listening && settings.alwaysOn) scheduleRestart(180);
-      };
-      currentAudio.onended = done;
-      currentAudio.onerror = function () {
-        lastTtsError = "Audio playback failed";
-        logLine("TTS ERROR: " + lastTtsError, "err");
-        done(); browserSpeak(spoken);
-      };
-      currentAudio.play();
-    } catch (err) {
-      var msg = err && err.message ? err.message : String(err);
-      lastTtsError = msg;
-      logLine("TTS ERROR: " + msg, "err");
-      speaking = false;
-      if (els.stopSpeakBtn) els.stopSpeakBtn.classList.remove("show");
-      updateChips(); browserSpeak(spoken);
-    }
-  }
-
-  function stopAudio() {
-    if (currentAudio) { try { currentAudio.pause(); currentAudio.currentTime = 0; } catch (e) {} currentAudio = null; }
-    if (ttsAudioUrl) { try { URL.revokeObjectURL(ttsAudioUrl); } catch (e) {} ttsAudioUrl = null; }
-  }
-  function stopSpeaking(silent) {
-    var was = speaking;
-    if (currentAudio) { was = was || !currentAudio.paused; stopAudio(); }
-    if ("speechSynthesis" in window) { was = was || speechSynthesis.speaking; try { speechSynthesis.cancel(); } catch (e) {} }
-    speaking = false;
-    if (els.stopSpeakBtn) els.stopSpeakBtn.classList.remove("show");
-    if (!silent && was) { logLine("Speech interrupted.", "sys"); setStatus("ONLINE", "ALL SYSTEMS NOMINAL"); }
-    updateChips();
-    if (wantListening && !listening && settings.alwaysOn) scheduleRestart(160);
-    return was;
-  }
-
-  var statusResetTimer = null;
-  function setStatus(text, sub) {
-    if (els.statusText) els.statusText.textContent = text;
-    if (sub !== undefined && els.coreSub) els.coreSub.textContent = sub;
-    clearTimeout(statusResetTimer);
-    if (text !== "ONLINE" && text !== "LISTENING") {
-      statusResetTimer = setTimeout(function () {
-        if (!listening) {
-          if (els.statusText) els.statusText.textContent = "ONLINE";
-          if (els.coreSub) els.coreSub.textContent = "ALL SYSTEMS NOMINAL";
-        }
-      }, 3600);
-    }
-  }
-  function respond(text, opts) {
-    opts = opts || {};
-    logLine(text, opts.type || "ace");
-    if (opts.speak !== false) speak(text);
-    if (!opts.silentStatus) setStatus("RESPONDING", opts.sub || "");
-  }
-
-  function updateChips() {
-    var aiChip = els.aiChip, aiTxt = els.aiChipText;
-    if (aiChip && aiTxt) {
-      var k = effectiveApiKey();
-      if (!k) { aiChip.className = "status-chip warn"; aiTxt.textContent = "AI: SET KEY"; }
-      else if (!keyLooksValid(k)) { aiChip.className = "status-chip warn"; aiTxt.textContent = "AI: BAD KEY"; }
-      else { aiChip.className = "status-chip ok"; aiTxt.textContent = "AI: " + (aiBusy ? "THINKING" : "READY"); }
-    }
-    var micChip = els.micChip, micTxt = els.micChipText;
-    if (micChip && micTxt) {
-      if (!micSupported) { micChip.className = "status-chip warn"; micTxt.textContent = "MIC: N/A"; }
-      else if (settings.alwaysOn && wantListening) { micChip.className = "status-chip on"; micTxt.textContent = "MIC: ALWAYS"; }
-      else if (listening) { micChip.className = "status-chip on"; micTxt.textContent = "MIC: LIVE"; }
-      else { micChip.className = "status-chip"; micTxt.textContent = "MIC: OFF"; }
-    }
-    var scChip = els.screenChip, scTxt = els.screenChipText;
-    if (scChip && scTxt) {
-      if (screenStream) { scChip.className = "status-chip on"; scTxt.textContent = "SCREEN: LIVE"; }
-      else { scChip.className = "status-chip"; scTxt.textContent = "SCREEN: OFF"; }
-    }
-    if (els.keySourceBadge) {
-      var k2 = effectiveApiKey();
-      if (!k2) els.keySourceBadge.style.display = "none";
-      else if (isUsingHardcodedKey()) {
-        els.keySourceBadge.style.display = "inline-block";
-        els.keySourceBadge.className = "key-badge";
-        els.keySourceBadge.textContent = "HARDCODED";
-      } else if (!keyLooksValid(k2)) {
-        els.keySourceBadge.style.display = "inline-block";
-        els.keySourceBadge.className = "key-badge warn";
-        els.keySourceBadge.textContent = "SUSPECT";
-      } else {
-        els.keySourceBadge.style.display = "inline-block";
-        els.keySourceBadge.className = "key-badge ok";
-        els.keySourceBadge.textContent = "OK";
-      }
-    }
-    updateKeyLengthDisplay();
-  }
-
-  function updateKeyLengthDisplay() {
-    var d = els.keyLengthDisplay;
-    if (!d) return;
-    var fieldVal = els.setApiKey ? cleanKey(els.setApiKey.value) : "";
-    var eff = effectiveApiKey();
-    if (!fieldVal && !settings.apiKey && !HARDCODED_API_KEY) {
-      d.textContent = "Field is empty — no key set anywhere";
-      d.className = "key-length bad";
-    } else if (fieldVal) {
-      d.innerHTML = "Field: <b>" + fieldVal.length + " chars</b> · starts with " + fieldVal.slice(0, 10) + "… · effective key = field value";
-      d.className = keyLooksValid(fieldVal) ? "key-length" : "key-length bad";
-    } else if (settings.apiKey) {
-      d.innerHTML = "Field empty · using saved settings value: <b>" + settings.apiKey.length + " chars</b>";
-      d.className = "key-length";
-    } else {
-      d.innerHTML = "Field empty · using hardcoded key: <b>" + HARDCODED_API_KEY.length + " chars</b>";
-      d.className = "key-length";
-    }
-  }
-
-  function highlightKeyField() {
-    var f = els.setApiKey;
-    if (!f) return;
-    openSettings();
-    f.classList.add("invalid");
-    setTimeout(function () { f.classList.remove("invalid"); }, 600);
-    f.focus();
-    f.scrollIntoView({ behavior: "smooth", block: "center" });
-  }
-
-  function tickClock() { if (els.clock) els.clock.textContent = new Date().toLocaleTimeString("en-GB", { hour12: false }); }
-  function tickUptime() {
-    var s = Math.floor((Date.now() - startTime) / 1000);
-    if (els.uptime) els.uptime.textContent = String(Math.floor(s / 3600)).padStart(2, "0") + ":" + String(Math.floor((s % 3600) / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0");
-  }
-
-  function updateStats() {
-    var pwr = clamp(97 + rand(-1.2, 1.2), 90, 100);
-    var cpu = clamp(28 + Math.sin(Date.now() / 4000) * 12 + rand(-9, 9), 4, 97);
-    var mem = clamp(54 + rand(-5, 5), 20, 95);
-    var net = clamp(62 + rand(-18, 18), 5, 99);
-    var tmp = clamp(41 + rand(-3, 4), 30, 80);
-    function setStat(id, val, suffix) {
-      var bar = $("b-" + id), lab = $("v-" + id);
-      if (bar) bar.style.width = val + "%";
-      if (lab) lab.textContent = Math.round(val) + (suffix || "%");
-    }
-    setStat("pwr", pwr); setStat("cpu", cpu); setStat("mem", mem);
-    setStat("net", net); setStat("tmp", tmp, "°C");
-    energy = 0.14 + (cpu / 100) * 0.22 + (pwr / 100) * 0.10;
-    if (listening) energy = Math.max(energy, 0.7);
-    if (aiBusy) energy = Math.max(energy, 0.8);
-  }
-
-  var canvas = null, ctx = null, W = 0, H = 0;
-  function resizeCanvas() {
-    if (!canvas) return;
-    var rect = canvas.getBoundingClientRect();
-    var dpr = Math.min(window.devicePixelRatio || 1, 2);
-    W = Math.max(rect.width, 1); H = Math.max(rect.height, 1);
-    canvas.width = Math.floor(W * dpr); canvas.height = Math.floor(H * dpr);
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  }
-  function arcSeg(cx, cy, rot, radius, start, len, lw, color, glow) {
-    ctx.save(); ctx.translate(cx, cy); ctx.rotate(rot);
-    ctx.beginPath(); ctx.arc(0, 0, radius, start, start + len);
-    ctx.lineWidth = lw; ctx.strokeStyle = color; ctx.lineCap = "round";
-    if (glow) { ctx.shadowBlur = glow; ctx.shadowColor = color; }
-    ctx.stroke(); ctx.restore();
-  }
-  function drawReactor(now) {
-    if (!ctx) return;
-    ctx.clearRect(0, 0, W, H);
-    var cx = W / 2, cy = H / 2, R = Math.min(W, H) / 2 - 10;
-    if (R <= 0) return;
-    var motion = settings.reducedMotion ? 0.15 : 1;
-    var pulse = Math.sin(now / 900) * 0.5 + 0.5, e = energyCur;
-    ctx.save(); ctx.translate(cx, cy); ctx.rotate(now / 26000 * motion);
-    ctx.beginPath(); ctx.arc(0, 0, R * 0.97, 0, Math.PI * 2);
-    ctx.setLineDash([2, 7]); ctx.lineWidth = 1.2; ctx.strokeStyle = "rgba(255,42,42,.35)"; ctx.stroke();
-    ctx.restore();
-    ctx.save(); ctx.translate(cx, cy); ctx.rotate(now / 60000 * motion);
-    for (var i = 0; i < 72; i++) {
-      var a = (i / 72) * Math.PI * 2, isLong = i % 6 === 0;
-      var r1 = R * 0.80, r2 = R * (isLong ? 0.88 : 0.845);
-      ctx.beginPath();
-      ctx.moveTo(Math.cos(a) * r1, Math.sin(a) * r1);
-      ctx.lineTo(Math.cos(a) * r2, Math.sin(a) * r2);
-      ctx.strokeStyle = isLong ? "rgba(255,42,42,.7)" : "rgba(255,42,42,.22)";
-      ctx.lineWidth = isLong ? 1.6 : 1; ctx.stroke();
-    }
-    ctx.restore();
-    var rotA = now / 5200 * motion, rotB = -now / 3600 * motion, rotC = now / 2400 * motion;
-    arcSeg(cx, cy, rotA, R * 0.90, 0, Math.PI * 0.34, 2.4, "rgba(255,42,42,.95)", 16);
-    arcSeg(cx, cy, rotA, R * 0.90, Math.PI * 0.62, Math.PI * 0.20, 2.4, "rgba(255,42,42,.55)", 10);
-    arcSeg(cx, cy, rotB, R * 0.78, 0, Math.PI * 0.42, 3.2, "rgba(255,255,255,.85)", 18);
-    arcSeg(cx, cy, rotB, R * 0.78, Math.PI * 0.78, Math.PI * 0.14, 3.2, "rgba(255,255,255,.45)", 10);
-    arcSeg(cx, cy, rotC, R * 0.64, 0, Math.PI * 0.24, 1.8, "rgba(255,42,42,.7)", 12);
-    arcSeg(cx, cy, rotC, R * 0.64, Math.PI * 0.45, Math.PI * 0.30, 1.8, "rgba(255,42,42,.4)", 8);
-    var sweep = now / 1500 * motion;
-    for (var k = 0; k < 14; k++) arcSeg(cx, cy, sweep - k * 0.045, R * 0.70, 0, 0.05, 6, "rgba(255,255,255," + ((1 - k / 14) * 0.4) + ")", 0);
-    ctx.save(); ctx.translate(cx, cy);
-    ctx.beginPath(); ctx.arc(0, 0, R * 0.52, 0, Math.PI * 2);
-    ctx.lineWidth = 1; ctx.strokeStyle = "rgba(255,42,42," + (0.25 + e * 0.4) + ")"; ctx.stroke();
-    ctx.restore();
-    var coreR = R * 0.20 * (1 + 0.07 * pulse + 0.30 * e);
-    var g = ctx.createRadialGradient(cx, cy, 0, cx, cy, coreR * 3.4);
-    g.addColorStop(0, "rgba(255,255,255,1)"); g.addColorStop(0.18, "rgba(255,180,180,.9)");
-    g.addColorStop(0.42, "rgba(255,42,42,.4)"); g.addColorStop(0.75, "rgba(180,0,0,.14)");
-    g.addColorStop(1, "rgba(120,0,0,0)");
-    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(cx, cy, coreR * 3.4, 0, Math.PI * 2); ctx.fill();
-    ctx.beginPath(); ctx.arc(cx, cy, coreR, 0, Math.PI * 2);
-    ctx.lineWidth = 2; ctx.strokeStyle = "rgba(255,255,255,.95)";
-    ctx.shadowBlur = 26; ctx.shadowColor = "rgba(255,42,42,.95)"; ctx.stroke(); ctx.shadowBlur = 0;
-    if (!settings.reducedMotion) {
-      for (var p = 0; p < 26; p++) {
-        var seed = p * 137.508, ang = (seed + now / (2000 + (p % 7) * 400)) % (Math.PI * 2);
-        var rr = R * (0.30 + ((p % 9) / 9) * 0.58);
-        ctx.beginPath();
-        ctx.arc(cx + Math.cos(ang) * rr, cy + Math.sin(ang) * rr, 1 + (p % 3) * 0.6, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(255," + (60 + Math.floor(e * 60)) + "," + (60 + Math.floor(e * 60)) + "," + (0.3 + 0.5 * e) + ")";
-        ctx.fill();
-      }
-    }
-  }
-  var lastFrame = 0;
-  function loop(now) {
-    var dt = Math.min(now - lastFrame, 60);
-    lastFrame = now;
-    energyCur += (energy - energyCur) * clamp(dt / 180, 0, 1);
-    drawReactor(now);
-    requestAnimationFrame(loop);
-  }
-
-  function setupRecognition() {
-    var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-    micSupported = !!SR;
-    if (!micSupported) return;
-    recognition = new SR();
-    recognition.continuous = true; recognition.interimResults = true;
-    recognition.lang = settings.lang; recognition.maxAlternatives = 1;
-    recognition.onstart = function () {
-      listening = true;
-      if (els.micBtn) els.micBtn.classList.add("listening");
-      setStatus("LISTENING", settings.alwaysOn ? "ALWAYS-ON · SAY 'BE QUIET' TO INTERRUPT" : "AWAITING VOICE INPUT");
-      energy = 0.8; updateChips(); updateMicAppearance();
-    };
-    recognition.onresult = function (ev) {
-      var interim = "", final = "";
-      for (var i = ev.resultIndex; i < ev.results.length; i++) {
-        var tr = ev.results[i][0].transcript;
-        if (ev.results[i].isFinal) final += tr; else interim += tr;
-      }
-      if (interim && !final && els.cmd) els.cmd.value = interim;
-      if (!final) return;
-      var text = final.trim();
-      if (!text) return;
-      if (els.cmd) els.cmd.value = "";
-      if (speaking) {
-        var words = text.split(/\s+/).filter(Boolean).length;
-        if (words <= 5 && INTERRUPT_WORDS.test(text.trim())) {
-          beep(440, 0.09, 0.1); stopSpeaking(false);
-          logLine(text, "user"); setStatus("ONLINE", "AWAITING INPUT");
-          return;
-        }
-        return;
-      }
-      if (text.length < 2) return;
-      processTranscript(text);
-    };
-    recognition.onerror = function (ev) {
-      var map = { "not-allowed": "Microphone access denied.", "service-not-allowed": "Speech service blocked.", "audio-capture": "No microphone found.", "network": "Speech service unreachable." };
-      var msg = map[ev.error] || ("Voice error: " + ev.error);
-      if (ev.error !== "aborted" && ev.error !== "no-speech") { logLine(msg, "warn"); toast(msg, "warn"); }
-      if (ev.error === "not-allowed" || ev.error === "service-not-allowed" || ev.error === "audio-capture") {
-        wantListening = false; settings.alwaysOn = false; saveSettings(); applySettings();
-      }
-    };
-    recognition.onend = function () {
-      listening = false;
-      if (els.micBtn) els.micBtn.classList.remove("listening");
-      if (els.statusText && els.statusText.textContent === "LISTENING") setStatus("ONLINE", "ALL SYSTEMS NOMINAL");
-      updateChips(); updateMicAppearance();
-      if (wantListening && settings.alwaysOn) scheduleRestart(260);
-    };
-  }
-  function scheduleRestart(delay) {
-    clearTimeout(restartTimer);
-    restartTimer = setTimeout(function () {
-      if (!wantListening || listening) return;
-      if (speaking) { scheduleRestart(400); return; }
-      try { recognition.start(); } catch (e) { scheduleRestart(800); }
-    }, delay || 300);
-  }
-  function startListening() {
-    if (!micSupported) { logLine("Voice input isn't supported.", "warn"); toast("Voice not supported", "warn"); return; }
-    if ("speechSynthesis" in window && !settings.alwaysOn) speechSynthesis.cancel();
-    wantListening = true;
-    if (!listening) { try { recognition.start(); } catch (e) { scheduleRestart(500); } }
-    updateChips(); updateMicAppearance();
-  }
-  function stopListening() {
-    wantListening = false; clearTimeout(restartTimer);
-    if (listening) { try { recognition.stop(); } catch (e) {} }
-    updateChips(); updateMicAppearance();
-  }
-  function toggleMic() {
-    userHasInteracted = true;
-    if (!micSupported) { logLine("Voice input isn't supported.", "warn"); toast("Voice not supported", "warn"); return; }
-    if (wantListening) stopListening(); else startListening();
-  }
-  function processTranscript(text) {
-    var needWake = settings.alwaysOn && settings.requireWake;
-    var awake = Date.now() < awakeUntil;
-    if (needWake && !awake) {
-      var ww = (settings.wakeWord || "ace").toLowerCase().trim();
-      var lower = text.toLowerCase(), idx = ww ? lower.indexOf(ww) : -1;
-      if (idx === -1) return;
-      var rest = text.slice(idx + ww.length).replace(/^[\s,.:;!?\-]+/, "").trim();
-      logLine(text, "user");
-      if (!rest) { awakeUntil = Date.now() + 9000; beep(660, 0.1, 0.08); respond("Yes?"); return; }
-      handleCommand(rest); return;
-    }
-    if (awake) awakeUntil = 0;
-    logLine(text, "user");
-    handleCommand(text);
-  }
-
-  function updateMicAppearance() {
-    if (!els.micBtn) return;
-    els.micBtn.classList.toggle("always", !!settings.alwaysOn);
-    els.micBtn.classList.toggle("muted", !!settings.alwaysOn && !wantListening);
-    els.micBtn.title = settings.alwaysOn
-      ? (wantListening ? "Always-listening active — click to pause" : "Always-listening paused — click to resume")
-      : "Toggle voice input";
-  }
-
-  function applySettings() {
-    document.body.classList.toggle("no-grid", !settings.showGrid);
-    document.body.classList.toggle("reduced-motion", !!settings.reducedMotion);
-    if (els.telemetryPanel) els.telemetryPanel.classList.toggle("hidden", !settings.showTelemetry);
-    if (els.logPanel) els.logPanel.classList.toggle("hidden", !settings.showLog);
-    if (els.mainGrid) {
-      els.mainGrid.classList.toggle("no-telemetry", !settings.showTelemetry);
-      els.mainGrid.classList.toggle("no-log", !settings.showLog);
-    }
-    if (els.memCount) els.memCount.textContent = Object.keys(settings.memories).length;
-    if (els.histCount) els.histCount.textContent = Math.floor(conversationHistory.length / 2);
-
-    // IMPORTANT: only populate the API key field from settings on FIRST load
-    // (or when it's empty). Never overwrite what the user has typed/pasted.
-    if (els.setApiKey && !els.setApiKey.value && settings.apiKey) {
-      els.setApiKey.value = settings.apiKey;
-    }
-
-    if (els.setModel) els.setModel.value = settings.model || "";
-    if (els.setVisionModel) els.setVisionModel.value = settings.visionModel || "";
-    if (els.setUserName) els.setUserName.value = settings.userName || "";
-    if (els.setAlwaysOn) els.setAlwaysOn.checked = !!settings.alwaysOn;
-    if (els.setRequireWake) els.setRequireWake.checked = !!settings.requireWake;
-    if (els.setWakeWord) els.setWakeWord.value = settings.wakeWord;
-    if (els.setLang) els.setLang.value = settings.lang;
-    if (els.setSpeak) els.setSpeak.checked = !!settings.speak;
-    if (els.setTelemetry) els.setTelemetry.checked = !!settings.showTelemetry;
-    if (els.setLogPanel) els.setLogPanel.checked = !!settings.showLog;
-    if (els.setGrid) els.setGrid.checked = !!settings.showGrid;
-    if (els.setReduced) els.setReduced.checked = !!settings.reducedMotion;
-    if (els.setScreenPreview) els.setScreenPreview.checked = !!settings.screenPreview;
-    if (els.setVisionDebug) els.setVisionDebug.checked = !!settings.visionDebug;
-    if (els.setRate) els.setRate.value = settings.rate;
-    if (els.setPitch) els.setPitch.value = settings.pitch;
-    if (els.setVolume) els.setVolume.value = settings.volume;
-    if (els.valRate) els.valRate.textContent = Number(settings.rate).toFixed(2);
-    if (els.valPitch) els.valPitch.textContent = Number(settings.pitch).toFixed(2);
-    if (els.valVolume) els.valVolume.textContent = Number(settings.volume).toFixed(2);
-
-    syncTtsDropdowns();
-    updateChips(); updateMicAppearance();
-  }
-
-  function syncTtsDropdowns() {
-    var modelSel = els.setTtsModel;
-    if (!modelSel) return;
-    var known = false;
-    for (var i = 0; i < modelSel.options.length; i++) {
-      if (modelSel.options[i].value === settings.ttsModel && settings.ttsModel !== "__custom__") { known = true; break; }
-    }
-    if (settings.ttsModel === "") {
-      modelSel.value = "";
-      if (els.setTtsModelCustom) els.setTtsModelCustom.style.display = "none";
-    } else if (known) {
-      modelSel.value = settings.ttsModel;
-      if (els.setTtsModelCustom) els.setTtsModelCustom.style.display = "none";
-    } else {
-      modelSel.value = "__custom__";
-      if (els.setTtsModelCustom) {
-        els.setTtsModelCustom.style.display = "block";
-        els.setTtsModelCustom.value = settings.ttsModel;
-      }
-    }
-    populateVoiceDropdown(settings.ttsModel);
-    updateTtsHelp(settings.ttsModel);
-  }
-
-  function populateVoiceDropdown(model) {
-    var voiceSel = els.setTtsVoice;
-    if (!voiceSel) return;
-    var list = TTS_VOICES[model];
-    voiceSel.innerHTML = "";
-    if (!list || !list.length) {
-      var opt = document.createElement("option");
-      opt.value = "__custom__";
-      opt.textContent = "Custom voice id…";
-      voiceSel.appendChild(opt);
-      voiceSel.value = "__custom__";
-      if (els.setTtsVoiceCustom) {
-        els.setTtsVoiceCustom.style.display = "block";
-        els.setTtsVoiceCustom.value = settings.ttsVoice || "";
-      }
-      return;
-    }
-    for (var i = 0; i < list.length; i++) {
-      var o = document.createElement("option");
-      o.value = list[i].id;
-      o.textContent = list[i].label;
-      voiceSel.appendChild(o);
-    }
-    var custom = document.createElement("option");
-    custom.value = "__custom__";
-    custom.textContent = "Custom voice id…";
-    voiceSel.appendChild(custom);
-    var matched = false;
-    for (var j = 0; j < list.length; j++) {
-      if (list[j].id === (settings.ttsVoice || "")) { voiceSel.value = list[j].id; matched = true; break; }
-    }
-    if (!matched) {
-      if (settings.ttsVoice) {
-        voiceSel.value = "__custom__";
-        if (els.setTtsVoiceCustom) {
-          els.setTtsVoiceCustom.style.display = "block";
-          els.setTtsVoiceCustom.value = settings.ttsVoice;
-        }
-      } else {
-        voiceSel.value = list[0].id;
-        settings.ttsVoice = list[0].id;
-        saveSettings();
-        if (els.setTtsVoiceCustom) els.setTtsVoiceCustom.style.display = "none";
-      }
-    } else {
-      if (els.setTtsVoiceCustom) els.setTtsVoiceCustom.style.display = "none";
-    }
-  }
-
-  function updateTtsHelp(model) {
-    var help = els.ttsVoiceHelp;
-    if (!help) return;
-    if (!model) help.innerHTML = "No TTS provider selected — using browser voice.";
-    else if (model === "deepgram/flux-tts:free") help.innerHTML = "Deepgram Flux is free and the most human. <b>Cliff</b> or <b>Colin</b> match A.C.E.'s tone.";
-    else if (model === "openai/gpt-4o-mini-tts") help.innerHTML = "OpenAI TTS — <b>onyx</b> and <b>fable</b> are closest to A.C.E.'s register.";
-    else if (model === "x-ai/grok-voice-tts-1.0") help.innerHTML = "xAI Grok Voice — 20+ languages.";
-    else if (model === "mistralai/voxtral-mini-tts-2603") help.innerHTML = "Mistral Voxtral — supports voice cloning.";
-    else help.innerHTML = "Custom provider — enter any voice id the model accepts.";
-  }
-
-  function openSettings() { document.body.classList.add("settings-open"); if (els.settingsBtn) els.settingsBtn.classList.add("active"); updateKeyLengthDisplay(); }
-  function closeSettings() {
-    // When closing, sync settings from the field one more time
-    if (els.setApiKey) {
-      settings.apiKey = cleanKey(els.setApiKey.value);
-      saveSettings();
-    }
-    document.body.classList.remove("settings-open");
-    if (els.settingsBtn) els.settingsBtn.classList.remove("active");
-  }
-  function toggleSettings() { if (document.body.classList.contains("settings-open")) closeSettings(); else openSettings(); }
-
-  async function startScreenShare() {
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) { logLine("Screen capture isn't supported.", "warn"); toast("Unsupported", "warn"); return; }
-    try {
-      screenStream = await navigator.mediaDevices.getDisplayMedia({ video: { cursor: "always", frameRate: 5 }, audio: false });
-      screenVideo = document.createElement("video");
-      screenVideo.srcObject = screenStream;
-      screenVideo.muted = true; screenVideo.playsInline = true;
-      await screenVideo.play();
-      screenWarmupAt = Date.now();
-      var track = screenStream.getVideoTracks()[0];
-      track.addEventListener("ended", stopScreenShare);
-      if (els.screenPreview) els.screenPreview.classList.toggle("on", !!settings.screenPreview);
-      if (els.stopShareBtn) els.stopShareBtn.style.display = "block";
-      if (els.shareScreenBtn) els.shareScreenBtn.textContent = "Sharing…";
-      if (els.screenBtn) els.screenBtn.classList.add("active");
-      startPreviewLoop();
-      logLine("Screen vision enabled.", "ok"); toast("Screen sharing active");
-      respond("Screen vision enabled. Ask me what's on your screen.");
-      updateChips();
-    } catch (err) {
-      if (err && err.name === "NotAllowedError") logLine("Screen sharing cancelled.", "sys");
-      else logLine("Screen sharing failed: " + (err && err.message || err), "warn");
-    }
-  }
-  function stopScreenShare() {
-    if (screenStream) { try { screenStream.getTracks().forEach(function (t) { t.stop(); }); } catch (e) {} screenStream = null; }
-    screenVideo = null;
-    if (els.screenPreview) els.screenPreview.classList.remove("on");
-    if (els.stopShareBtn) els.stopShareBtn.style.display = "none";
-    if (els.shareScreenBtn) els.shareScreenBtn.textContent = "Share screen";
-    if (els.screenBtn) els.screenBtn.classList.remove("active");
-    if (screenPreviewRAF) { cancelAnimationFrame(screenPreviewRAF); screenPreviewRAF = null; }
-    logLine("Screen vision disabled.", "sys"); toast("Screen sharing stopped");
-    updateChips();
-  }
-  function startPreviewLoop() {
-    if (screenPreviewRAF) cancelAnimationFrame(screenPreviewRAF);
-    function tick() {
-      var pc = els.screenPreviewCanvas;
-      if (!pc || !screenVideo || screenVideo.videoWidth === 0) { screenPreviewRAF = requestAnimationFrame(tick); return; }
-      if (document.visibilityState === "visible" && settings.screenPreview) {
-        var cw = pc.width, ch = pc.height, vw = screenVideo.videoWidth, vh = screenVideo.videoHeight;
-        var scale = Math.max(cw / vw, ch / vh), dw = vw * scale, dh = vh * scale;
-        var pctx = pc.getContext("2d");
-        try { pctx.drawImage(screenVideo, (cw - dw) / 2, (ch - dh) / 2, dw, dh); } catch (e) {}
-      }
-      screenPreviewRAF = setTimeout(function () { screenPreviewRAF = requestAnimationFrame(tick); }, 900);
-    }
-    screenPreviewRAF = requestAnimationFrame(tick);
-  }
-  function captureScreenFrame() {
-    if (!screenVideo) return { error: "No screen stream." };
-    if (screenVideo.readyState < 2) return { error: "Screen stream not ready." };
-    if (!screenVideo.videoWidth || !screenVideo.videoHeight) return { error: "No dimensions yet." };
-    if (Date.now() - screenWarmupAt < 400) return { error: "Still warming up." };
-    try {
-      var c = document.createElement("canvas");
-      var vw = screenVideo.videoWidth, vh = screenVideo.videoHeight;
-      var scale = Math.min(1, 1280 / vw);
-      c.width = Math.max(1, Math.round(vw * scale));
-      c.height = Math.max(1, Math.round(vh * scale));
-      c.getContext("2d").drawImage(screenVideo, 0, 0, c.width, c.height);
-      var dataUrl = c.toDataURL("image/jpeg", 0.72);
-      return { dataUrl: dataUrl, width: c.width, height: c.height, bytes: dataUrl.length };
-    } catch (err) { return { error: "Capture failed: " + (err && err.message || err) }; }
-  }
-
-  function aiConfigured() { return !!(effectiveApiKey() && settings.model); }
-  function effectiveVisionModel() { return (settings.visionModel && settings.visionModel.trim()) || settings.model; }
-  function buildSystemPrompt() {
-    var p = settings.systemPrompt || DEFAULT_SYSTEM_PROMPT;
-    if (settings.userName) p += "\n\nThe user's name is " + settings.userName + ". Address them by name occasionally.";
-    return p;
-  }
-
-  async function askAI(userText, imageDataUrl) {
-    if (!aiConfigured()) throw new Error("AI not configured");
-    var model = imageDataUrl ? effectiveVisionModel() : settings.model;
-    var messages = [{ role: "system", content: buildSystemPrompt() }];
-    var hist = conversationHistory.slice(-12);
-    for (var i = 0; i < hist.length; i++) messages.push(hist[i]);
-    var userContent;
-    if (imageDataUrl) {
-      userContent = [
-        { type: "text", text: userText || "What's on my screen?" },
-        { type: "image_url", image_url: { url: imageDataUrl, detail: "auto" } }
-      ];
-    } else userContent = userText;
-    messages.push({ role: "user", content: userContent });
-    var k = effectiveApiKey();
-    var res = await fetch(OPENROUTER_ENDPOINT, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer " + k,
-        "HTTP-Referer": OPENROUTER_REFERER,
-        "X-Title": OPENROUTER_TITLE
-      },
-      body: JSON.stringify({ model: model, messages: messages, temperature: 0.6, max_tokens: 700 })
-    });
-    var rawBody = "";
-    try { rawBody = await res.text(); } catch (e) {}
-    if (!res.ok) {
-      var brief = rawBody;
-      try {
-        var parsedErr = JSON.parse(rawBody);
-        if (parsedErr && parsedErr.error) {
-          if (typeof parsedErr.error === "string") brief = parsedErr.error;
-          else if (parsedErr.error.message) brief = parsedErr.error.message;
-        }
-      } catch (e) {}
-      throw new Error("HTTP " + res.status + " — " + (brief || res.statusText).slice(0, 240));
-    }
-    var data;
-    try { data = JSON.parse(rawBody); } catch (e) { throw new Error("Invalid JSON: " + rawBody.slice(0, 160)); }
-    if (!data.choices || !data.choices[0] || !data.choices[0].message) throw new Error("Unexpected response shape");
-    var content = data.choices[0].message.content;
-    if (Array.isArray(content)) content = content.map(function (b) { return typeof b === "string" ? b : (b && b.text) || ""; }).join(" ");
-    return String(content || "").trim();
-  }
-
-  function pushHistory(role, content) {
-    var safeContent = content;
-    if (Array.isArray(content)) {
-      safeContent = content.map(function (p) {
-        if (p.type === "image_url") return { type: "text", text: "[image of the user's screen]" };
-        return p;
-      });
-    }
-    conversationHistory.push({ role: role, content: safeContent });
-    if (conversationHistory.length > 30) conversationHistory = conversationHistory.slice(-30);
-    if (els.histCount) els.histCount.textContent = Math.floor(conversationHistory.length / 2);
-  }
-
-  async function handleWithAI(userText, imageDataUrl) {
-    if (!aiConfigured()) {
-      respond("I'm not connected yet. Open settings and add your OpenRouter API key.");
-      toast("Add OpenRouter key in settings", "warn"); return;
-    }
-    if (aiBusy) { respond("One moment — I'm still thinking."); return; }
-    aiBusy = true; updateChips(); energy = 0.9;
-    setStatus("THINKING", imageDataUrl ? "ANALYSING SCREEN" : "PROCESSING QUERY");
-    var thinkingRow = logLine(imageDataUrl ? "Analysing your screen…" : "Thinking…", "sys");
-    if (thinkingRow) thinkingRow.classList.add("thinking");
-    try {
-      var reply = await askAI(userText, imageDataUrl);
-      if (thinkingRow && thinkingRow.parentNode) thinkingRow.parentNode.removeChild(thinkingRow);
-      if (!reply) reply = "I don't have anything to add.";
-      if (imageDataUrl) pushHistory("user", [{ type: "text", text: userText || "What's on my screen?" }, { type: "text", text: "[screen image]" }]);
-      else pushHistory("user", userText);
-      pushHistory("assistant", reply);
-      respond(reply);
-    } catch (err) {
-      if (thinkingRow && thinkingRow.parentNode) thinkingRow.parentNode.removeChild(thinkingRow);
-      var detail = err && err.message ? err.message : String(err);
-      logLine("AI error: " + detail, "err");
-      var userMsg = "I had trouble reaching the AI service. ";
-      if (/401|403|auth/i.test(detail)) {
-        userMsg = "OpenRouter rejected the API key. Run 'Verify key' in settings — it will tell you exactly what's wrong.";
-        highlightKeyField();
-      } else if (/404|model/i.test(detail) && imageDataUrl) userMsg = "The vision model rejected the request. Try a different Vision Model.";
-      else if (/404|model/i.test(detail)) userMsg = "That model doesn't exist on OpenRouter. Check the slug in settings.";
-      else if (/402|insufficient|credit|quota/i.test(detail)) userMsg = "OpenRouter says you're out of credits.";
-      else if (/429|rate/i.test(detail)) userMsg = "Rate limited — give it a moment.";
-      respond(userMsg);
-    } finally {
-      aiBusy = false; updateChips();
-      if (!listening && !speaking) setStatus("ONLINE", "ALL SYSTEMS NOMINAL");
-    }
-  }
-
-  function diagnoseKey() {
-    userHasInteracted = true;
-    var fieldVal = els.setApiKey ? cleanKey(els.setApiKey.value) : "";
-    var stored = cleanKey(settings.apiKey);
-    var hard = cleanKey(HARDCODED_API_KEY);
-    var eff = effectiveApiKey();
-
-    logLine("════ API KEY DIAGNOSTICS ════", "sys");
-    logLine("Field value length: " + fieldVal.length + (fieldVal ? (" | starts: " + fieldVal.slice(0, 15) + "… | ends: …" + fieldVal.slice(-6)) : " (empty)"), "sys");
-    logLine("Saved settings length: " + stored.length + (stored ? (" | starts: " + stored.slice(0, 15) + "…") : " (empty)"), "sys");
-    logLine("Hardcoded length: " + hard.length, "sys");
-    logLine("► EFFECTIVE length: " + eff.length + " (this is what gets sent to OpenRouter)", "sys");
-    if (eff) logLine("► Effective starts with: " + eff.slice(0, 15) + "… | ends with …" + eff.slice(-6), "sys");
-    logLine("Source of effective key: " + (fieldVal ? "LIVE FIELD" : (stored ? "saved settings" : (hard ? "hardcoded" : "NONE"))), "sys");
-
-    if (eff && !/^sk-/.test(eff)) logLine("✗ Key doesn't start with 'sk-'", "err");
-    if (eff && !/^sk-or-v1-/.test(eff)) logLine("⚠ Key doesn't start with 'sk-or-v1-' — OpenRouter keys always do.", "err");
-    if (eff && eff.length < 60) logLine("⚠ Key is " + eff.length + " chars — OpenRouter keys are typically 73 chars. Likely truncated.", "err");
-    if (eff && /\s/.test(eff)) logLine("✗ Key contains whitespace.", "err");
-    if (!eff) logLine("✗ No key anywhere.", "err");
-
-    try { localStorage.setItem("__ace_test__", "1"); localStorage.removeItem("__ace_test__"); logLine("localStorage: OK ✓", "ok"); }
-    catch (e) { logLine("✗ localStorage is BLOCKED — settings won't persist across reloads.", "err"); }
-
-    if (keyLooksValid(eff)) logLine("Format check: PASS ✓", "ok");
-    logLine("════════════════════════════", "sys");
-    toast("Diagnostics in log", "ok");
-  }
-
-  async function verifyKey() {
-    userHasInteracted = true;
-    var k = effectiveApiKey();
-    if (!k) { toast("No API key set", "warn"); logLine("Verify failed: no key.", "err"); return; }
-
-    logLine("════ VERIFY ════", "sys");
-    logLine("Sending key of length " + k.length + " to OpenRouter…", "sys");
-    logLine("First 15 chars: " + k.slice(0, 15) + "…", "sys");
-    logLine("Last 6 chars: …" + k.slice(-6), "sys");
-
-    setStatus("PROCESSING", "VERIFYING API KEY");
-
-    try {
-      var res = await fetch(OPENROUTER_ENDPOINT, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer " + k,
-          "HTTP-Referer": OPENROUTER_REFERER,
-          "X-Title": OPENROUTER_TITLE
-        },
-        body: JSON.stringify({
-          model: "openai/gpt-4o-mini",
-          messages: [{ role: "user", content: "Reply with the single word: ok" }],
-          max_tokens: 5
-        })
-      });
-      var body = "";
-      try { body = await res.text(); } catch (e) {}
-      logLine("Response: HTTP " + res.status, res.ok ? "ok" : "err");
-      logLine("Body: " + body.slice(0, 500), res.ok ? "ok" : "err");
-
-      if (res.ok) {
-        toast("Key verified ✓", "ok");
-        logLine("✓ Key accepted by OpenRouter. Chat is ready.", "ok");
-        respond("The API key is valid. Chat is ready.");
-      } else if (res.status === 401) {
-        logLine("✗ 401 Unauthorized — OpenRouter does not recognize this key.", "err");
-        logLine("Possible causes:", "warn");
-        logLine("  1. The key in the field is NOT the key you just made (check the diagnostics above).", "warn");
-        logLine("  2. The key was deleted or disabled on OpenRouter's dashboard.", "warn");
-        logLine("  3. The key was copied incompletely (truncated).", "warn");
-        toast("401 — key rejected", "warn");
-        highlightKeyField();
-      } else if (res.status === 402) {
-        logLine("Key is valid but you have no credits. Add funds at openrouter.ai/credits", "warn");
-        toast("Key OK, no credits", "warn");
-      } else {
-        logLine("Unexpected status. Raw body above.", "warn");
-        toast("Verify failed", "warn");
-      }
-    } catch (err) {
-      var m = err && err.message || String(err);
-      logLine("Network error: " + m, "err");
-      logLine("→ This is a CORS, ad-blocker, or offline issue — not an auth problem.", "warn");
-      toast("Network error", "warn");
-    } finally {
-      logLine("════════════════", "sys");
-      if (!listening && !speaking) setStatus("ONLINE", "ALL SYSTEMS NOMINAL");
-    }
-  }
-
-  function setTimer(seconds, label) {
-    var id = setTimeout(function () {
-      var msg = label ? ("Timer complete — " + label + ".") : "Your timer has finished.";
-      logLine(msg, "ace"); setStatus("ALERT", "TIMER COMPLETE");
-      energy = 1; flashScreen();
-      beep(660, 0.18, 0.15);
-      setTimeout(function () { beep(880, 0.18, 0.15); }, 220);
-      setTimeout(function () { beep(1100, 0.25, 0.15); }, 440);
-      speak(msg);
-      var i = activeTimers.indexOf(id); if (i > -1) activeTimers.splice(i, 1);
-    }, seconds * 1000);
-    activeTimers.push(id); return id;
-  }
-  function safeEval(expr) {
-    var e = String(expr).toLowerCase().trim();
-    e = e.replace(/(\d+(?:\.\d+)?)\s*(?:%|percent)\s*of\s*/g, "($1/100)*");
-    e = e.replace(/\bplus\b/g, "+").replace(/\bminus\b/g, "-").replace(/\bmultiplied by\b|\btimes\b/g, "*")
-         .replace(/\bdivided by\b|\bover\b/g, "/").replace(/\bto the power of\b/g, "**")
-         .replace(/[x×]/g, "*").replace(/÷/g, "/").replace(/−/g, "-").replace(/\^/g, "**").replace(/,/g, "");
-    if (!/^[\d+\-*/().\s]+$/.test(e)) return null;
-    try { var r = Function('"use strict";return (' + e + ')')(); if (typeof r !== "number" || !isFinite(r)) return null; return r; }
-    catch (err) { return null; }
-  }
-  function looksLikeMath(s) { if (!/\d/.test(s)) return false; return /[+\-*/x×÷^%]|\b(plus|minus|times|divided|multiplied|percent|of)\b/i.test(s); }
-  var UNIT_GROUPS = {
-    length: { km:1000,kilometer:1000,kilometers:1000,m:1,meter:1,meters:1,metre:1,metres:1,cm:0.01,centimeter:0.01,centimeters:0.01,mm:0.001,mi:1609.344,mile:1609.344,miles:1609.344,ft:0.3048,foot:0.3048,feet:0.3048,in:0.0254,inch:0.0254,inches:0.0254,yd:0.9144,yard:0.9144,yards:0.9144 },
-    weight: { kg:1000,kilogram:1000,kilograms:1000,g:1,gram:1,grams:1,mg:0.001,lb:453.592,lbs:453.592,pound:453.592,pounds:453.592,oz:28.3495,ounce:28.3495,ounces:28.3495,st:6350.29,stone:6350.29 },
-    volume: { l:1,liter:1,liters:1,litre:1,litres:1,ml:0.001,gal:3.78541,gallon:3.78541,gallons:3.78541,cup:0.236588,cups:0.236588,pint:0.473176,pints:0.473176 }
-  };
-  var TEMP_ALIASES = { c:"c",celsius:"c","°c":"c",centigrade:"c",f:"f",fahrenheit:"f","°f":"f",k:"k",kelvin:"k" };
-  function convertUnits(val, from, to) {
-    from = from.toLowerCase(); to = to.toLowerCase();
-    if (TEMP_ALIASES[from] && TEMP_ALIASES[to]) {
-      var f = TEMP_ALIASES[from], t = TEMP_ALIASES[to], c;
-      if (f === "c") c = val; else if (f === "f") c = (val - 32) * 5 / 9; else c = val - 273.15;
-      var out;
-      if (t === "c") out = c; else if (t === "f") out = c * 9 / 5 + 32; else out = c + 273.15;
-      return { value: out, unit: to };
-    }
-    for (var gname in UNIT_GROUPS) {
-      var group = UNIT_GROUPS[gname];
-      if (group[from] != null && group[to] != null) return { value: (val * group[from]) / group[to], unit: to };
-    }
-    return null;
-  }
-  var WX = { 0:"clear skies",1:"mainly clear",2:"partly cloudy",3:"overcast",45:"foggy",48:"freezing fog",51:"light drizzle",53:"drizzle",55:"heavy drizzle",61:"light rain",63:"rain",65:"heavy rain",71:"light snow",73:"snow",75:"heavy snow",80:"rain showers",81:"rain showers",82:"violent rain showers",95:"a thunderstorm",96:"a thunderstorm with hail",99:"a severe thunderstorm with hail" };
-  function getWeather() {
-    return new Promise(function (resolve, reject) {
-      if (!navigator.geolocation) return reject(new Error("no-geo"));
-      navigator.geolocation.getCurrentPosition(function (pos) {
-        var url = "https://api.open-meteo.com/v1/forecast?latitude=" + pos.coords.latitude + "&longitude=" + pos.coords.longitude + "&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m";
-        fetch(url).then(function (r) { return r.json(); }).then(function (d) { resolve(d.current); }).catch(reject);
-      }, function () { reject(new Error("denied")); }, { timeout: 9000 });
-    });
-  }
-
-  function askConfirm(prompt, action) { pendingAction = action; respond(prompt); }
-
-  function tryLocalCommand(raw) {
-    var t = raw.toLowerCase().replace(/[?!.,]+$/g, "").trim();
-    var m;
-    if (/^(?:please\s+)?(?:be quiet|quiet|stop(?: talking)?|shut up|silence|shush|hush|mute|hold on|wait|pause|cancel|enough|that's enough|nevermind|never mind|stop it|shut it)(?:[\s.!?,]*)$/i.test(t)) {
-      var was = stopSpeaking(false);
-      if (!was) respond("I'm not speaking, but noted."); else beep(440, 0.09, 0.1);
-      return true;
-    }
-    if (/^(?:never mind|nevermind|cancel)(?:\s+(?:that|it|the last one))?$/i.test(t) && pendingAction) {
-      pendingAction = null; respond("Cancelled."); return true;
-    }
-    if (pendingAction) {
-      if (/^(yes|yeah|yep|yup|sure|ok|okay|do it|please do|affirmative|go ahead|confirm)\b/.test(t)) { var a = pendingAction; pendingAction = null; a(); return true; }
-      if (/^(no|nope|nah|negative|cancel|nevermind|never mind|stop)\b/.test(t)) { pendingAction = null; respond("Cancelled."); return true; }
-    }
-    if ((m = t.match(/^(?:my name is|call me|i am|i'm)\s+([a-z][a-z '\-]{0,38})$/))) {
-      settings.userName = cap(m[1].trim()); saveSettings(); applySettings();
-      respond("Noted. I'll call you " + settings.userName + "."); return true;
-    }
-    if (/what(?:'s| is) my name|who am i\b/.test(t)) {
-      respond(settings.userName ? ("You're " + settings.userName + ", of course.") : "You haven't told me your name yet."); return true;
-    }
-    if ((m = t.match(/^(?:remember|memorise|memorize|store)(?: that)?\s+(?:my\s+)?(.+?)\s+(?:is|are|equals?)\s+(.+)$/))) {
-      var key = m[1].trim().replace(/^my\s+/, ""), val = m[2].trim();
-      if (key.length > 60 || val.length > 200) { respond("That's too long."); return true; }
-      settings.memories[key] = val; saveSettings(); applySettings();
-      beep(880, 0.08, 0.08);
-      respond("Stored. Your " + key + " is " + val + "."); return true;
-    }
-    if ((m = t.match(/^(?:what(?:'s| is)|do you remember)\s+my\s+(.+?)$/))) {
-      var k2 = m[1].trim();
-      if (settings.memories[k2]) { respond("Your " + k2 + " is " + settings.memories[k2] + "."); return true; }
-      for (var mk in settings.memories) {
-        if (mk.indexOf(k2) > -1 || k2.indexOf(mk) > -1) { respond("Did you mean your " + mk + "? It's " + settings.memories[mk] + "."); return true; }
-      }
-      respond("I don't have anything stored for \"" + k2 + "\"."); return true;
-    }
-    if ((m = t.match(/^forget\s+(?:my\s+)?(.+)$/))) {
-      var fk = m[1].trim().replace(/^my\s+/, "");
-      if (settings.memories[fk]) { delete settings.memories[fk]; saveSettings(); applySettings(); respond("Forgotten: " + fk + "."); }
-      else respond("I don't have a memory for \"" + fk + "\".");
-      return true;
-    }
-    if (/\b(time|clock)\b/.test(t) && !/timetable|timer/.test(t) && !/set a timer/.test(t)) {
-      respond("The current time is " + new Date().toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit", hour12: true }) + "."); return true;
-    }
-    if (/\b(date|day|today)\b/.test(t) && !/update/.test(t)) {
-      respond("Today is " + new Date().toLocaleDateString(undefined, { weekday: "long", day: "numeric", month: "long", year: "numeric" }) + "."); return true;
-    }
-    if ((m = t.match(/^(?:set (?:a )?timer(?: for)?|timer for|remind me in|in)\s+(\d+(?:\.\d+)?)\s*(seconds?|secs?|s|minutes?|mins?|m|hours?|hrs?|h)\b(.*)$/))) {
-      var tval = parseFloat(m[1]), tunit = m[2], secs = tval;
-      if (/^m/.test(tunit)) secs = tval * 60; else if (/^h/.test(tunit)) secs = tval * 3600;
-      if (secs <= 0 || secs > 86400) { respond("Choose 1 sec – 24 hours."); return true; }
-      var labelMatch = m[3].match(/(?:to|for|about|that)\s+(.+)$/);
-      var label = labelMatch ? labelMatch[1].trim() : "";
-      setTimer(secs, label);
-      var pretty = secs < 60 ? (Math.round(secs) + " seconds") : secs < 3600 ? (round(secs / 60) + " minutes") : (round(secs / 3600) + " hours");
-      respond(label ? ("Timer set for " + pretty + " — " + label + ".") : ("Timer set for " + pretty + ".")); return true;
-    }
-    if (/^(?:cancel|clear|stop)(?: all)? timers?/.test(t)) {
-      var tn = activeTimers.length;
-      for (var ti = 0; ti < activeTimers.length; ti++) clearTimeout(activeTimers[ti]);
-      activeTimers = [];
-      respond(tn ? ("Cancelled " + tn + " timer" + (tn === 1 ? "" : "s") + ".") : "No active timers."); return true;
-    }
-    if (/\b(weather|temperature outside|forecast|how hot|how cold)\b/.test(t)) {
-      setStatus("PROCESSING", "QUERYING METEOROLOGICAL DATA");
-      logLine("Requesting location and weather data…", "sys");
-      getWeather().then(function (cur) {
-        var desc = WX[cur.weather_code] || "indeterminate conditions";
-        respond("Currently " + Math.round(cur.temperature_2m) + " degrees Celsius with " + desc + ". It feels like " + Math.round(cur.apparent_temperature) + " degrees.");
-      }).catch(function (err) {
-        if (err.message === "denied") respond("I require location permission.");
-        else respond("I can't reach the weather service.");
-      });
-      return true;
-    }
-    var wantScreen =
-      /\b(?:look at|look|see|read|check|what'?s on|what is on|analyse|analyze|describe|scan|view|examine|inspect|look over|take a look at)\b[\s\S]{0,60}\b(?:my |the |this |a )?(screen|monitor|display|page|window|browser|website|site|tab|desktop)\b/i.test(raw)
-      || /\b(?:can you see|do you see|are you seeing|what do you see|what am i looking at|what is this|what'?s this|read this|read that|look here|look there)\b/i.test(t)
-      || /^(?:screen|vision)\s*(?:check|test|look|read|analyse|analyze)$/i.test(t);
-    if (wantScreen) {
-      if (!screenStream) { respond("Screen vision isn't active. Click the screen icon in the header."); return true; }
-      var cap = captureScreenFrame();
-      if (cap.error) { logLine("Screen capture: " + cap.error, "warn"); respond("I couldn't capture your screen — " + cap.error); return true; }
-      logLine("Captured screen: " + cap.width + "×" + cap.height, "sys");
-      handleWithAI(raw, cap.dataUrl); return true;
-    }
-    if (/^(?:share|start sharing|enable)(?: my| the)? screen/.test(t)) { startScreenShare(); return true; }
-    if (/^(?:stop|end)(?: sharing| screen share| sharing my screen)/.test(t)) { stopScreenShare(); respond("Screen sharing stopped."); return true; }
-    var openMatch = t.match(/^(?:open|launch|go to|navigate to|bring up)\s+(.+)$/);
-    if (openMatch) {
-      var target = openMatch[1].replace(/\s+(website|site|page|dot com|\.com)$/g, "").trim();
-      var sites = { "youtube":"https://www.youtube.com","google":"https://www.google.com","github":"https://www.github.com","gmail":"https://mail.google.com","reddit":"https://www.reddit.com","wikipedia":"https://www.wikipedia.org","twitter":"https://twitter.com","x":"https://x.com","spotify":"https://open.spotify.com","chatgpt":"https://chat.openai.com","maps":"https://maps.google.com","news":"https://news.google.com","netflix":"https://www.netflix.com","twitch":"https://www.twitch.tv","openrouter":"https://openrouter.ai" };
-      var url = sites[target];
-      if (!url && /^[\w-]+(\.[\w-]+)+$/.test(target)) url = "https://" + target;
-      if (url) { logLine("Opening " + url, "sys"); window.open(url, "_blank", "noopener"); respond("Opening " + target + "."); return true; }
-      respond("I don't have a shortcut for \"" + target + "\"."); return true;
-    }
-    var searchMatch = t.match(/^(?:search|google|look up|find|search for)\s+(?:for\s+)?(.+)$/);
-    if (searchMatch) {
-      var q = searchMatch[1];
-      logLine("Searching the web for: " + q, "sys");
-      window.open("https://www.google.com/search?q=" + encodeURIComponent(q), "_blank", "noopener");
-      respond("Searching for " + q + "."); return true;
-    }
-    if ((m = t.match(/^(?:convert\s+)?(-?\d+(?:\.\d+)?)\s*(?:degrees?\s+)?([a-z°]+)\s+(?:to|in|into)\s+(?:degrees?\s+)?([a-z°]+)$/))) {
-      var cval = parseFloat(m[1]), cres = convertUnits(cval, m[2], m[3]);
-      if (cres) { respond(cval + " " + m[2] + " equals " + round(cres.value) + " " + m[3] + "."); return true; }
-    }
-    if (/\b(roll|throw)\b.*\b(dice|die|d6|d20)\b/.test(t) || /^roll a? (dice|die)/.test(t)) { respond("You rolled a " + (Math.floor(Math.random() * 6) + 1) + "."); return true; }
-    if (/\b(flip|toss)\b.*\bcoin\b/.test(t)) { respond(Math.random() < 0.5 ? "Heads." : "Tails."); return true; }
-    if (looksLikeMath(t) && /^(?:calculate|compute|what(?:'s| is)|solve|evaluate|eval)\s+/i.test(t)) {
-      var cleaned = t.replace(/^(?:calculate|compute|what(?:'s| is)|solve|evaluate|eval)\s+/i, "");
-      var mres = safeEval(cleaned);
-      if (mres !== null) { respond("The result is " + round(mres) + "."); return true; }
-    }
-    if (/^(?:clear|wipe)(?: the)?(?: activity)?(?: log)?$/.test(t)) {
-      if (els.log) els.log.innerHTML = ""; logCount = 0;
-      if (els.logCount) els.logCount.textContent = "0";
-      logLine("Activity log cleared.", "sys"); respond("Log cleared."); return true;
-    }
-    if (/(full ?screen|maximise|maximize)/.test(t)) {
-      if (!document.fullscreenElement) { if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen(); respond("Entering full screen."); }
-      else { if (document.exitFullscreen) document.exitFullscreen(); respond("Exiting full screen."); }
-      return true;
-    }
-    if (/^(?:open|show)\s+(?:the\s+)?settings|^(?:settings|preferences)$/.test(t)) { openSettings(); respond("Opening settings."); return true; }
-    if (/(shut down|power off|standby|sleep mode|good night)/.test(t)) {
-      setStatus("STANDBY", "ENTERING LOW POWER MODE"); energy = 0.05;
-      setTimeout(function () { if (!listening) setStatus("ONLINE", "ALL SYSTEMS NOMINAL"); }, 5000);
-      respond("Entering standby."); return true;
-    }
-    if (/^(?:clear|reset|forget)\s+(?:our\s+|the\s+)?conversation|^(?:new|fresh)\s+conversation/.test(t)) {
-      conversationHistory = [];
-      if (els.histCount) els.histCount.textContent = "0";
-      respond("Conversation memory cleared."); return true;
-    }
-    return false;
-  }
-
-  async function handleCommand(input) {
-    var raw = String(input).trim();
-    if (!raw) return;
-    if (INTERRUPT_WORDS.test(raw.trim())) { stopSpeaking(false); return; }
-    try { if (tryLocalCommand(raw)) return; } catch (e) { console.error("Local command error:", e); }
-    if (aiConfigured()) handleWithAI(raw, null);
-    else {
-      respond("I don't have a local response for that. Open settings and add your OpenRouter API key.", { type: "warn" });
-      toast("Add OpenRouter key in settings", "warn");
-    }
-  }
-
-  var BOOT_LINES = [
-    ["INITIALISING A.C.E. CORE", "OK"],
-    ["LOADING COGNITIVE RUNTIME", "OK"],
-    ["MOUNTING VISION SUBSYSTEM", "OK"],
-    ["CONNECTING TO OPENROUTER", "…"],
-    ["LOADING TTS VOICE ENGINE", "…"],
-    ["CALIBRATING VOICE INTERFACE", "OK"],
-    ["LOADING COMMAND PROTOCOLS", "312"],
-    ["REACTOR OUTPUT", "98.4%"],
-    ["ALL SYSTEMS NOMINAL", ""]
-  ];
-  function runBoot() {
-    var box = els.bootLog;
-    var bar = els.bootBar ? els.bootBar.firstElementChild : null;
-    if (!box) return Promise.resolve();
-    var i = 0;
-    function step() {
-      if (i >= BOOT_LINES.length) {
-        return sleep(380).then(function () {
-          els.boot.classList.add("done");
-          logLine("A.C.E. online. Standing by.", "ace");
-          if (settings.userName) logLine("Good to see you, " + settings.userName + ".", "ace");
-          var k = effectiveApiKey();
-          if (!k) logLine("⚠ No API key configured — open settings and add one.", "warn");
-          else logLine("API key loaded (" + k.length + " chars, from " + (isUsingHardcodedKey() ? "hardcoded script" : "settings") + ").", "ok");
-          if (ttsConfigured()) logLine("TTS engine: " + settings.ttsModel + (settings.ttsVoice ? (" / " + settings.ttsVoice) : ""), "ok");
-          if (settings.alwaysOn) {
-            logLine("Always-listening mode active.", "ok");
-            setTimeout(function () { if (userHasInteracted) startListening(); }, 500);
-          }
-        });
-      }
-      var line = BOOT_LINES[i], label = line[0], status = line[1];
-      if (label === "CONNECTING TO OPENROUTER") status = aiConfigured() ? "OK" : "PENDING";
-      if (label === "LOADING TTS VOICE ENGINE") status = ttsConfigured() ? "OK" : "BROWSER";
-      var dots = ".".repeat(Math.max(4, 42 - label.length));
-      var row = document.createElement("div");
-      row.innerHTML = label + ' <span style="color:#6a1a1a">' + dots + '</span> <span class="ok">' + status + "</span>";
-      box.appendChild(row);
-      if (bar) bar.style.width = ((i + 1) / BOOT_LINES.length * 100) + "%";
-      i++;
-      var delay = (i === BOOT_LINES.length) ? 380 : rand(120, 240);
-      return sleep(delay).then(step);
-    }
-    return step();
-  }
-
-  function cacheElements() {
-    els = {
-      boot: $("boot"), bootLog: $("bootLog"), bootBar: $("bootBar"),
-      clock: $("clock"), uptime: $("uptime"),
-      statusText: $("statusText"), coreSub: $("coreSub"), reactor: $("reactor"),
-      log: $("log"), logCount: $("logCount"), cmd: $("cmd"), micBtn: $("micBtn"),
-      voiceName: $("voiceName"), memCount: $("memCount"), histCount: $("histCount"),
-      telemetryPanel: $("telemetryPanel"), logPanel: $("logPanel"), mainGrid: $("mainGrid"),
-      aiChip: $("aiChip"), aiChipText: $("aiChipText"),
-      micChip: $("micChip"), micChipText: $("micChipText"),
-      screenChip: $("screenChip"), screenChipText: $("screenChipText"),
-      settingsBtn: $("settingsBtn"), settingsClose: $("settingsClose"), settingsBackdrop: $("settingsBackdrop"),
-      screenBtn: $("screenBtn"), screenPreview: $("screenPreview"), screenPreviewCanvas: $("screenPreviewCanvas"),
-      stopScreenBtn: $("stopScreenBtn"), stopShareBtn: $("stopShareBtn"), shareScreenBtn: $("shareScreenBtn"),
-      stopSpeakBtn: $("stopSpeakBtn"),
-      setUserName: $("setUserName"),
-      setApiKey: $("setApiKey"), toggleKeyBtn: $("toggleKeyBtn"), clearKeyBtn: $("clearKeyBtn"),
-      copyKeyBtn: $("copyKeyBtn"), keySourceBadge: $("keySourceBadge"), keyLengthDisplay: $("keyLengthDisplay"),
-      diagnoseKeyBtn: $("diagnoseKeyBtn"), verifyKeyBtn: $("verifyKeyBtn"), hardResetBtn: $("hardResetBtn"),
-      setModel: $("setModel"), setVisionModel: $("setVisionModel"),
-      setTtsModel: $("setTtsModel"), setTtsModelCustom: $("setTtsModelCustom"),
-      setTtsVoice: $("setTtsVoice"), setTtsVoiceCustom: $("setTtsVoiceCustom"),
-      ttsVoiceHelp: $("ttsVoiceHelp"),
-      testAiBtn: $("testAiBtn"), testVisionBtn: $("testVisionBtn"), testTtsBtn: $("testTtsBtn"),
-      clearHistoryBtn: $("clearHistoryBtn"),
-      setScreenPreview: $("setScreenPreview"), setVisionDebug: $("setVisionDebug"),
-      setAlwaysOn: $("setAlwaysOn"), setRequireWake: $("setRequireWake"),
-      setWakeWord: $("setWakeWord"), setLang: $("setLang"),
-      setVoice: $("setVoice"), setRate: $("setRate"), setPitch: $("setPitch"), setVolume: $("setVolume"),
-      valRate: $("valRate"), valPitch: $("valPitch"), valVolume: $("valVolume"),
-      setSpeak: $("setSpeak"), testVoice: $("testVoice"),
-      setTelemetry: $("setTelemetry"), setLogPanel: $("setLogPanel"),
-      setGrid: $("setGrid"), setReduced: $("setReduced"),
-      clearLogBtn: $("clearLogBtn"), clearMemBtn: $("clearMemBtn"), resetBtn: $("resetBtn")
-    };
-    canvas = els.reactor;
-    if (canvas) ctx = canvas.getContext("2d");
-  }
-
-  function bindCheckbox(id, key, onChange) {
-    var el = els[id]; if (!el) return;
-    el.addEventListener("change", function (e) {
-      settings[key] = e.target.checked; saveSettings(); applySettings();
-      if (onChange) onChange(e.target.checked);
-    });
-  }
-  function bindRange(id, key, displayId) {
-    var el = els[id]; if (!el) return;
-    el.addEventListener("input", function (e) {
-      settings[key] = parseFloat(e.target.value);
-      if (els[displayId]) els[displayId].textContent = settings[key].toFixed(2);
-      saveSettings();
-    });
-  }
-
-  function bindAll() {
-    if (els.settingsBtn) els.settingsBtn.addEventListener("click", function () { userHasInteracted = true; toggleSettings(); });
-    if (els.settingsClose) els.settingsClose.addEventListener("click", closeSettings);
-    if (els.settingsBackdrop) els.settingsBackdrop.addEventListener("click", closeSettings);
-    document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeSettings(); });
-
-    if (els.micBtn) els.micBtn.addEventListener("click", toggleMic);
-    if (els.stopSpeakBtn) els.stopSpeakBtn.addEventListener("click", function () { stopSpeaking(false); });
-
-    if (els.screenBtn) els.screenBtn.addEventListener("click", function () {
-      userHasInteracted = true;
-      if (screenStream) stopScreenShare(); else startScreenShare();
-    });
-    if (els.shareScreenBtn) els.shareScreenBtn.addEventListener("click", startScreenShare);
-    if (els.stopShareBtn) els.stopShareBtn.addEventListener("click", stopScreenShare);
-    if (els.stopScreenBtn) els.stopScreenBtn.addEventListener("click", stopScreenShare);
-
-    if (els.cmd) {
-      els.cmd.addEventListener("keydown", function (e) {
-        if (e.key === "Enter") {
-          var val = els.cmd.value.trim(); els.cmd.value = "";
-          if (val) { userHasInteracted = true; logLine(val, "user"); handleCommand(val); }
-        }
-      });
-    }
-
-    document.addEventListener("click", function () { userHasInteracted = true; }, { once: true });
-    document.addEventListener("keydown", function () { userHasInteracted = true; }, { once: true });
-
-    if (els.setUserName) {
-      els.setUserName.addEventListener("input", function (e) { settings.userName = e.target.value.trim(); saveSettings(); });
-      els.setUserName.addEventListener("blur", function (e) {
-        var v = e.target.value.trim();
-        if (v && v !== cap(v)) { e.target.value = cap(v); settings.userName = cap(v); saveSettings(); }
-      });
-    }
-
-    // ============ API KEY FIELD ============
-    if (els.setApiKey) {
-      var syncKey = function () {
-        settings.apiKey = cleanKey(els.setApiKey.value);
-        saveSettings();
-        updateKeyLengthDisplay();
-        updateChips();
-      };
-      // Fires on every keystroke, paste via keyboard, cut, etc.
-      els.setApiKey.addEventListener("input", syncKey);
-      els.setApiKey.addEventListener("change", syncKey);
-      els.setApiKey.addEventListener("blur", syncKey);
-      // Programmatic paste (right-click, middle-click, etc.)
-      els.setApiKey.addEventListener("paste", function () {
-        setTimeout(syncKey, 0);
-        setTimeout(syncKey, 50);
-        setTimeout(syncKey, 200);
-      });
-      els.setApiKey.addEventListener("cut", function () {
-        setTimeout(syncKey, 0);
-        setTimeout(syncKey, 50);
-      });
-      // Autofill — poll the field briefly in case the browser inserts a value
-      setInterval(function () {
-        if (document.activeElement === els.setApiKey) return; // user is typing
-        var fieldVal = cleanKey(els.setApiKey.value);
-        var savedVal = cleanKey(settings.apiKey);
-        if (fieldVal && fieldVal !== savedVal) {
-          // Something (browser autofill) put a value in the field that isn't in settings
-          settings.apiKey = fieldVal;
-          saveSettings();
-          updateKeyLengthDisplay();
-        }
-      }, 800);
-    }
-
-    if (els.toggleKeyBtn) {
-      els.toggleKeyBtn.addEventListener("click", function () {
-        var k = els.setApiKey; if (!k) return;
-        if (k.type === "password") { k.type = "text"; els.toggleKeyBtn.textContent = "HIDE"; }
-        else { k.type = "password"; els.toggleKeyBtn.textContent = "SHOW"; }
-      });
-    }
-    if (els.copyKeyBtn) {
-      els.copyKeyBtn.addEventListener("click", function () {
-        var v = els.setApiKey ? els.setApiKey.value : "";
-        if (!v) { toast("Field is empty", "warn"); return; }
-        try {
-          navigator.clipboard.writeText(v);
-          toast("Copied " + cleanKey(v).length + " chars to clipboard", "ok");
-          logLine("Copied field value to clipboard (length " + cleanKey(v).length + ").", "sys");
-        } catch (e) { toast("Copy failed", "warn"); }
-      });
-    }
-    if (els.clearKeyBtn) {
-      els.clearKeyBtn.addEventListener("click", function () {
-        if (els.setApiKey) els.setApiKey.value = "";
-        settings.apiKey = "";
-        saveSettings(); updateChips();
-        logLine("API key field cleared.", "sys");
-        toast("Field cleared");
-      });
-    }
-    if (els.diagnoseKeyBtn) els.diagnoseKeyBtn.addEventListener("click", diagnoseKey);
-    if (els.verifyKeyBtn) els.verifyKeyBtn.addEventListener("click", verifyKey);
-    if (els.hardResetBtn) {
-      els.hardResetBtn.addEventListener("click", function () {
-        if (!confirm("This clears ALL A.C.E. data from this browser (settings, key, memories, history) and reloads the page. Continue?")) return;
-        try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
-        try {
-          // Nuke any old versions of the settings too
-          for (var i = 0; i < localStorage.length; i++) {
-            var k = localStorage.key(i);
-            if (k && k.indexOf("ace.settings.") === 0) localStorage.removeItem(k);
-          }
-        } catch (e) {}
-        logLine("Wiped. Reloading…", "sys");
-        setTimeout(function () { location.reload(); }, 400);
-      });
-    }
-
-    if (els.setModel) {
-      els.setModel.addEventListener("input", function (e) { settings.model = e.target.value.trim(); saveSettings(); updateChips(); });
-      els.setModel.addEventListener("blur", function (e) {
-        var cleaned = parseModelInput(e.target.value);
-        if (cleaned && cleaned !== e.target.value) { e.target.value = cleaned; settings.model = cleaned; saveSettings(); updateChips(); toast("Model cleaned up"); }
-      });
-    }
-    if (els.setVisionModel) {
-      els.setVisionModel.addEventListener("input", function (e) { settings.visionModel = e.target.value.trim(); saveSettings(); });
-      els.setVisionModel.addEventListener("blur", function (e) {
-        var cleaned = parseModelInput(e.target.value);
-        if (cleaned && cleaned !== e.target.value) { e.target.value = cleaned; settings.visionModel = cleaned; saveSettings(); }
-      });
-    }
-    if (els.setTtsModel) {
-      els.setTtsModel.addEventListener("change", function (e) {
-        var v = e.target.value;
-        if (v === "__custom__") {
-          if (els.setTtsModelCustom) { els.setTtsModelCustom.style.display = "block"; els.setTtsModelCustom.focus(); }
-        } else {
-          if (els.setTtsModelCustom) { els.setTtsModelCustom.style.display = "none"; els.setTtsModelCustom.value = ""; }
-          settings.ttsModel = v;
-          var list = TTS_VOICES[v];
-          settings.ttsVoice = (list && list.length) ? list[0].id : "";
-          saveSettings();
-          populateVoiceDropdown(settings.ttsModel);
-          updateTtsHelp(settings.ttsModel);
-          updateChips();
-          toast(v ? ("Voice: " + v) : "Browser voice");
-        }
-      });
-    }
-    if (els.setTtsModelCustom) {
-      els.setTtsModelCustom.addEventListener("input", function (e) {
-        settings.ttsModel = e.target.value.trim();
-        saveSettings();
-        populateVoiceDropdown(settings.ttsModel);
-        updateTtsHelp(settings.ttsModel);
-        updateChips();
-      });
-      els.setTtsModelCustom.addEventListener("blur", function (e) {
-        var cleaned = parseModelInput(e.target.value);
-        if (cleaned && cleaned !== e.target.value) { e.target.value = cleaned; settings.ttsModel = cleaned; saveSettings(); }
-      });
-    }
-    if (els.setTtsVoice) {
-      els.setTtsVoice.addEventListener("change", function (e) {
-        var v = e.target.value;
-        if (v === "__custom__") {
-          if (els.setTtsVoiceCustom) { els.setTtsVoiceCustom.style.display = "block"; els.setTtsVoiceCustom.focus(); }
-        } else {
-          if (els.setTtsVoiceCustom) { els.setTtsVoiceCustom.style.display = "none"; els.setTtsVoiceCustom.value = ""; }
-          settings.ttsVoice = v; saveSettings();
-        }
-      });
-    }
-    if (els.setTtsVoiceCustom) {
-      els.setTtsVoiceCustom.addEventListener("input", function (e) { settings.ttsVoice = e.target.value.trim(); saveSettings(); });
-    }
-
-    if (els.testAiBtn) {
-      els.testAiBtn.addEventListener("click", async function () {
-        userHasInteracted = true;
-        if (!aiConfigured()) { toast("Enter your API key and model", "warn"); return; }
-        els.testAiBtn.textContent = "Testing…"; els.testAiBtn.disabled = true;
-        try {
-          logLine("Chat test → " + settings.model + " | key length " + effectiveApiKey().length, "sys");
-          var reply = await askAI("Say 'A.C.E. online' — nothing else.", null);
-          logLine("Chat OK. Reply: " + reply.slice(0, 100), "ok");
-          toast("Chat connected", "ok"); speak("Chat connection verified.");
-        } catch (err) {
-          logLine("Chat error: " + (err && err.message || err), "err");
-          toast("Chat failed", "warn");
-          if (/401|403|auth/i.test(String(err && err.message))) highlightKeyField();
-        } finally {
-          els.testAiBtn.textContent = "Test chat connection"; els.testAiBtn.disabled = false; updateChips();
-        }
-      });
-    }
-    if (els.testVisionBtn) {
-      els.testVisionBtn.addEventListener("click", async function () {
-        userHasInteracted = true;
-        if (!aiConfigured()) { toast("Enter your API key first", "warn"); return; }
-        if (!screenStream) { toast("Share your screen first", "warn"); return; }
-        els.testVisionBtn.textContent = "Testing…"; els.testVisionBtn.disabled = true;
-        try {
-          if (Date.now() - screenWarmupAt < 500) await sleep(500);
-          var cap = captureScreenFrame();
-          if (cap.error) { logLine("Vision capture: " + cap.error, "err"); toast("Capture failed", "warn"); }
-          else {
-            logLine("Vision test → " + effectiveVisionModel() + ", image " + cap.width + "×" + cap.height, "sys");
-            var reply = await askAI("Describe in one sentence what is on this screen.", cap.dataUrl);
-            logLine("Vision reply: " + reply.slice(0, 200), "ace");
-            toast("Vision OK", "ok"); speak("Vision connection verified.");
-          }
-        } catch (err) {
-          logLine("Vision error: " + (err && err.message || err), "err"); toast("Vision failed", "warn");
-        } finally {
-          els.testVisionBtn.textContent = "Test vision connection"; els.testVisionBtn.disabled = false; updateChips();
-        }
-      });
-    }
-    if (els.testTtsBtn) {
-      els.testTtsBtn.addEventListener("click", function () {
-        userHasInteracted = true;
-        if (!ttsConfigured()) { toast("Set a TTS provider first", "warn"); return; }
-        logLine("Testing voice: " + settings.ttsModel + (settings.ttsVoice ? (" / " + settings.ttsVoice) : " (default)"), "sys");
-        speak("This is A.C.E., testing the voice engine. All systems are operating within normal parameters.");
-      });
-    }
-    if (els.clearHistoryBtn) {
-      els.clearHistoryBtn.addEventListener("click", function () {
-        conversationHistory = [];
-        if (els.histCount) els.histCount.textContent = "0";
-        toast("History cleared"); logLine("Conversation history cleared.", "sys");
-      });
-    }
-
-    bindCheckbox("setScreenPreview", "screenPreview", function (on) {
-      if (els.screenPreview) els.screenPreview.classList.toggle("on", on && !!screenStream);
-    });
-    bindCheckbox("setVisionDebug", "visionDebug");
-    bindCheckbox("setRequireWake", "requireWake");
-    bindCheckbox("setAlwaysOn", "alwaysOn", function (on) {
-      if (on) {
-        var go = function () {
-          startListening();
-          document.removeEventListener("click", go);
-          document.removeEventListener("keydown", go);
-        };
-        if (userHasInteracted) startListening();
-        else { document.addEventListener("click", go); document.addEventListener("keydown", go); }
-        toast("Always-listening enabled");
-        logLine("Always-listening mode enabled.", "ok");
-      } else {
-        stopListening(); toast("Always-listening disabled"); logLine("Always-listening mode disabled.", "sys");
-      }
-    });
-    if (els.setWakeWord) els.setWakeWord.addEventListener("input", function (e) { settings.wakeWord = e.target.value.trim() || "ace"; saveSettings(); });
-    if (els.setLang) {
-      els.setLang.addEventListener("change", function (e) {
-        settings.lang = e.target.value; saveSettings();
-        if (recognition) {
-          recognition.lang = settings.lang;
-          if (wantListening) { stopListening(); setTimeout(startListening, 300); }
-        }
-        toast("Language updated");
-      });
-    }
-    if (els.setVoice) {
-      els.setVoice.addEventListener("change", function (e) {
-        settings.voiceName = e.target.value; saveSettings();
-        var v = pickVoiceByName(settings.voiceName);
-        if (els.voiceName) els.voiceName.textContent = (v ? v.name : (jarvisVoice ? jarvisVoice.name : "DEFAULT")).toUpperCase().slice(0, 16);
-      });
-    }
-    bindRange("setRate", "rate", "valRate");
-    bindRange("setPitch", "pitch", "valPitch");
-    bindRange("setVolume", "volume", "valVolume");
-    bindCheckbox("setSpeak", "speak");
-    if (els.testVoice) {
-      els.testVoice.addEventListener("click", function () {
-        userHasInteracted = true;
-        var was = settings.speak; settings.speak = true;
-        browserSpeak("A.C.E. browser voice fallback operational.");
-        if (!was) setTimeout(function () { settings.speak = false; }, 300);
-      });
-    }
-    bindCheckbox("setTelemetry", "showTelemetry");
-    bindCheckbox("setLogPanel", "showLog");
-    bindCheckbox("setGrid", "showGrid");
-    bindCheckbox("setReduced", "reducedMotion");
-
-    if (els.clearLogBtn) els.clearLogBtn.addEventListener("click", function () {
-      if (els.log) els.log.innerHTML = ""; logCount = 0;
-      if (els.logCount) els.logCount.textContent = "0";
-      logLine("Activity log cleared.", "sys"); toast("Log cleared");
-    });
-    if (els.clearMemBtn) els.clearMemBtn.addEventListener("click", function () {
-      settings.memories = {}; settings.notes = [];
-      saveSettings(); applySettings();
-      logLine("All memories and notes erased.", "sys"); toast("Memories cleared");
-    });
-    if (els.resetBtn) els.resetBtn.addEventListener("click", function () {
-      if (!confirm("Reset all settings to defaults? This will also erase memories, notes, and history.")) return;
-      settings = JSON.parse(JSON.stringify(DEFAULTS));
-      settings.memories = {}; settings.notes = [];
-      conversationHistory = [];
-      saveSettings(); applySettings();
-      if (els.setApiKey) els.setApiKey.value = "";
-      if (recognition) recognition.lang = settings.lang;
-      stopListening(); stopScreenShare(); stopAudio();
-      if (els.histCount) els.histCount.textContent = "0";
-      logLine("All settings reset to defaults.", "sys"); toast("Settings reset");
-    });
-
-    window.addEventListener("resize", resizeCanvas);
-  }
-
-  function init() {
-    cacheElements();
-    bindAll();
-    applySettings();
-    setupRecognition();
-    refreshVoices();
-
-    // Initial sync — make sure field value matches settings exactly on first load
-    if (els.setApiKey && !els.setApiKey.value && settings.apiKey) {
-      els.setApiKey.value = settings.apiKey;
-    }
-    updateKeyLengthDisplay();
-
-    if ("speechSynthesis" in window) {
-      speechSynthesis.onvoiceschanged = refreshVoices;
-      setTimeout(refreshVoices, 500);
-      setTimeout(refreshVoices, 1500);
-    } else if (els.voiceName) els.voiceName.textContent = "UNSUPPORTED";
-    if (!micSupported) logLine("Speech recognition unsupported — use Chrome or Edge.", "warn");
-
-    setInterval(tickClock, 1000); tickClock();
-    setInterval(tickUptime, 1000); tickUptime();
-    setInterval(updateStats, 1400); updateStats();
-    setInterval(function () { if (!listening && !aiBusy) energy = clamp(energy + rand(-0.05, 0.06), 0.1, 0.55); }, 1800);
-
-    resizeCanvas();
-    lastFrame = performance.now();
-    requestAnimationFrame(loop);
-    setTimeout(resizeCanvas, 200);
-    setTimeout(resizeCanvas, 600);
-
-    setTimeout(function () {
-      if (els.boot && !els.boot.classList.contains("done")) {
-        els.boot.classList.add("done");
-        logLine("Boot sequence timed out — interface ready.", "warn");
-      }
-    }, 6500);
-
-    runBoot().catch(function (err) { console.error("Boot error:", err); if (els.boot) els.boot.classList.add("done"); });
-  }
-
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
-  else init();
-
-})();
-</script>
-</body>
-</html>
+  return voices.find(v => v.lang && v.lang.toLowerCase().startsWith("en")) || voices[0];
+}
+
+function browserSpeak(text) {
+  if (!window.speechSynthesis) { setState(""); return; }
+  speechSynthesis.cancel();
+
+  const u = new SpeechSynthesisUtterance(text);
+  const v = pickVoice();
+  if (v) u.voice = v;
+  u.rate = 1.0;
+  u.pitch = 0.95;
+  u.volume = 1;
+  u.onend = () => setState("");
+  u.onerror = () => setState("");
+
+  setState("speaking");
+  speechSynthesis.speak(u);
+}
+
+/* ---------------- text cleanup for TTS ---------------- */
+function stripForSpeech(text) {
+  return String(text)
+    .replace(/
