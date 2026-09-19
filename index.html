@@ -15,6 +15,8 @@
     --text:#bfeaf5;
     --dim:#4d7f8e;
     --warn:#ffb347;
+    --ok:#3ee87e;
+    --danger:#ff5c7a;
   }
 
   *{box-sizing:border-box}
@@ -29,169 +31,168 @@
     overflow:hidden;
     -webkit-font-smoothing:antialiased;
   }
+  button{font-family:inherit;letter-spacing:inherit;color:inherit}
 
-  /* ---------- background layers ---------- */
-  .bg-grid,.bg-vignette,.bg-scan{
-    position:fixed; inset:0; pointer-events:none; z-index:0;
-  }
+  /* ---------- background ---------- */
+  .bg-grid,.bg-vignette,.bg-scan{position:fixed;inset:0;pointer-events:none;z-index:0}
   .bg-grid{
     background:
       radial-gradient(circle at 50% 42%, rgba(0,130,180,.22), transparent 62%),
       linear-gradient(rgba(0,229,255,.045) 1px, transparent 1px) 0 0/100% 42px,
       linear-gradient(90deg, rgba(0,229,255,.045) 1px, transparent 1px) 0 0/42px 100%;
+    transition:opacity .3s;
   }
-  .bg-vignette{
-    background:radial-gradient(circle at 50% 50%, transparent 45%, rgba(0,0,0,.75) 100%);
-  }
+  body.no-grid .bg-grid{opacity:0}
+  .bg-vignette{background:radial-gradient(circle at 50% 50%, transparent 45%, rgba(0,0,0,.75) 100%)}
   .bg-scan{
     background:repeating-linear-gradient(to bottom, rgba(0,229,255,.035) 0 1px, transparent 1px 3px);
-    mix-blend-mode:screen; opacity:.5;
+    mix-blend-mode:screen;opacity:.5;transition:opacity .3s;
   }
+  body.reduced-motion .bg-scan{opacity:0}
 
   /* ---------- layout ---------- */
-  #app{
-    position:relative; z-index:1;
-    height:100%;
-    display:grid;
-    grid-template-rows:auto 1fr auto;
-  }
+  #app{position:relative;z-index:1;height:100%;display:grid;grid-template-rows:auto 1fr auto}
 
   header{
-    display:flex; align-items:center; justify-content:space-between;
-    gap:16px;
-    padding:12px 20px;
-    border-bottom:1px solid var(--line);
+    display:flex;align-items:center;justify-content:space-between;gap:16px;
+    padding:12px 20px;border-bottom:1px solid var(--line);
     background:linear-gradient(180deg, rgba(0,40,60,.35), transparent);
   }
-  .brand{display:flex; align-items:center; gap:12px}
+  .brand{display:flex;align-items:center;gap:12px}
   .brand .dot{
     width:8px;height:8px;border-radius:50%;
-    background:var(--cyan); box-shadow:0 0 10px var(--cyan);
+    background:var(--cyan);box-shadow:0 0 10px var(--cyan);
     animation:blink 2.4s infinite;
   }
   @keyframes blink{0%,92%{opacity:1}94%,100%{opacity:.25}}
-  .brand h1{
-    margin:0; font-size:15px; font-weight:600; letter-spacing:.42em;
-    color:#eafcff; text-shadow:0 0 14px rgba(0,229,255,.55);
+  .brand h1{margin:0;font-size:15px;font-weight:600;letter-spacing:.42em;color:#eafcff;text-shadow:0 0 14px rgba(0,229,255,.55)}
+  .brand small{color:var(--dim);letter-spacing:.2em;font-size:10px}
+  .head-right{display:flex;align-items:center;gap:12px;color:var(--dim);font-size:11px}
+  #clock{color:var(--cyan);text-shadow:0 0 10px rgba(0,229,255,.4)}
+
+  .listen-badge{
+    display:none;align-items:center;gap:6px;
+    padding:4px 10px;border:1px solid rgba(62,232,126,.45);
+    background:rgba(62,232,126,.08);color:var(--ok);
+    font-size:10px;letter-spacing:.22em;border-radius:2px;
   }
-  .brand small{color:var(--dim); letter-spacing:.2em; font-size:10px}
-  .head-right{display:flex; align-items:center; gap:14px; color:var(--dim); font-size:11px}
-  #clock{color:var(--cyan); text-shadow:0 0 10px rgba(0,229,255,.4)}
+  .listen-badge.on{display:inline-flex}
+  .listen-badge .pulse{
+    width:6px;height:6px;border-radius:50%;background:var(--ok);
+    box-shadow:0 0 8px var(--ok);animation:pulseDot 1.4s infinite;
+  }
+  .listen-badge.paused{border-color:rgba(255,179,71,.5);background:rgba(255,179,71,.08);color:var(--warn)}
+  .listen-badge.paused .pulse{background:var(--warn);box-shadow:0 0 8px var(--warn)}
+  @keyframes pulseDot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.75)}}
+
+  .icon-btn{
+    width:34px;height:34px;display:grid;place-items:center;
+    background:transparent;border:1px solid var(--line);
+    color:var(--cyan);cursor:pointer;border-radius:2px;
+    transition:all .2s;font-size:15px;
+  }
+  .icon-btn:hover{border-color:var(--cyan-soft);background:rgba(0,229,255,.08);box-shadow:0 0 14px rgba(0,229,255,.2)}
+  .icon-btn.active{background:rgba(0,229,255,.15);border-color:var(--cyan)}
 
   main{
     display:grid;
     grid-template-columns:270px minmax(0,1fr) 330px;
-    gap:16px;
-    padding:16px 20px;
-    min-height:0;
+    gap:16px;padding:16px 20px;min-height:0;
   }
+  main.no-telemetry{grid-template-columns:minmax(0,1fr) 330px}
+  main.no-log{grid-template-columns:270px minmax(0,1fr)}
+  main.no-telemetry.no-log{grid-template-columns:minmax(0,1fr)}
 
   .panel{
-    position:relative;
-    background:var(--panel);
-    border:1px solid var(--line);
-    backdrop-filter:blur(6px);
-    -webkit-backdrop-filter:blur(6px);
-    padding:14px;
-    display:flex; flex-direction:column; min-height:0;
+    position:relative;background:var(--panel);border:1px solid var(--line);
+    backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+    padding:14px;display:flex;flex-direction:column;min-height:0;
     clip-path:polygon(0 14px,14px 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%);
   }
   .panel::after{
-    content:''; position:absolute; inset:0; pointer-events:none;
+    content:'';position:absolute;inset:0;pointer-events:none;
     background:linear-gradient(180deg, rgba(0,229,255,.05), transparent 30%);
   }
-
+  .panel.hidden{display:none}
   .panel-title{
-    display:flex; align-items:center; justify-content:space-between;
-    font-size:10px; letter-spacing:.28em; color:var(--cyan);
-    text-transform:uppercase; margin-bottom:12px;
-    padding-bottom:8px; border-bottom:1px solid var(--line-soft);
+    display:flex;align-items:center;justify-content:space-between;
+    font-size:10px;letter-spacing:.28em;color:var(--cyan);
+    text-transform:uppercase;margin-bottom:12px;
+    padding-bottom:8px;border-bottom:1px solid var(--line-soft);
   }
-  .panel-title .tag{color:var(--dim); letter-spacing:.14em}
+  .panel-title .tag{color:var(--dim);letter-spacing:.14em}
 
   /* ---------- stats ---------- */
   .stat{margin-bottom:11px}
-  .stat .row{display:flex; justify-content:space-between; font-size:10px; color:var(--dim); margin-bottom:5px}
-  .stat .row b{color:var(--text); font-weight:500}
-  .bar{
-    height:5px; background:rgba(0,229,255,.08);
-    border:1px solid var(--line-soft); overflow:hidden;
-  }
+  .stat .row{display:flex;justify-content:space-between;font-size:10px;color:var(--dim);margin-bottom:5px}
+  .stat .row b{color:var(--text);font-weight:500}
+  .bar{height:5px;background:rgba(0,229,255,.08);border:1px solid var(--line-soft);overflow:hidden}
   .bar i{
-    display:block; height:100%; width:0%;
+    display:block;height:100%;width:0;
     background:linear-gradient(90deg, rgba(0,229,255,.35), var(--cyan));
     box-shadow:0 0 10px rgba(0,229,255,.6);
     transition:width .6s cubic-bezier(.4,0,.2,1);
   }
-  .readouts{margin-top:auto; padding-top:12px; border-top:1px solid var(--line-soft); font-size:10px; color:var(--dim); line-height:1.9}
+  .readouts{margin-top:auto;padding-top:12px;border-top:1px solid var(--line-soft);font-size:10px;color:var(--dim);line-height:1.9}
   .readouts span{color:var(--text)}
 
   /* ---------- core ---------- */
-  .core{
-    position:relative; display:flex; align-items:center; justify-content:center;
-    min-height:0;
-  }
-  #reactor{width:100%; height:100%; display:block}
+  .core{position:relative;display:flex;align-items:center;justify-content:center;min-height:0}
+  #reactor{width:100%;height:100%;display:block}
   .core-overlay{
-    position:absolute; inset:0; display:flex; flex-direction:column;
-    align-items:center; justify-content:center; pointer-events:none; text-align:center;
+    position:absolute;inset:0;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;pointer-events:none;text-align:center;padding:0 20px;
   }
   #statusText{
-    font-size:11px; letter-spacing:.5em; color:var(--cyan);
-    text-shadow:0 0 12px rgba(0,229,255,.7); text-transform:uppercase;
-    margin-top: calc(min(60vh, 100%) * 0.02);
+    font-size:11px;letter-spacing:.5em;color:var(--cyan);
+    text-shadow:0 0 12px rgba(0,229,255,.7);text-transform:uppercase;
   }
-  .core-sub{font-size:10px; color:var(--dim); letter-spacing:.24em; margin-top:8px}
+  .core-sub{font-size:10px;color:var(--dim);letter-spacing:.24em;margin-top:8px;min-height:14px}
 
   /* ---------- log ---------- */
   #log{
-    flex:1; overflow-y:auto; min-height:0; padding-right:6px;
-    display:flex; flex-direction:column; gap:7px;
-    scrollbar-width:thin; scrollbar-color:rgba(0,229,255,.3) transparent;
+    flex:1;overflow-y:auto;min-height:0;padding-right:6px;
+    display:flex;flex-direction:column;gap:7px;
+    scrollbar-width:thin;scrollbar-color:rgba(0,229,255,.3) transparent;
   }
   #log::-webkit-scrollbar{width:5px}
   #log::-webkit-scrollbar-thumb{background:rgba(0,229,255,.3)}
-  .log-line{display:flex; gap:8px; line-height:1.5; animation:fadeIn .3s ease}
-  @keyframes fadeIn{from{opacity:0; transform:translateY(4px)}to{opacity:1;transform:none}}
-  .log-line .t{color:var(--dim); font-size:10px; flex:0 0 auto; padding-top:1px}
-  .log-line .m{flex:1; word-break:break-word}
-  .log-line.jarvis .m{color:#8ff3ff; text-shadow:0 0 8px rgba(0,229,255,.25)}
+  .log-line{display:flex;gap:8px;line-height:1.5;animation:fadeIn .3s ease}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+  .log-line .t{color:var(--dim);font-size:10px;flex:0 0 auto;padding-top:1px}
+  .log-line .m{flex:1;word-break:break-word}
+  .log-line.jarvis .m{color:#8ff3ff;text-shadow:0 0 8px rgba(0,229,255,.25)}
   .log-line.user .m{color:#fff}
   .log-line.user .t{color:#2f6d80}
   .log-line.sys .m{color:var(--dim)}
   .log-line.warn .m{color:var(--warn)}
+  .log-line.ok .m{color:var(--ok)}
 
   /* ---------- footer ---------- */
   footer{
-    padding:12px 20px 18px;
-    border-top:1px solid var(--line);
+    padding:12px 20px 18px;border-top:1px solid var(--line);
     background:linear-gradient(0deg, rgba(0,40,60,.35), transparent);
   }
   .console{
-    display:flex; align-items:center; gap:12px;
-    border:1px solid var(--line);
-    background:rgba(0,20,32,.6);
-    padding:8px 12px;
+    display:flex;align-items:center;gap:12px;
+    border:1px solid var(--line);background:rgba(0,20,32,.6);padding:8px 12px;
     clip-path:polygon(0 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%);
   }
-  .console .prompt{color:var(--cyan); font-size:14px; text-shadow:0 0 8px rgba(0,229,255,.6)}
+  .console .prompt{color:var(--cyan);font-size:14px;text-shadow:0 0 8px rgba(0,229,255,.6)}
   #cmd{
-    flex:1; background:transparent; border:0; outline:0;
-    color:var(--text); font-family:inherit; font-size:13px; letter-spacing:.06em;
+    flex:1;background:transparent;border:0;outline:0;
+    color:var(--text);font-family:inherit;font-size:13px;letter-spacing:.06em;
   }
   #cmd::placeholder{color:#2f6d80}
 
   .mic{
-    position:relative;
-    width:46px;height:46px; flex:0 0 auto;
-    border-radius:50%;
+    position:relative;width:46px;height:46px;flex:0 0 auto;border-radius:50%;
     border:1px solid var(--cyan-soft);
     background:radial-gradient(circle at 50% 40%, rgba(0,229,255,.22), rgba(0,229,255,.04));
-    color:var(--cyan); cursor:pointer;
-    display:grid; place-items:center;
+    color:var(--cyan);cursor:pointer;display:grid;place-items:center;
     transition:transform .15s ease, box-shadow .25s ease, background .25s ease;
   }
-  .mic:hover{transform:scale(1.06); box-shadow:0 0 18px rgba(0,229,255,.35)}
+  .mic:hover{transform:scale(1.06);box-shadow:0 0 18px rgba(0,229,255,.35)}
   .mic svg{width:20px;height:20px;fill:currentColor}
   .mic.listening{
     background:radial-gradient(circle at 50% 40%, rgba(0,229,255,.5), rgba(0,229,255,.1));
@@ -199,54 +200,208 @@
     animation:pulseBtn 1.3s infinite;
   }
   @keyframes pulseBtn{0%,100%{transform:scale(1)}50%{transform:scale(1.09)}}
+  .mic.always{
+    border-color:var(--ok);
+    background:radial-gradient(circle at 50% 40%, rgba(62,232,126,.35), rgba(62,232,126,.05));
+    color:var(--ok);
+    box-shadow:0 0 22px rgba(62,232,126,.4);
+  }
+  .mic.always.listening{box-shadow:0 0 30px rgba(62,232,126,.75)}
   .mic::after{
-    content:''; position:absolute; inset:-6px; border-radius:50%;
-    border:1px solid rgba(0,229,255,.35); opacity:0; transition:opacity .3s;
+    content:'';position:absolute;inset:-6px;border-radius:50%;
+    border:1px solid rgba(0,229,255,.35);opacity:0;transition:opacity .3s;
   }
-  .mic.listening::after{opacity:1; animation:ripple 1.6s infinite}
+  .mic.listening::after{opacity:1;animation:ripple 1.6s infinite}
   @keyframes ripple{0%{transform:scale(.9);opacity:.9}100%{transform:scale(1.5);opacity:0}}
+  .mic.muted{opacity:.4}
 
-  .hint{text-align:center; color:#2f6d80; font-size:10px; letter-spacing:.2em; margin-top:9px}
-  .hint b{color:var(--cyan-soft); font-weight:500}
+  .hint{text-align:center;color:#2f6d80;font-size:10px;letter-spacing:.2em;margin-top:9px}
+  .hint b{color:var(--cyan-soft);font-weight:500}
 
-  /* ---------- boot overlay ---------- */
+  /* ---------- boot ---------- */
   #boot{
-    position:fixed; inset:0; z-index:50;
-    background:#02060d;
-    display:flex; flex-direction:column; align-items:center; justify-content:center;
-    gap:20px; padding:24px;
-    transition:opacity .8s ease, visibility .8s;
+    position:fixed;inset:0;z-index:80;background:#02060d;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:20px;padding:24px;transition:opacity .8s ease, visibility .8s;
   }
-  #boot.done{opacity:0; visibility:hidden}
-  #bootLog{
-    width:min(560px,90vw); font-size:12px; line-height:2;
-    color:var(--cyan-soft); min-height:220px;
-  }
-  #bootLog div{opacity:0; animation:fadeIn .25s forwards}
+  #boot.done{opacity:0;visibility:hidden;pointer-events:none}
+  #bootLog{width:min(560px,90vw);font-size:12px;line-height:2;color:var(--cyan-soft);min-height:220px}
+  #bootLog div{opacity:0;animation:fadeIn .25s forwards}
   #bootLog .ok{color:var(--cyan)}
-  #bootBar{
-    width:min(560px,90vw); height:2px; background:rgba(0,229,255,.12); overflow:hidden;
-  }
+  #bootBar{width:min(560px,90vw);height:2px;background:rgba(0,229,255,.12);overflow:hidden}
   #bootBar i{display:block;height:100%;width:0;background:var(--cyan);box-shadow:0 0 12px var(--cyan);transition:width .35s}
-  .boot-title{
-    font-size:26px; letter-spacing:.6em; color:#eafcff;
-    text-shadow:0 0 26px rgba(0,229,255,.8); margin:0 0 4px;
+  .boot-title{font-size:26px;letter-spacing:.6em;color:#eafcff;text-shadow:0 0 26px rgba(0,229,255,.8);margin:0 0 4px}
+
+  /* ---------- settings ---------- */
+  .settings-backdrop{
+    position:fixed;inset:0;background:rgba(0,5,10,.6);
+    backdrop-filter:blur(2px);z-index:45;
+    opacity:0;visibility:hidden;transition:opacity .3s, visibility .3s;
   }
+  .settings-backdrop.open{opacity:1;visibility:visible}
+
+  .settings-panel{
+    position:fixed;top:0;right:0;bottom:0;width:min(420px,94vw);
+    background:rgba(2,10,17,.97);
+    border-left:1px solid var(--line);
+    z-index:50;
+    display:flex;flex-direction:column;
+    transform:translateX(105%);
+    transition:transform .38s cubic-bezier(.4,0,.2,1);
+    box-shadow:-30px 0 60px rgba(0,0,0,.6);
+  }
+  .settings-panel.open{transform:translateX(0)}
+
+  .settings-header{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:16px 20px;border-bottom:1px solid var(--line);
+    background:linear-gradient(180deg, rgba(0,60,90,.25), transparent);
+  }
+  .settings-header h2{
+    margin:0;font-size:12px;letter-spacing:.42em;color:var(--cyan);
+    text-transform:uppercase;font-weight:600;
+    text-shadow:0 0 12px rgba(0,229,255,.5);
+  }
+  .settings-body{
+    flex:1;overflow-y:auto;padding:18px 20px 30px;
+    scrollbar-width:thin;scrollbar-color:rgba(0,229,255,.3) transparent;
+  }
+  .settings-body::-webkit-scrollbar{width:6px}
+  .settings-body::-webkit-scrollbar-thumb{background:rgba(0,229,255,.25);border-radius:3px}
+
+  .setting-group{
+    margin-bottom:26px;padding-bottom:20px;
+    border-bottom:1px solid var(--line-soft);
+  }
+  .setting-group:last-of-type{border-bottom:0}
+  .setting-group h3{
+    margin:0 0 14px;font-size:10px;letter-spacing:.3em;
+    color:var(--cyan);text-transform:uppercase;font-weight:600;
+    display:flex;align-items:center;gap:8px;
+  }
+  .setting-group h3::after{
+    content:'';flex:1;height:1px;background:var(--line-soft);
+  }
+
+  .setting-row{
+    display:flex;align-items:center;justify-content:space-between;
+    gap:14px;padding:9px 0;font-size:12px;color:var(--text);
+    cursor:pointer;user-select:none;
+  }
+  .setting-row.col{flex-direction:column;align-items:stretch;gap:8px;cursor:default}
+  .setting-row.col > span{
+    display:flex;justify-content:space-between;align-items:center;
+    color:var(--dim);font-size:11px;letter-spacing:.06em;
+  }
+  .setting-row.col > span b{color:var(--cyan);font-weight:500;font-variant-numeric:tabular-nums}
+
+  .setting-help{
+    font-size:10.5px;color:#3d6b7a;line-height:1.65;
+    margin:-4px 0 10px;letter-spacing:.02em;
+  }
+
+  /* switch */
+  .switch{
+    appearance:none;-webkit-appearance:none;
+    width:42px;height:22px;border-radius:11px;
+    background:rgba(0,229,255,.10);
+    border:1px solid var(--line);
+    position:relative;cursor:pointer;flex:0 0 auto;
+    transition:background .25s, border-color .25s, box-shadow .25s;
+  }
+  .switch::after{
+    content:'';position:absolute;top:2px;left:2px;
+    width:16px;height:16px;border-radius:50%;
+    background:#4d7f8e;transition:all .25s cubic-bezier(.4,0,.2,1);
+  }
+  .switch:checked{background:rgba(0,229,255,.3);border-color:var(--cyan);box-shadow:0 0 12px rgba(0,229,255,.35)}
+  .switch:checked::after{left:22px;background:var(--cyan);box-shadow:0 0 10px var(--cyan)}
+  .switch:focus-visible{outline:2px solid var(--cyan-soft);outline-offset:2px}
+
+  .text-input, select.text-input{
+    width:100%;background:rgba(0,20,32,.7);
+    border:1px solid var(--line);color:var(--text);
+    font-family:inherit;font-size:12px;letter-spacing:.04em;
+    padding:9px 11px;border-radius:2px;outline:0;
+    transition:border-color .2s, box-shadow .2s;
+  }
+  .text-input:focus{border-color:var(--cyan-soft);box-shadow:0 0 12px rgba(0,229,255,.2)}
+  select.text-input{cursor:pointer}
+  select.text-input option{background:#04121c;color:var(--text)}
+
+  input[type=range].range{
+    -webkit-appearance:none;appearance:none;
+    width:100%;height:4px;border-radius:2px;
+    background:rgba(0,229,255,.15);outline:0;cursor:pointer;
+  }
+  input[type=range].range::-webkit-slider-thumb{
+    -webkit-appearance:none;appearance:none;
+    width:14px;height:14px;border-radius:50%;
+    background:var(--cyan);box-shadow:0 0 12px rgba(0,229,255,.7);
+    cursor:pointer;border:0;
+  }
+  input[type=range].range::-moz-range-thumb{
+    width:14px;height:14px;border-radius:50%;border:0;
+    background:var(--cyan);box-shadow:0 0 12px rgba(0,229,255,.7);cursor:pointer;
+  }
+
+  .btn{
+    display:block;width:100%;margin-top:8px;
+    background:rgba(0,229,255,.08);border:1px solid var(--line);
+    color:var(--cyan);padding:10px 14px;font-size:11px;
+    letter-spacing:.22em;text-transform:uppercase;cursor:pointer;
+    border-radius:2px;transition:all .2s;
+  }
+  .btn:hover{background:rgba(0,229,255,.18);border-color:var(--cyan-soft);box-shadow:0 0 16px rgba(0,229,255,.25)}
+  .btn:active{transform:translateY(1px)}
+  .btn.danger{color:var(--danger);border-color:rgba(255,92,122,.3);background:rgba(255,92,122,.06)}
+  .btn.danger:hover{background:rgba(255,92,122,.15);border-color:rgba(255,92,122,.6);box-shadow:0 0 16px rgba(255,92,122,.25)}
+
+  .settings-footer{
+    padding:16px 20px;border-top:1px solid var(--line-soft);
+    font-size:10px;color:#2f6d80;letter-spacing:.2em;text-align:center;
+  }
+
+  /* ---------- toast ---------- */
+  .toast{
+    position:fixed;bottom:110px;left:50%;
+    transform:translate(-50%,20px);
+    background:rgba(0,229,255,.12);
+    border:1px solid var(--cyan-soft);
+    color:var(--cyan);padding:10px 20px;
+    font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+    opacity:0;transition:all .3s;z-index:70;pointer-events:none;
+    backdrop-filter:blur(8px);border-radius:2px;
+    box-shadow:0 0 24px rgba(0,229,255,.25);
+  }
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+  .toast.warn{background:rgba(255,179,71,.12);border-color:rgba(255,179,71,.5);color:var(--warn);box-shadow:0 0 24px rgba(255,179,71,.25)}
+
+  /* ---------- alert flash ---------- */
+  body.flash::before{
+    content:'';position:fixed;inset:0;z-index:65;
+    background:radial-gradient(circle at 50% 50%, rgba(0,229,255,.35), transparent 70%);
+    pointer-events:none;animation:flashFade 1.2s ease-out forwards;
+  }
+  @keyframes flashFade{from{opacity:1}to{opacity:0}}
 
   /* ---------- responsive ---------- */
   @media (max-width:1000px){
-    main{grid-template-columns:1fr; grid-template-rows:auto minmax(240px,1fr) minmax(160px,auto); overflow-y:auto}
+    main{grid-template-columns:1fr;grid-template-rows:auto minmax(240px,1fr) minmax(160px,auto);overflow-y:auto}
+    main.no-telemetry,main.no-log,main.no-telemetry.no-log{grid-template-columns:1fr}
     body{overflow:auto}
-    #app{height:auto; min-height:100%}
+    #app{height:auto;min-height:100%}
     .core{min-height:280px}
-    .panel{min-height:0}
+    .settings-panel{width:100%}
   }
   @media (max-width:520px){
-    header{padding:10px 14px}
-    .brand h1{font-size:12px; letter-spacing:.3em}
+    header{padding:10px 14px;gap:8px}
+    .brand h1{font-size:12px;letter-spacing:.3em}
     .head-right .hide-sm{display:none}
-    main{padding:12px 14px; gap:12px}
+    main{padding:12px 14px;gap:12px}
     footer{padding:10px 14px 14px}
+    .hint{font-size:9px;letter-spacing:.12em}
+    .hint .hide-xs{display:none}
   }
 </style>
 </head>
@@ -274,15 +429,19 @@
       </div>
     </div>
     <div class="head-right">
+      <span class="listen-badge" id="listenBadge"><span class="pulse"></span><span id="listenBadgeText">ALWAYS LISTENING</span></span>
       <span class="hide-sm" id="netLabel">UPLINK: SECURE</span>
       <span id="clock">--:--:--</span>
+      <button class="icon-btn" id="settingsBtn" title="Settings" aria-label="Open settings">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M19.14 12.94a7.5 7.5 0 0 0 .06-.94 7.5 7.5 0 0 0-.06-.94l2.03-1.58a.5.5 0 0 0 .12-.64l-1.92-3.32a.5.5 0 0 0-.6-.22l-2.39.96a7.3 7.3 0 0 0-1.62-.94l-.36-2.54a.5.5 0 0 0-.5-.42h-3.84a.5.5 0 0 0-.5.42l-.36 2.54c-.59.24-1.13.56-1.62.94l-2.39-.96a.5.5 0 0 0-.6.22L2.67 8.84a.5.5 0 0 0 .12.64l2.03 1.58c-.04.31-.06.62-.06.94s.02.63.06.94l-2.03 1.58a.5.5 0 0 0-.12.64l1.92 3.32c.13.22.39.3.6.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.04.24.25.42.5.42h3.84c.25 0 .46-.18.5-.42l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .6-.22l1.92-3.32a.5.5 0 0 0-.12-.64l-2.03-1.58zM12 15.6A3.6 3.6 0 1 1 12 8.4a3.6 3.6 0 0 1 0 7.2z"/></svg>
+      </button>
     </div>
   </header>
 
-  <main>
+  <main id="mainGrid">
     <!-- LEFT PANEL -->
-    <aside class="panel">
-      <div class="panel-title">System Diagnostics <span class="tag">v4.2.1</span></div>
+    <aside class="panel" id="telemetryPanel">
+      <div class="panel-title">System Diagnostics <span class="tag">v5.0</span></div>
 
       <div class="stat">
         <div class="row"><span>ARC REACTOR</span><b id="v-pwr">98%</b></div>
@@ -306,9 +465,10 @@
       </div>
 
       <div class="readouts">
-        <div>PROTOCOL <span>MARK VII</span></div>
+        <div>PROTOCOL <span>MARK VIII</span></div>
         <div>VOICE <span id="voiceName">SCANNING…</span></div>
         <div>MIC <span id="micState">STANDBY</span></div>
+        <div>MEMORIES <span id="memCount">0</span></div>
         <div>UPTIME <span id="uptime">00:00:00</span></div>
       </div>
     </aside>
@@ -323,7 +483,7 @@
     </section>
 
     <!-- RIGHT PANEL -->
-    <aside class="panel">
+    <aside class="panel" id="logPanel">
       <div class="panel-title">Activity Log <span class="tag" id="logCount">0</span></div>
       <div id="log"></div>
     </aside>
@@ -338,9 +498,137 @@
         <svg viewBox="0 0 24 24"><path d="M12 14a3 3 0 0 0 3-3V6a3 3 0 1 0-6 0v5a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11h-2z"/></svg>
       </button>
     </div>
-    <div class="hint">TRY: <b>“what time is it”</b> · <b>“open github”</b> · <b>“search for arc reactor”</b> · <b>“help”</b></div>
+    <div class="hint">
+      TRY: <b>“set a timer for 2 minutes”</b> ·
+      <b>“remember my wifi password is hunter2”</b> ·
+      <b>“convert 5 km to miles”</b> ·
+      <b class="hide-xs">“tell me a joke”</b> ·
+      <b>“help”</b>
+    </div>
   </footer>
 </div>
+
+<!-- ================= SETTINGS ================= -->
+<div class="settings-backdrop" id="settingsBackdrop"></div>
+
+<aside class="settings-panel" id="settingsPanel" aria-hidden="true">
+  <div class="settings-header">
+    <h2>Settings</h2>
+    <button class="icon-btn" id="settingsClose" aria-label="Close settings">✕</button>
+  </div>
+
+  <div class="settings-body">
+
+    <section class="setting-group">
+      <h3>Microphone</h3>
+      <label class="setting-row">
+        <span>Always listening</span>
+        <input type="checkbox" id="setAlwaysOn" class="switch">
+      </label>
+      <div class="setting-help">
+        Keeps the microphone active permanently. When enabled, JARVIS never stops listening
+        — the recognizer auto-restarts after every silence, speech, or error.
+      </div>
+
+      <label class="setting-row">
+        <span>Require wake word</span>
+        <input type="checkbox" id="setRequireWake" class="switch">
+      </label>
+      <div class="setting-help">
+        When always-listening is on, only respond after hearing the wake word.
+        Say <b>“Jarvis, what's the time?”</b> instead of everything being processed.
+      </div>
+
+      <label class="setting-row col">
+        <span>Wake word</span>
+        <input type="text" id="setWakeWord" class="text-input" placeholder="jarvis" maxlength="20">
+      </label>
+
+      <label class="setting-row col">
+        <span>Recognition language</span>
+        <select id="setLang" class="text-input">
+          <option value="en-US">English (US)</option>
+          <option value="en-GB">English (UK)</option>
+          <option value="en-AU">English (Australia)</option>
+          <option value="en-IN">English (India)</option>
+          <option value="es-ES">Español</option>
+          <option value="fr-FR">Français</option>
+          <option value="de-DE">Deutsch</option>
+          <option value="it-IT">Italiano</option>
+          <option value="pt-BR">Português (Brasil)</option>
+          <option value="nl-NL">Nederlands</option>
+          <option value="ja-JP">日本語</option>
+          <option value="ko-KR">한국어</option>
+          <option value="zh-CN">中文 (简体)</option>
+        </select>
+      </label>
+    </section>
+
+    <section class="setting-group">
+      <h3>Voice Output</h3>
+
+      <label class="setting-row col">
+        <span>Voice</span>
+        <select id="setVoice" class="text-input"><option value="">System default</option></select>
+      </label>
+
+      <label class="setting-row col">
+        <span>Rate <b id="valRate">0.96</b></span>
+        <input type="range" id="setRate" min="0.5" max="1.6" step="0.01" class="range">
+      </label>
+
+      <label class="setting-row col">
+        <span>Pitch <b id="valPitch">0.82</b></span>
+        <input type="range" id="setPitch" min="0.1" max="1.5" step="0.01" class="range">
+      </label>
+
+      <label class="setting-row col">
+        <span>Volume <b id="valVolume">1.00</b></span>
+        <input type="range" id="setVolume" min="0" max="1" step="0.01" class="range">
+      </label>
+
+      <label class="setting-row">
+        <span>Speak responses</span>
+        <input type="checkbox" id="setSpeak" class="switch">
+      </label>
+
+      <button class="btn" id="testVoice">Test voice</button>
+    </section>
+
+    <section class="setting-group">
+      <h3>Interface</h3>
+
+      <label class="setting-row">
+        <span>Telemetry panel</span>
+        <input type="checkbox" id="setTelemetry" class="switch">
+      </label>
+
+      <label class="setting-row">
+        <span>Activity log panel</span>
+        <input type="checkbox" id="setLogPanel" class="switch">
+      </label>
+
+      <label class="setting-row">
+        <span>Grid background</span>
+        <input type="checkbox" id="setGrid" class="switch">
+      </label>
+
+      <label class="setting-row">
+        <span>Reduced motion</span>
+        <input type="checkbox" id="setReduced" class="switch">
+      </label>
+    </section>
+
+    <section class="setting-group">
+      <h3>Data</h3>
+      <button class="btn" id="clearLogBtn">Clear activity log</button>
+      <button class="btn" id="clearMemBtn">Clear memories &amp; notes</button>
+      <button class="btn danger" id="resetBtn">Reset all settings</button>
+    </section>
+
+    <div class="settings-footer">J.A.R.V.I.S. v5.0 · Saved automatically</div>
+  </div>
+</aside>
 
 <script>
 "use strict";
@@ -352,9 +640,85 @@ const $ = (id) => document.getElementById(id);
 const sleep = (ms) => new Promise(r => setTimeout(r, ms));
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
 const rand = (a, b) => a + Math.random() * (b - a);
+const cap = (s) => s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
+const round = (n, d = 6) => Math.round(n * Math.pow(10, d)) / Math.pow(10, d);
 
 /* ============================================================
-   1. BOOT SEQUENCE
+   1. SETTINGS MANAGER
+   ============================================================ */
+const STORAGE_KEY = "jarvis.settings.v5";
+
+const DEFAULT_SETTINGS = {
+  alwaysOn: false,
+  requireWake: true,
+  wakeWord: "jarvis",
+  lang: "en-US",
+  voiceName: "",
+  rate: 0.96,
+  pitch: 0.82,
+  volume: 1.0,
+  speak: true,
+  showTelemetry: true,
+  showLog: true,
+  showGrid: true,
+  reducedMotion: false,
+  userName: "",
+  memories: {},
+  notes: []
+};
+
+let settings = loadSettings();
+
+function loadSettings() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
+    const parsed = JSON.parse(raw);
+    return Object.assign(JSON.parse(JSON.stringify(DEFAULT_SETTINGS)), parsed);
+  } catch (e) {
+    return JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
+  }
+}
+
+function saveSettings() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(settings)); } catch (e) {}
+}
+
+function applySettings() {
+  document.body.classList.toggle("no-grid", !settings.showGrid);
+  document.body.classList.toggle("reduced-motion", settings.reducedMotion);
+
+  $("telemetryPanel").classList.toggle("hidden", !settings.showTelemetry);
+  $("logPanel").classList.toggle("hidden", !settings.showLog);
+  const main = $("mainGrid");
+  main.classList.toggle("no-telemetry", !settings.showTelemetry);
+  main.classList.toggle("no-log", !settings.showLog);
+
+  $("memCount").textContent = Object.keys(settings.memories).length;
+
+  // reflect in UI
+  $("setAlwaysOn").checked = settings.alwaysOn;
+  $("setRequireWake").checked = settings.requireWake;
+  $("setWakeWord").value = settings.wakeWord;
+  $("setLang").value = settings.lang;
+  $("setSpeak").checked = settings.speak;
+  $("setTelemetry").checked = settings.showTelemetry;
+  $("setLogPanel").checked = settings.showLog;
+  $("setGrid").checked = settings.showGrid;
+  $("setReduced").checked = settings.reducedMotion;
+  $("setRate").value = settings.rate;
+  $("setPitch").value = settings.pitch;
+  $("setVolume").value = settings.volume;
+  $("valRate").textContent = Number(settings.rate).toFixed(2);
+  $("valPitch").textContent = Number(settings.pitch).toFixed(2);
+  $("valVolume").textContent = Number(settings.volume).toFixed(2);
+
+  updateListenBadge();
+  updateMicAppearance();
+}
+
+/* ============================================================
+   2. BOOT SEQUENCE
    ============================================================ */
 const BOOT_LINES = [
   ["INITIALISING J.A.R.V.I.S. KERNEL", "OK"],
@@ -363,6 +727,7 @@ const BOOT_LINES = [
   ["MOUNTING STARK INDUSTRIES DATABASE", "OK"],
   ["ESTABLISHING SECURE UPLINK", "OK"],
   ["ARC REACTOR OUTPUT", "98.4%"],
+  ["LOADING COMMAND PROTOCOLS", "214"],
   ["ALL SYSTEMS NOMINAL", ""]
 ];
 
@@ -376,15 +741,19 @@ const BOOT_LINES = [
     row.innerHTML = `${label} <span style="color:#1d5b6b">${dots}</span> <span class="ok">${status}</span>`;
     box.appendChild(row);
     bar.style.width = ((i + 1) / BOOT_LINES.length * 100) + "%";
-    await sleep(i === BOOT_LINES.length - 1 ? 420 : rand(150, 300));
+    await sleep(i === BOOT_LINES.length - 1 ? 380 : rand(130, 260));
   }
-  await sleep(450);
+  await sleep(400);
   $("boot").classList.add("done");
   logLine("Interface initialised. Standing by.", "jarvis");
+  if (settings.alwaysOn) {
+    logLine("Always-listening mode active.", "ok");
+    setTimeout(() => startListening(), 600);
+  }
 })();
 
 /* ============================================================
-   2. LOGGING
+   3. LOGGING
    ============================================================ */
 const logEl = $("log");
 let logCount = 0;
@@ -392,80 +761,146 @@ let logCount = 0;
 function logLine(text, type = "sys") {
   const row = document.createElement("div");
   row.className = "log-line " + type;
-
   const t = document.createElement("span");
   t.className = "t";
   t.textContent = new Date().toLocaleTimeString("en-GB", { hour12: false });
-
   const m = document.createElement("span");
   m.className = "m";
   m.textContent = text;
-
   row.append(t, m);
   logEl.appendChild(row);
   logEl.scrollTop = logEl.scrollHeight;
-
   logCount++;
   $("logCount").textContent = logCount;
-
-  while (logEl.children.length > 250) logEl.removeChild(logEl.firstChild);
+  while (logEl.children.length > 300) logEl.removeChild(logEl.firstChild);
 }
 
 /* ============================================================
-   3. SPEECH SYNTHESIS (JARVIS VOICE)
+   4. TOASTS + FLASH + BEEP
+   ============================================================ */
+function toast(msg, type) {
+  const t = document.createElement("div");
+  t.className = "toast" + (type === "warn" ? " warn" : "");
+  t.textContent = msg;
+  document.body.appendChild(t);
+  requestAnimationFrame(() => t.classList.add("show"));
+  setTimeout(() => {
+    t.classList.remove("show");
+    setTimeout(() => t.remove(), 400);
+  }, 2200);
+}
+
+function flashScreen() {
+  document.body.classList.add("flash");
+  setTimeout(() => document.body.classList.remove("flash"), 1300);
+}
+
+let audioCtx = null;
+function beep(freq = 880, dur = 0.15, vol = 0.12) {
+  try {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.type = "sine";
+    o.frequency.value = freq;
+    g.gain.setValueAtTime(vol, audioCtx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + dur);
+    o.connect(g).connect(audioCtx.destination);
+    o.start();
+    o.stop(audioCtx.currentTime + dur);
+  } catch (e) {}
+}
+
+/* ============================================================
+   5. SPEECH SYNTHESIS
    ============================================================ */
 let jarvisVoice = null;
+let speaking = false;
 let userHasInteracted = false;
+let allVoices = [];
 
-function pickVoice() {
+function refreshVoices() {
   if (!("speechSynthesis" in window)) return;
-  const voices = speechSynthesis.getVoices();
-  if (!voices.length) return;
+  allVoices = speechSynthesis.getVoices();
+  if (!allVoices.length) return;
 
-  const preferred = [
-    "Daniel", "Google UK English Male", "Microsoft Ryan Online",
-    "Microsoft George Online", "Arthur", "Oliver", "en-GB"
-  ];
+  // Populate the select
+  const sel = $("setVoice");
+  const current = settings.voiceName;
+  sel.innerHTML = '<option value="">System default</option>';
+  allVoices.forEach(v => {
+    const opt = document.createElement("option");
+    opt.value = v.name;
+    opt.textContent = `${v.name} (${v.lang})`;
+    sel.appendChild(opt);
+  });
+  sel.value = current || "";
+
+  // Pick preferred default
+  const preferred = ["Daniel", "Google UK English Male", "Microsoft Ryan Online",
+                     "Microsoft George Online", "Arthur", "Oliver", "en-GB"];
   for (const name of preferred) {
-    const v = voices.find(v => v.name === name || v.name.includes(name));
+    const v = allVoices.find(v => v.name === name || v.name.includes(name));
     if (v) { jarvisVoice = v; break; }
   }
-  if (!jarvisVoice) jarvisVoice = voices.find(v => v.lang === "en-GB") || voices[0];
+  if (!jarvisVoice) jarvisVoice = allVoices.find(v => v.lang === "en-GB") || allVoices[0];
   $("voiceName").textContent = (jarvisVoice.name || "DEFAULT").toUpperCase().slice(0, 16);
 }
 
 if ("speechSynthesis" in window) {
-  pickVoice();
-  speechSynthesis.onvoiceschanged = pickVoice;
-  setTimeout(pickVoice, 600);
+  refreshVoices();
+  speechSynthesis.onvoiceschanged = refreshVoices;
+  setTimeout(refreshVoices, 600);
+  setTimeout(refreshVoices, 1800);
 } else {
   $("voiceName").textContent = "UNSUPPORTED";
 }
 
+function pickVoiceByName(name) {
+  if (!name) return null;
+  return allVoices.find(v => v.name === name) || null;
+}
+
 function speak(text) {
-  if (!("speechSynthesis" in window) || !userHasInteracted) return;
+  if (!settings.speak) return;
+  if (!("speechSynthesis" in window)) return;
+  if (!userHasInteracted) return;
   try {
     speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(text);
-    if (jarvisVoice) u.voice = jarvisVoice;
-    u.rate = 0.96;
-    u.pitch = 0.82;
-    u.volume = 1;
-    u.onstart = () => setStatus("SPEAKING");
-    u.onend = () => { if (!listening) setStatus("ONLINE"); };
+    const v = pickVoiceByName(settings.voiceName) || jarvisVoice;
+    if (v) u.voice = v;
+    u.rate = Number(settings.rate);
+    u.pitch = Number(settings.pitch);
+    u.volume = Number(settings.volume);
+    u.onstart = () => {
+      speaking = true;
+      setStatus("SPEAKING");
+      energy = Math.max(energy, 0.6);
+      // pause recognition so we don't hear ourselves (when always on)
+      if (settings.alwaysOn && recognition) {
+        try { recognition.abort(); } catch (e) {}
+      }
+    };
+    const done = () => {
+      speaking = false;
+      if (!listening) setStatus("ONLINE", "ALL SYSTEMS NOMINAL");
+      scheduleRestart(400);
+    };
+    u.onend = done;
+    u.onerror = done;
     speechSynthesis.speak(u);
-    energy = Math.max(energy, 0.55);
-  } catch (e) { /* ignore */ }
+  } catch (e) {}
 }
 
 /* ============================================================
-   4. ARC REACTOR CANVAS
+   6. ARC REACTOR CANVAS
    ============================================================ */
 const canvas = $("reactor");
 const ctx = canvas.getContext("2d");
 let W = 0, H = 0;
-let energy = 0.18;      // target glow 0..1
-let energyCur = 0.18;   // smoothed
+let energy = 0.18;
+let energyCur = 0.18;
 
 function resizeCanvas() {
   const rect = canvas.getBoundingClientRect();
@@ -498,13 +933,14 @@ function drawReactor(now) {
   const R = Math.min(W, H) / 2 - 10;
   if (R <= 0) return;
 
+  const motion = settings.reducedMotion ? 0.15 : 1;
   const pulse = Math.sin(now / 900) * 0.5 + 0.5;
   const e = energyCur;
 
-  /* --- outer dashed ring --- */
+  // outer dashed ring
   ctx.save();
   ctx.translate(cx, cy);
-  ctx.rotate(now / 26000);
+  ctx.rotate(now / 26000 * motion);
   ctx.beginPath();
   ctx.arc(0, 0, R * 0.97, 0, Math.PI * 2);
   ctx.setLineDash([2, 7]);
@@ -513,10 +949,10 @@ function drawReactor(now) {
   ctx.stroke();
   ctx.restore();
 
-  /* --- tick marks --- */
+  // tick marks
   ctx.save();
   ctx.translate(cx, cy);
-  ctx.rotate(now / 60000);
+  ctx.rotate(now / 60000 * motion);
   for (let i = 0; i < 72; i++) {
     const a = (i / 72) * Math.PI * 2;
     const long = i % 6 === 0;
@@ -531,10 +967,10 @@ function drawReactor(now) {
   }
   ctx.restore();
 
-  /* --- rotating arc segments --- */
-  const rotA = now / 5200;
-  const rotB = -now / 3600;
-  const rotC = now / 2400;
+  // rotating arcs
+  const rotA = now / 5200 * motion;
+  const rotB = -now / 3600 * motion;
+  const rotC = now / 2400 * motion;
 
   arcSeg(cx, cy, rotA, R * 0.90, 0, Math.PI * 0.34, 2.4, "rgba(0,229,255,.85)", 14);
   arcSeg(cx, cy, rotA, R * 0.90, Math.PI * 0.62, Math.PI * 0.20, 2.4, "rgba(0,229,255,.55)", 10);
@@ -543,15 +979,14 @@ function drawReactor(now) {
   arcSeg(cx, cy, rotC, R * 0.64, 0, Math.PI * 0.24, 1.8, "rgba(0,229,255,.65)", 12);
   arcSeg(cx, cy, rotC, R * 0.64, Math.PI * 0.45, Math.PI * 0.30, 1.8, "rgba(0,229,255,.35)", 8);
 
-  /* --- sweep trail --- */
-  const sweep = now / 1500;
+  // sweep
+  const sweep = now / 1500 * motion;
   for (let i = 0; i < 14; i++) {
     const alpha = (1 - i / 14) * 0.32;
-    arcSeg(cx, cy, sweep - i * 0.045, R * 0.70, 0, 0.05,
-           6, `rgba(150,250,255,${alpha})`, 0);
+    arcSeg(cx, cy, sweep - i * 0.045, R * 0.70, 0, 0.05, 6, `rgba(150,250,255,${alpha})`, 0);
   }
 
-  /* --- thin inner rings --- */
+  // inner ring
   ctx.save();
   ctx.translate(cx, cy);
   ctx.beginPath();
@@ -561,7 +996,7 @@ function drawReactor(now) {
   ctx.stroke();
   ctx.restore();
 
-  /* --- core glow --- */
+  // core glow
   const coreR = R * 0.20 * (1 + 0.07 * pulse + 0.30 * e);
   const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, coreR * 3.4);
   g.addColorStop(0, "rgba(235,255,255,.98)");
@@ -574,7 +1009,7 @@ function drawReactor(now) {
   ctx.arc(cx, cy, coreR * 3.4, 0, Math.PI * 2);
   ctx.fill();
 
-  /* --- core ring --- */
+  // core ring
   ctx.beginPath();
   ctx.arc(cx, cy, coreR, 0, Math.PI * 2);
   ctx.lineWidth = 2;
@@ -584,19 +1019,21 @@ function drawReactor(now) {
   ctx.stroke();
   ctx.shadowBlur = 0;
 
-  /* --- particles --- */
-  const n = 26;
-  for (let i = 0; i < n; i++) {
-    const seed = i * 137.508;
-    const ang = (seed + now / (2000 + (i % 7) * 400)) % (Math.PI * 2);
-    const rr = R * (0.30 + ((i % 9) / 9) * 0.58);
-    const x = cx + Math.cos(ang) * rr;
-    const y = cy + Math.sin(ang) * rr;
-    const size = 1 + (i % 3) * 0.6;
-    ctx.beginPath();
-    ctx.arc(x, y, size, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(140,245,255,${0.22 + 0.4 * e})`;
-    ctx.fill();
+  // particles
+  if (!settings.reducedMotion) {
+    const n = 26;
+    for (let i = 0; i < n; i++) {
+      const seed = i * 137.508;
+      const ang = (seed + now / (2000 + (i % 7) * 400)) % (Math.PI * 2);
+      const rr = R * (0.30 + ((i % 9) / 9) * 0.58);
+      const x = cx + Math.cos(ang) * rr;
+      const y = cy + Math.sin(ang) * rr;
+      const size = 1 + (i % 3) * 0.6;
+      ctx.beginPath();
+      ctx.arc(x, y, size, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(140,245,255,${0.22 + 0.4 * e})`;
+      ctx.fill();
+    }
   }
 }
 
@@ -610,7 +1047,7 @@ function loop(now) {
 }
 
 /* ============================================================
-   5. STATUS / HUD
+   7. STATUS / TELEMETRY
    ============================================================ */
 let statusResetTimer = null;
 
@@ -624,7 +1061,7 @@ function setStatus(text, sub) {
         $("statusText").textContent = "ONLINE";
         $("coreSub").textContent = "ALL SYSTEMS NOMINAL";
       }
-    }, 3200);
+    }, 3400);
   }
 }
 
@@ -634,14 +1071,11 @@ function respond(text, sub) {
   speak(text);
 }
 
-/* clock */
 function tickClock() {
-  const d = new Date();
-  $("clock").textContent = d.toLocaleTimeString("en-GB", { hour12: false });
+  $("clock").textContent = new Date().toLocaleTimeString("en-GB", { hour12: false });
 }
 setInterval(tickClock, 1000); tickClock();
 
-/* uptime */
 const startTime = Date.now();
 setInterval(() => {
   const s = Math.floor((Date.now() - startTime) / 1000);
@@ -651,7 +1085,6 @@ setInterval(() => {
   $("uptime").textContent = `${hh}:${mm}:${ss}`;
 }, 1000);
 
-/* fake telemetry */
 function updateStats() {
   const pwr = clamp(97 + rand(-1.2, 1.2), 90, 100);
   const cpu = clamp(28 + Math.sin(Date.now() / 4000) * 12 + rand(-9, 9), 4, 97);
@@ -670,35 +1103,40 @@ function updateStats() {
   set("tmp", tmp, "°C");
 
   energy = 0.14 + (cpu / 100) * 0.22 + (pwr / 100) * 0.10;
+  if (listening) energy = Math.max(energy, 0.7);
 }
 setInterval(updateStats, 1400);
 updateStats();
 
 /* ============================================================
-   6. SPEECH RECOGNITION
+   8. SPEECH RECOGNITION (with always-on support)
    ============================================================ */
 const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
 let recognition = null;
 let listening = false;
+let wantListening = false;   // user/setting intent
 let micSupported = !!SR;
+let awakeUntil = 0;          // wake-word window
+let restartTimer = null;
 
 const micBtn = $("micBtn");
 const cmdInput = $("cmd");
 
 if (micSupported) {
   recognition = new SR();
-  recognition.continuous = false;
+  recognition.continuous = true;
   recognition.interimResults = true;
-  recognition.lang = "en-US";
+  recognition.lang = settings.lang;
   recognition.maxAlternatives = 1;
 
   recognition.onstart = () => {
     listening = true;
     micBtn.classList.add("listening");
-    $("micState").textContent = "LISTENING";
-    setStatus("LISTENING", "AWAITING VOICE INPUT");
-    energy = 0.85;
-    logLine("Voice channel open.", "sys");
+    $("micState").textContent = settings.alwaysOn ? "ALWAYS ON" : "LISTENING";
+    setStatus("LISTENING", settings.alwaysOn ? "ALWAYS-ON CHANNEL ACTIVE" : "AWAITING VOICE INPUT");
+    energy = 0.8;
+    updateListenBadge();
+    updateMicAppearance();
   };
 
   recognition.onresult = (ev) => {
@@ -707,30 +1145,49 @@ if (micSupported) {
       const tr = ev.results[i][0].transcript;
       if (ev.results[i].isFinal) final += tr; else interim += tr;
     }
-    cmdInput.value = final || interim;
-    if (final) handleCommand(final);
+    if (interim && !final) cmdInput.value = interim;
+    if (!final) return;
+
+    const transcript = final.trim();
+    if (!transcript) return;
+    cmdInput.value = "";
+
+    processTranscript(transcript);
   };
 
   recognition.onerror = (ev) => {
     const map = {
-      "not-allowed": "Microphone access denied. Check browser permissions.",
+      "not-allowed": "Microphone access denied. Enable it in browser settings.",
+      "service-not-allowed": "Speech service blocked by browser.",
       "no-speech": "No speech detected.",
       "audio-capture": "No microphone found.",
-      "network": "Speech service unreachable."
+      "network": "Speech service unreachable.",
+      "aborted": "Voice channel interrupted."
     };
     const msg = map[ev.error] || ("Voice error: " + ev.error);
-    logLine(msg, "warn");
-    setStatus("STANDBY", "VOICE CHANNEL ERROR");
+    if (ev.error !== "aborted" && ev.error !== "no-speech") {
+      logLine(msg, "warn");
+      toast(msg, "warn");
+    }
+    if (ev.error === "not-allowed" || ev.error === "service-not-allowed" || ev.error === "audio-capture") {
+      wantListening = false;
+      settings.alwaysOn = false;
+      saveSettings();
+      applySettings();
+      updateListenBadge();
+    }
   };
 
   recognition.onend = () => {
     listening = false;
     micBtn.classList.remove("listening");
-    $("micState").textContent = "STANDBY";
-    energy = 0.2;
+    $("micState").textContent = settings.alwaysOn ? (wantListening ? "RESTARTING" : "PAUSED") : "STANDBY";
     if ($("statusText").textContent === "LISTENING") {
       setStatus("ONLINE", "ALL SYSTEMS NOMINAL");
     }
+    updateListenBadge();
+    updateMicAppearance();
+    if (wantListening) scheduleRestart(260);
   };
 } else {
   $("micState").textContent = "UNSUPPORTED";
@@ -738,38 +1195,601 @@ if (micSupported) {
   logLine("Speech recognition unsupported — use Chrome or Edge for voice.", "warn");
 }
 
+function scheduleRestart(delay = 300) {
+  if (!wantListening) return;
+  if (speaking) return;               // wait until TTS finishes
+  if (!settings.alwaysOn) return;     // one-shot mode doesn't auto-restart
+  clearTimeout(restartTimer);
+  restartTimer = setTimeout(() => {
+    if (wantListening && !listening && !speaking) {
+      try { recognition.start(); }
+      catch (e) { scheduleRestart(700); }
+    }
+  }, delay);
+}
+
+function startListening() {
+  if (!micSupported) {
+    logLine("Voice input isn't supported in this browser.", "warn");
+    return;
+  }
+  if ("speechSynthesis" in window) speechSynthesis.cancel();
+  wantListening = true;
+  if (!listening) {
+    try { recognition.start(); }
+    catch (e) { scheduleRestart(500); }
+  }
+  updateListenBadge();
+}
+
+function stopListening() {
+  wantListening = false;
+  clearTimeout(restartTimer);
+  if (listening) { try { recognition.stop(); } catch (e) {} }
+  updateListenBadge();
+  updateMicAppearance();
+}
+
 function toggleMic() {
   userHasInteracted = true;
   if (!micSupported) {
-    logLine("Voice input isn't supported in this browser. Please type instead.", "warn");
+    logLine("Voice input isn't supported here. Please type instead.", "warn");
+    toast("Voice not supported", "warn");
     return;
   }
-  if (listening) {
-    recognition.stop();
-  } else {
-    if ("speechSynthesis" in window) speechSynthesis.cancel();
-    try { recognition.start(); }
-    catch (e) { logLine("Could not start voice channel.", "warn"); }
-  }
+  if (wantListening) stopListening();
+  else startListening();
 }
 
 micBtn.addEventListener("click", toggleMic);
 
-/* ============================================================
-   7. COMMAND HANDLING
-   ============================================================ */
-cmdInput.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") {
-    const val = cmdInput.value.trim();
-    cmdInput.value = "";
-    if (val) { userHasInteracted = true; handleCommand(val); }
+/* --- transcript processing (wake word aware) --- */
+function processTranscript(transcript) {
+  const needWake = settings.alwaysOn && settings.requireWake;
+  const awake = Date.now() < awakeUntil;
+
+  if (needWake && !awake) {
+    const ww = (settings.wakeWord || "jarvis").toLowerCase().trim();
+    const lower = transcript.toLowerCase();
+    const idx = ww ? lower.indexOf(ww) : -1;
+
+    if (idx === -1) {
+      // Ignore — mic picked up ambient speech
+      return;
+    }
+
+    const rest = transcript.slice(idx + ww.length).replace(/^[\s,.:;!?\-]+/, "").trim();
+    logLine(transcript, "user");
+
+    if (!rest) {
+      awakeUntil = Date.now() + 9000;
+      beep(660, 0.1, 0.08);
+      respond("Yes?");
+      return;
+    }
+    handleCommand(rest);
+    return;
   }
-});
 
-/* unlock audio on first click anywhere */
-document.addEventListener("click", () => { userHasInteracted = true; }, { once: true });
+  if (awake) awakeUntil = 0;
+  logLine(transcript, "user");
+  handleCommand(transcript);
+}
 
-/* --- weather helper (Open-Meteo, no API key) --- */
+/* --- UI state helpers --- */
+function updateListenBadge() {
+  const badge = $("listenBadge");
+  const text = $("listenBadgeText");
+  if (!settings.alwaysOn) {
+    badge.classList.remove("on", "paused");
+    return;
+  }
+  badge.classList.add("on");
+  if (listening) {
+    badge.classList.remove("paused");
+    text.textContent = "ALWAYS LISTENING";
+  } else {
+    badge.classList.add("paused");
+    text.textContent = speaking ? "PAUSED — SPEAKING" : "ALWAYS ON — PAUSED";
+  }
+}
+
+function updateMicAppearance() {
+  micBtn.classList.toggle("always", settings.alwaysOn);
+  micBtn.classList.toggle("muted", settings.alwaysOn && !wantListening);
+  micBtn.title = settings.alwaysOn
+    ? (wantListening ? "Always-listening active — click to pause" : "Always-listening paused — click to resume")
+    : "Toggle voice input";
+}
+
+/* ============================================================
+   9. COMMAND ENGINE — helpers
+   ============================================================ */
+
+// --- pending confirmation ---
+let pendingAction = null;
+
+// --- timers ---
+const activeTimers = [];
+
+function setTimer(seconds, label) {
+  const id = setTimeout(() => {
+    const msg = label ? `Timer complete — ${label}.` : "Your timer has finished.";
+    logLine(msg, "jarvis");
+    setStatus("ALERT", "TIMER COMPLETE");
+    energy = 1;
+    flashScreen();
+    beep(880, 0.18, 0.15);
+    setTimeout(() => beep(1320, 0.18, 0.15), 220);
+    setTimeout(() => beep(1760, 0.25, 0.15), 440);
+    speak(msg);
+    const i = activeTimers.indexOf(id);
+    if (i > -1) activeTimers.splice(i, 1);
+  }, seconds * 1000);
+  activeTimers.push(id);
+  return id;
+}
+
+// --- safe math evaluator ---
+function safeEval(expr) {
+  let e = String(expr).toLowerCase().trim();
+  e = e.replace(/(\d+(?:\.\d+)?)\s*(?:%|percent)\s*of\s*/g, "($1/100)*");
+  e = e.replace(/\bplus\b/g, "+")
+       .replace(/\bminus\b/g, "-")
+       .replace(/\bmultiplied by\b|\btimes\b/g, "*")
+       .replace(/\bdivided by\b|\bover\b/g, "/")
+       .replace(/\bto the power of\b/g, "**")
+       .replace(/[x×]/g, "*")
+       .replace(/÷/g, "/")
+       .replace(/−/g, "-")
+       .replace(/\^/g, "**")
+       .replace(/,/g, "");
+  if (!/^[\d+\-*/().\s]+$/.test(e)) return null;
+  try {
+    const result = Function('"use strict";return (' + e + ')')();
+    if (typeof result !== "number" || !isFinite(result)) return null;
+    return result;
+  } catch (err) { return null; }
+}
+
+function looksLikeMath(s) {
+  if (!/\d/.test(s)) return false;
+  return /[+\-*/x×÷^%]|\b(plus|minus|times|divided|multiplied|percent|of)\b/i.test(s);
+}
+
+// --- unit conversion ---
+const UNIT_GROUPS = {
+  length: { km:1000, kilometer:1000, kilometers:1000, m:1, meter:1, meters:1, metre:1, metres:1,
+            cm:0.01, centimeter:0.01, centimeters:0.01, mm:0.001,
+            mi:1609.344, mile:1609.344, miles:1609.344,
+            ft:0.3048, foot:0.3048, feet:0.3048,
+            in:0.0254, inch:0.0254, inches:0.0254,
+            yd:0.9144, yard:0.9144, yards:0.9144 },
+  weight: { kg:1000, kilogram:1000, kilograms:1000, g:1, gram:1, grams:1, mg:0.001,
+            lb:453.592, lbs:453.592, pound:453.592, pounds:453.592,
+            oz:28.3495, ounce:28.3495, ounces:28.3495, st:6350.29, stone:6350.29 },
+  volume: { l:1, liter:1, liters:1, litre:1, litres:1, ml:0.001,
+            gal:3.78541, gallon:3.78541, gallons:3.78541,
+            cup:0.236588, cups:0.236588, pint:0.473176, pints:0.473176 }
+};
+
+const TEMP_ALIASES = {
+  c:"c", celsius:"c", "°c":"c", centigrade:"c",
+  f:"f", fahrenheit:"f", "°f":"f",
+  k:"k", kelvin:"k"
+};
+
+function convertUnits(val, from, to) {
+  from = from.toLowerCase(); to = to.toLowerCase();
+
+  // temperature
+  if (TEMP_ALIASES[from] && TEMP_ALIASES[to]) {
+    const f = TEMP_ALIASES[from], t = TEMP_ALIASES[to];
+    let c;
+    if (f === "c") c = val;
+    else if (f === "f") c = (val - 32) * 5 / 9;
+    else c = val - 273.15;
+    let out;
+    if (t === "c") out = c;
+    else if (t === "f") out = c * 9 / 5 + 32;
+    else out = c + 273.15;
+    return { value: out, unit: to };
+  }
+
+  // grouped units
+  for (const group of Object.values(UNIT_GROUPS)) {
+    if (group[from] != null && group[to] != null) {
+      const inBase = val * group[from];
+      return { value: inBase / group[to], unit: to };
+    }
+  }
+  return null;
+}
+
+// --- content libraries ---
+const JOKES = [
+  "Why did the developer go broke? He used up all his cache.",
+  "There are only two hard things in computer science: cache invalidation, naming things, and off-by-one errors.",
+  "Why do programmers prefer dark mode? Because light attracts bugs.",
+  "A SQL query walks into a bar, approaches two tables and asks: may I join you?",
+  "I would tell you a UDP joke, but you might not get it.",
+  "Why did the AI cross the road? To optimise the other side.",
+  "There are 10 types of people in the world: those who understand binary, and those who don't.",
+  "Why was the JavaScript developer sad? Because he didn't know how to null his feelings."
+];
+
+const QUOTES = [
+  "Sometimes you gotta run before you can walk. — Tony Stark",
+  "The best way to predict the future is to invent it. — Alan Kay",
+  "Any sufficiently advanced technology is indistinguishable from magic. — Arthur C. Clarke",
+  "Simplicity is the ultimate sophistication. — Leonardo da Vinci",
+  "The only way to do great work is to love what you do. — Steve Jobs",
+  "We are what we repeatedly do. Excellence, then, is not an act, but a habit. — Aristotle",
+  "Programs must be written for people to read, and only incidentally for machines to execute. — Abelson & Sussman"
+];
+
+/* ============================================================
+   10. COMMAND ENGINE — dispatcher
+   ============================================================ */
+function handleCommand(input) {
+  const raw = String(input).trim();
+  if (!raw) return;
+  const t = raw.toLowerCase().replace(/[?!.,]+$/g, "").trim();
+  const tRaw = raw.trim();
+
+  /* ---------- confirmation of pending action ---------- */
+  if (pendingAction) {
+    if (/^(yes|yeah|yep|yup|sure|ok|okay|do it|please do|affirmative|go ahead|confirm)\b/.test(t)) {
+      const a = pendingAction; pendingAction = null;
+      return a();
+    }
+    if (/^(no|nope|nah|negative|cancel|nevermind|never mind|stop)\b/.test(t)) {
+      pendingAction = null;
+      return respond("Cancelled.");
+    }
+  }
+
+  /* ---------- name ---------- */
+  let m;
+  if ((m = t.match(/^(?:my name is|call me|i am|i'm)\s+([a-z][a-z '\-]{0,38})$/))) {
+    const name = m[1].trim();
+    settings.userName = name;
+    saveSettings();
+    return respond(`Noted. I'll call you ${cap(name)}.`);
+  }
+  if (/what(?:'s| is) my name|who am i\b/.test(t)) {
+    return settings.userName
+      ? respond(`You're ${cap(settings.userName)}, of course.`)
+      : respond("You haven't told me your name yet. Say 'call me' followed by your name.");
+  }
+
+  /* ---------- memory ---------- */
+  if ((m = t.match(/^(?:remember|memorise|memorize|store)(?: that)?\s+(?:my\s+)?(.+?)\s+(?:is|are|equals?)\s+(.+)$/))) {
+    const key = m[1].trim().replace(/^my\s+/, "");
+    const val = m[2].trim();
+    if (key.length > 60 || val.length > 200) return respond("That's a bit long for me to store.");
+    settings.memories[key] = val;
+    saveSettings();
+    applySettings();
+    beep(880, 0.08, 0.08);
+    return respond(`Stored. I'll remember that your ${key} is ${val}.`);
+  }
+  if ((m = t.match(/^(?:what(?:'s| is)|do you remember)\s+my\s+(.+?)$/))) {
+    const key = m[1].trim();
+    if (settings.memories[key]) return respond(`Your ${key} is ${settings.memories[key]}.`);
+    const close = Object.keys(settings.memories).find(k => k.includes(key) || key.includes(k));
+    if (close) return respond(`Did you mean your ${close}? It's ${settings.memories[close]}.`);
+    return respond(`I don't have anything stored for "${key}".`);
+  }
+  if ((m = t.match(/^forget\s+(?:my\s+)?(.+)$/))) {
+    const key = m[1].trim().replace(/^my\s+/, "");
+    if (settings.memories[key]) {
+      delete settings.memories[key];
+      saveSettings();
+      applySettings();
+      return respond(`Forgotten: ${key}.`);
+    }
+    return respond(`I don't have a memory for "${key}".`);
+  }
+  if (/^(?:list|show|what do you)(?: me)?(?: my)? memories/.test(t)) {
+    const keys = Object.keys(settings.memories);
+    if (!keys.length) return respond("I haven't stored any memories yet.");
+    const list = keys.map(k => `${k}: ${settings.memories[k]}`).join(". ");
+    logLine("Memories — " + list, "sys");
+    return respond(`I remember ${keys.length} things. ${list}`);
+  }
+
+  /* ---------- notes ---------- */
+  if ((m = t.match(/^(?:take a note|note that|note down|add note|make a note|write down)\s*:?\s*(.+)$/))) {
+    settings.notes.push({ text: m[1].trim(), at: Date.now() });
+    saveSettings();
+    applySettings();
+    beep(880, 0.08, 0.08);
+    return respond(`Note saved. You now have ${settings.notes.length} note${settings.notes.length === 1 ? "" : "s"}.`);
+  }
+  if (/^(?:read|show|list|what are)(?: me)?(?: my)? notes?/.test(t)) {
+    if (!settings.notes.length) return respond("You don't have any notes.");
+    const list = settings.notes.map((n, i) => `${i + 1}. ${n.text}`).join(". ");
+    logLine("Notes — " + list, "sys");
+    return respond(`You have ${settings.notes.length} note${settings.notes.length === 1 ? "" : "s"}. ${list}`);
+  }
+  if (/^(?:clear|delete|erase)(?: all)?(?: my)? notes?/.test(t)) {
+    const n = settings.notes.length;
+    settings.notes = [];
+    saveSettings();
+    applySettings();
+    return respond(`All ${n} note${n === 1 ? "" : "s"} cleared.`);
+  }
+
+  /* ---------- greetings ---------- */
+  if (/^(hi|hey|hello|yo|greetings|good (morning|afternoon|evening)|howdy)\b/.test(t)) {
+    const h = new Date().getHours();
+    const part = h < 12 ? "Good morning" : h < 18 ? "Good afternoon" : "Good evening";
+    const name = settings.userName ? `, ${cap(settings.userName)}` : "";
+    return respond(`${part}${name}. All systems are operational. How may I assist you?`);
+  }
+
+  /* ---------- time & date ---------- */
+  if (/\b(time|clock)\b/.test(t) && !/timetable|timer/.test(t) && !/set a timer/.test(t)) {
+    const now = new Date();
+    const time = now.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit", hour12: true });
+    return respond(`The current time is ${time}.`);
+  }
+  if (/\b(date|day|today)\b/.test(t) && !/update/.test(t)) {
+    const now = new Date();
+    const d = now.toLocaleDateString(undefined, { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+    return respond(`Today is ${d}.`);
+  }
+
+  /* ---------- identity ---------- */
+  if (/(who are you|your name|what are you|introduce yourself)/.test(t)) {
+    return respond("I am J.A.R.V.I.S. — Just A Rather Very Intelligent System. A browser-based interface built to assist you.");
+  }
+  if (/(how are you|status report|system status|systems check)/.test(t)) {
+    return respond("All systems nominal. Arc reactor at 98 percent. No anomalies detected.");
+  }
+  if (/(what can you do|your capabilities|abilities)/.test(t) && !/help/.test(t)) {
+    return respond("I can manage timers, take notes, remember things for you, convert units, perform calculations, report the weather, open websites, run searches, and control the interface. Say 'help' for a full list.");
+  }
+
+  /* ---------- timers / reminders ---------- */
+  if ((m = t.match(/^(?:set (?:a )?timer(?: for)?|timer for|remind me in|in)\s+(\d+(?:\.\d+)?)\s*(seconds?|secs?|s|minutes?|mins?|m|hours?|hrs?|h)\b(.*)$/))) {
+    const val = parseFloat(m[1]);
+    const unit = m[2];
+    let secs = val;
+    if (/^m/.test(unit)) secs = val * 60;
+    else if (/^h/.test(unit)) secs = val * 3600;
+    if (secs <= 0 || secs > 86400) return respond("Please choose a duration between 1 second and 24 hours.");
+    const labelMatch = m[3].match(/(?:to|for|about|that)\s+(.+)$/);
+    const label = labelMatch ? labelMatch[1].trim() : "";
+    setTimer(secs, label);
+    const pretty = secs < 60 ? `${Math.round(secs)} seconds` : secs < 3600 ? `${round(secs / 60, 2)} minutes` : `${round(secs / 3600, 2)} hours`;
+    return respond(label ? `Timer set for ${pretty} — ${label}.` : `Timer set for ${pretty}.`);
+  }
+  if (/^(?:cancel|clear|stop)(?: all)? timers?/.test(t)) {
+    const n = activeTimers.length;
+    activeTimers.forEach(id => clearTimeout(id));
+    activeTimers.length = 0;
+    return respond(n ? `Cancelled ${n} timer${n === 1 ? "" : "s"}.` : "There are no active timers.");
+  }
+
+  /* ---------- weather ---------- */
+  if (/\b(weather|temperature outside|forecast|how hot|how cold)\b/.test(t)) {
+    setStatus("PROCESSING", "QUERYING METEOROLOGICAL DATA");
+    logLine("Requesting location and weather data…", "sys");
+    getWeather().then((cur) => {
+      const desc = WX[cur.weather_code] || "indeterminate conditions";
+      const temp = Math.round(cur.temperature_2m);
+      const feels = Math.round(cur.apparent_temperature);
+      respond(`Currently ${temp} degrees Celsius with ${desc}. It feels like ${feels} degrees, with winds at ${Math.round(cur.wind_speed_10m)} kilometres per hour.`);
+    }).catch((err) => {
+      if (err.message === "denied") respond("I require location permission to retrieve local weather.");
+      else if (err.message === "no-geo") respond("Your browser does not support geolocation.");
+      else respond("I'm unable to reach the meteorological service at the moment.");
+    });
+    return;
+  }
+
+  /* ---------- open websites ---------- */
+  const openMatch = t.match(/^(?:open|launch|go to|navigate to|bring up)\s+(.+)$/);
+  if (openMatch) {
+    const target = openMatch[1].replace(/\s+(website|site|page|dot com|\.com)$/g, "").trim();
+    const sites = {
+      "youtube": "https://www.youtube.com",
+      "google": "https://www.google.com",
+      "github": "https://www.github.com",
+      "gmail": "https://mail.google.com",
+      "reddit": "https://www.reddit.com",
+      "wikipedia": "https://www.wikipedia.org",
+      "twitter": "https://twitter.com",
+      "x": "https://x.com",
+      "spotify": "https://open.spotify.com",
+      "chatgpt": "https://chat.openai.com",
+      "maps": "https://maps.google.com",
+      "news": "https://news.google.com",
+      "netflix": "https://www.netflix.com",
+      "twitch": "https://www.twitch.tv",
+      "stack overflow": "https://stackoverflow.com",
+      "stark industries": "https://www.marvel.com"
+    };
+    let url = sites[target];
+    if (!url && /^[\w-]+(\.[\w-]+)+$/.test(target)) url = "https://" + target;
+    if (url) {
+      logLine("Opening " + url, "sys");
+      window.open(url, "_blank", "noopener");
+      return respond(`Opening ${target}.`);
+    }
+    return respond(`I don't have a shortcut for "${target}". Try a full web address.`);
+  }
+
+  /* ---------- web search ---------- */
+  const searchMatch = t.match(/^(?:search|google|look up|find|search for)\s+(?:for\s+)?(.+)$/);
+  if (searchMatch) {
+    const q = searchMatch[1];
+    logLine("Searching the web for: " + q, "sys");
+    window.open("https://www.google.com/search?q=" + encodeURIComponent(q), "_blank", "noopener");
+    return respond(`Searching for ${q}.`);
+  }
+
+  /* ---------- wikipedia ---------- */
+  const wikiMatch = tRaw.match(/^(?:who is|who was|what is|what's|tell me about|define)\s+(.{2,80})$/i);
+  if (wikiMatch) {
+    const q = wikiMatch[1].replace(/[?.!]+$/, "").trim();
+    // skip if it's a math or known command
+    if (!looksLikeMath(q) && !/^(the )?(time|date|weather)/.test(q.toLowerCase())) {
+      logLine(`Looking up "${q}" on Wikipedia…`, "sys");
+      window.open("https://en.wikipedia.org/wiki/Special:Search?search=" + encodeURIComponent(q), "_blank", "noopener");
+      return respond(`Looking up ${q} on Wikipedia.`);
+    }
+  }
+
+  /* ---------- unit conversion ---------- */
+  if ((m = t.match(/^(?:convert\s+)?(-?\d+(?:\.\d+)?)\s*(?:degrees?\s+)?([a-z°]+)\s+(?:to|in|into)\s+(?:degrees?\s+)?([a-z°]+)$/))) {
+    const val = parseFloat(m[1]);
+    const result = convertUnits(val, m[2], m[3]);
+    if (result) {
+      const out = round(result.value, 4);
+      return respond(`${val} ${m[2]} equals ${out} ${m[3]}.`);
+    }
+  }
+
+  /* ---------- random ---------- */
+  if (/\b(roll|throw)\b.*\b(dice|die|d6|d20)\b/.test(t) || /^roll a? (dice|die)/.test(t)) {
+    const n = Math.floor(Math.random() * 6) + 1;
+    return respond(`You rolled a ${n}.`);
+  }
+  if (/\b(flip|toss)\b.*\bcoin\b/.test(t)) {
+    return respond(Math.random() < 0.5 ? "Heads." : "Tails.");
+  }
+  if ((m = t.match(/random number(?: between)?\s*(\d+)\s*(?:and|to|-)\s*(\d+)/))) {
+    const a = parseInt(m[1], 10), b = parseInt(m[2], 10);
+    const lo = Math.min(a, b), hi = Math.max(a, b);
+    return respond(`Your random number is ${Math.floor(Math.random() * (hi - lo + 1)) + lo}.`);
+  }
+  if (/^(pick|choose)\s+(?:a\s+)?(?:random\s+)?(?:number|one)/.test(t)) {
+    return respond(`I pick ${Math.floor(Math.random() * 100) + 1}.`);
+  }
+
+  /* ---------- jokes & quotes ---------- */
+  if (/\b(joke|make me laugh|something funny)\b/.test(t)) {
+    return respond(JOKES[Math.floor(Math.random() * JOKES.length)]);
+  }
+  if (/\b(inspire me|quote|motivat)/.test(t)) {
+    return respond(QUOTES[Math.floor(Math.random() * QUOTES.length)]);
+  }
+
+  /* ---------- system info ---------- */
+  if (/\b(battery|power level|charge)\b/.test(t)) {
+    if (navigator.getBattery) {
+      navigator.getBattery().then(b => {
+        respond(`Battery at ${Math.round(b.level * 100)} percent${b.charging ? " and charging" : ""}.`);
+      }).catch(() => respond("I can't read the battery on this device."));
+    } else {
+      respond("Battery status isn't available in this browser.");
+    }
+    return;
+  }
+  if (/\b(ip|network info|my ip)\b/.test(t)) {
+    setStatus("PROCESSING", "QUERYING NETWORK");
+    fetch("https://api.ipify.org?format=json")
+      .then(r => r.json())
+      .then(d => respond(`Your public IP address is ${d.ip}.`))
+      .catch(() => respond("I couldn't reach the network service."));
+    return;
+  }
+  if (/\b(system info|device info|screen size|resolution|browser)\b/.test(t)) {
+    const w = window.screen.width, h = window.screen.height;
+    const cores = navigator.hardwareConcurrency || "unknown";
+    const lang = navigator.language;
+    return respond(`Display is ${w} by ${h}. ${cores} logical cores available. Browser language ${lang}.`);
+  }
+
+  /* ---------- clipboard ---------- */
+  if ((m = t.match(/^(?:copy|clipboard)\s+(.+)$/))) {
+    const text = m[1];
+    navigator.clipboard.writeText(text)
+      .then(() => respond("Copied to clipboard."))
+      .catch(() => respond("I couldn't access the clipboard."));
+    return;
+  }
+
+  /* ---------- interface control ---------- */
+  if (/^(?:clear|wipe)(?: the)?(?: activity)?(?: log)?$/.test(t) || /^clear log/.test(t)) {
+    logEl.innerHTML = "";
+    logCount = 0;
+    $("logCount").textContent = "0";
+    logLine("Activity log cleared.", "sys");
+    return respond("Log cleared.");
+  }
+  if (/(full ?screen|maximise|maximize)/.test(t)) {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen?.();
+      return respond("Entering full screen.");
+    } else {
+      document.exitFullscreen?.();
+      return respond("Exiting full screen.");
+    }
+  }
+  if (/(stop talking|be quiet|silence|shut up|mute yourself)/.test(t)) {
+    if ("speechSynthesis" in window) speechSynthesis.cancel();
+    logLine("Voice output suppressed.", "sys");
+    return;
+  }
+  if (/(settings|preferences|options)/.test(t) && /open|show|display/.test(t)) {
+    openSettings();
+    return respond("Opening settings.");
+  }
+
+  /* ---------- standby ---------- */
+  if (/(shut down|power off|standby|sleep mode|good night)/.test(t)) {
+    setStatus("STANDBY", "ENTERING LOW POWER MODE");
+    energy = 0.05;
+    setTimeout(() => { if (!listening) setStatus("ONLINE", "ALL SYSTEMS NOMINAL"); }, 5000);
+    return respond("Entering standby. Wake me when you need me.");
+  }
+
+  /* ---------- help ---------- */
+  if (/^(help|commands|what can i say|list commands)/.test(t)) {
+    const help = [
+      "Time & date, weather.",
+      "Set timers: 'set a timer for 5 minutes'.",
+      "Take notes: 'note that I need milk', 'read my notes'.",
+      "Remember things: 'remember my wifi password is hunter2'.",
+      "Convert units: 'convert 10 km to miles'.",
+      "Calculate: 'what is 15% of 240'.",
+      "Open sites: 'open github'. Search: 'search for arc reactors'.",
+      "Random: 'roll a dice', 'flip a coin'.",
+      "Say 'settings' to configure me."
+    ].join(" ");
+    logLine("Available protocols: " + help, "sys");
+    return respond(help);
+  }
+
+  /* ---------- math (fallback before search confirm) ---------- */
+  if (looksLikeMath(t)) {
+    const cleaned = t.replace(/^(?:calculate|compute|what(?:'s| is)|solve|evaluate|eval)\s+/i, "");
+    const result = safeEval(cleaned);
+    if (result !== null) return respond(`The result is ${round(result)}.`);
+  }
+
+  /* ---------- fallback with offer to search ---------- */
+  askConfirm(
+    `I'm afraid I don't have a protocol for "${raw}". Shall I search the web for it?`,
+    () => {
+      window.open("https://www.google.com/search?q=" + encodeURIComponent(raw), "_blank", "noopener");
+      respond(`Searching for ${raw}.`);
+    }
+  );
+}
+
+function askConfirm(prompt, action) {
+  pendingAction = action;
+  respond(prompt);
+}
+
+/* ============================================================
+   11. WEATHER HELPER
+   ============================================================ */
 const WX = {
   0: "clear skies", 1: "mainly clear", 2: "partly cloudy", 3: "overcast",
   45: "foggy", 48: "freezing fog", 51: "light drizzle", 53: "drizzle",
@@ -779,7 +1799,7 @@ const WX = {
   96: "a thunderstorm with hail", 99: "a severe thunderstorm with hail"
 };
 
-async function getWeather() {
+function getWeather() {
   return new Promise((resolve, reject) => {
     if (!navigator.geolocation) return reject(new Error("no-geo"));
     navigator.geolocation.getCurrentPosition(async (pos) => {
@@ -794,170 +1814,166 @@ async function getWeather() {
   });
 }
 
-/* --- main dispatcher --- */
-function handleCommand(input) {
-  const raw = String(input).trim();
-  if (!raw) return;
-  const t = raw.toLowerCase().replace(/[?!.,]+$/g, "").trim();
+/* ============================================================
+   12. SETTINGS UI
+   ============================================================ */
+const settingsPanel = $("settingsPanel");
+const settingsBackdrop = $("settingsBackdrop");
 
-  logLine(raw, "user");
-  cmdInput.value = "";
-
-  /* --- greetings --- */
-  if (/^(hi|hey|hello|yo|greetings|good (morning|afternoon|evening))\b/.test(t)) {
-    const h = new Date().getHours();
-    const part = h < 12 ? "Good morning" : h < 18 ? "Good afternoon" : "Good evening";
-    return respond(`${part}. All systems are operational. How may I assist you?`);
-  }
-
-  /* --- time --- */
-  if (/\b(time|clock)\b/.test(t) && !/timetable/.test(t)) {
-    const now = new Date();
-    const time = now.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", hour12: true });
-    return respond(`The current time is ${time}.`);
-  }
-
-  /* --- date --- */
-  if (/\b(date|day|today)\b/.test(t)) {
-    const now = new Date();
-    const d = now.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
-    return respond(`Today is ${d}.`);
-  }
-
-  /* --- identity --- */
-  if (/(who are you|your name|what are you)/.test(t)) {
-    return respond("I am J.A.R.V.I.S. — Just A Rather Very Intelligent System. A browser-based interface built to assist you.");
-  }
-  if (/(how are you|status report|system status)/.test(t)) {
-    return respond("All systems nominal. Arc reactor at 98 percent. No anomalies detected.");
-  }
-
-  /* --- weather --- */
-  if (/\b(weather|temperature outside|forecast)\b/.test(t)) {
-    setStatus("PROCESSING", "QUERYING METEOROLOGICAL DATA");
-    logLine("Requesting location and weather data…", "sys");
-    getWeather().then((cur) => {
-      const desc = WX[cur.weather_code] || "indeterminate conditions";
-      const temp = Math.round(cur.temperature_2m);
-      const feels = Math.round(cur.apparent_temperature);
-      respond(`Currently ${temp} degrees Celsius with ${desc}. It feels like ${feels} degrees, with winds at ${Math.round(cur.wind_speed_10m)} kilometres per hour.`);
-    }).catch((err) => {
-      if (err.message === "denied") respond("I require location permission to retrieve local weather, sir.");
-      else respond("I'm unable to reach the meteorological service at the moment.");
-    });
-    return;
-  }
-
-  /* --- open websites --- */
-  const openMatch = t.match(/^(?:open|launch|go to|navigate to)\s+(.+)$/);
-  if (openMatch) {
-    const target = openMatch[1].replace(/\s+(website|site|page|dot com)$/g, "").trim();
-    const sites = {
-      "youtube": "https://www.youtube.com",
-      "google": "https://www.google.com",
-      "github": "https://www.github.com",
-      "gmail": "https://mail.google.com",
-      "reddit": "https://www.reddit.com",
-      "wikipedia": "https://www.wikipedia.org",
-      "twitter": "https://twitter.com",
-      "x": "https://x.com",
-      "spotify": "https://open.spotify.com",
-      "chatgpt": "https://chat.openai.com",
-      "maps": "https://maps.google.com",
-      "stark industries": "https://www.marvel.com"
-    };
-    let url = sites[target];
-    if (!url && /^[\w-]+(\.[\w-]+)+$/.test(target)) url = "https://" + target;
-    if (url) {
-      logLine("Opening " + url, "sys");
-      window.open(url, "_blank", "noopener");
-      return respond(`Opening ${target}.`);
-    }
-    return respond(`I don't have a shortcut for "${target}". Try a full web address.`);
-  }
-
-  /* --- search --- */
-  const searchMatch = t.match(/^(?:search|google|look up|find)\s+(?:for\s+)?(.+)$/);
-  if (searchMatch) {
-    const q = searchMatch[1];
-    logLine("Searching the web for: " + q, "sys");
-    window.open("https://www.google.com/search?q=" + encodeURIComponent(q), "_blank", "noopener");
-    return respond(`Searching for ${q}.`);
-  }
-
-  /* --- calculation --- */
-  const calcMatch = t.match(/^(?:calculate|compute|what is|what's)\s+(-?[\d.]+)\s*([+\-*/x×÷])\s*(-?[\d.]+)$/);
-  if (calcMatch) {
-    const a = parseFloat(calcMatch[1]);
-    const b = parseFloat(calcMatch[3]);
-    const op = calcMatch[2];
-    let result;
-    if (op === "+") result = a + b;
-    else if (op === "-") result = a - b;
-    else if (op === "*" || op === "x" || op === "×") result = a * b;
-    else result = b === 0 ? NaN : a / b;
-    if (Number.isNaN(result)) return respond("That operation is undefined.");
-    return respond(`The result is ${Math.round(result * 1e6) / 1e6}.`);
-  }
-
-  /* --- utilities --- */
-  if (/^(clear|clear log|wipe log)\b/.test(t)) {
-    logEl.innerHTML = "";
-    logCount = 0;
-    $("logCount").textContent = "0";
-    logLine("Activity log cleared.", "sys");
-    return respond("Log cleared.");
-  }
-
-  if (/(full ?screen|maximise|maximize)/.test(t)) {
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen?.();
-      return respond("Entering full screen.");
-    } else {
-      document.exitFullscreen?.();
-      return respond("Exiting full screen.");
-    }
-  }
-
-  if (/(stop talking|be quiet|silence|mute)/.test(t)) {
-    if ("speechSynthesis" in window) speechSynthesis.cancel();
-    logLine("Voice output suppressed.", "sys");
-    return;
-  }
-
-  if (/(shut down|power off|sleep|standby)/.test(t)) {
-    setStatus("STANDBY", "ENTERING LOW POWER MODE");
-    energy = 0.05;
-    setTimeout(() => { if (!listening) setStatus("ONLINE", "ALL SYSTEMS NOMINAL"); }, 4000);
-    return respond("Entering standby. Wake me when you need me.");
-  }
-
-  if (/(help|what can you do|commands|abilities)/.test(t)) {
-    logLine("Available protocols: time · date · weather · open <site> · search <query> · calculate <a+b> · fullscreen · clear · standby", "sys");
-    return respond("I can tell you the time and date, report the weather, open websites, run web searches, perform calculations, toggle full screen, and clear this log. Simply ask.");
-  }
-
-  /* --- fallback --- */
-  const fallbacks = [
-    `I'm afraid I don't have a protocol for "${raw}" yet.`,
-    `That request is outside my current programming. Say "help" for options.`,
-    `I didn't quite catch a directive in that. Try rephrasing, or say "help".`
-  ];
-  respond(fallbacks[Math.floor(Math.random() * fallbacks.length)]);
+function openSettings() {
+  settingsPanel.classList.add("open");
+  settingsBackdrop.classList.add("open");
+  settingsPanel.setAttribute("aria-hidden", "false");
+  $("settingsBtn").classList.add("active");
+}
+function closeSettings() {
+  settingsPanel.classList.remove("open");
+  settingsBackdrop.classList.remove("open");
+  settingsPanel.setAttribute("aria-hidden", "true");
+  $("settingsBtn").classList.remove("active");
 }
 
+$("settingsBtn").addEventListener("click", () => {
+  userHasInteracted = true;
+  if (settingsPanel.classList.contains("open")) closeSettings();
+  else openSettings();
+});
+$("settingsClose").addEventListener("click", closeSettings);
+settingsBackdrop.addEventListener("click", closeSettings);
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && settingsPanel.classList.contains("open")) closeSettings();
+});
+
+/* --- bind setting controls --- */
+function bindCheckbox(id, key, onChange) {
+  $(id).addEventListener("change", (e) => {
+    settings[key] = e.target.checked;
+    saveSettings();
+    applySettings();
+    if (onChange) onChange(e.target.checked);
+  });
+}
+function bindRange(id, key, displayId) {
+  $(id).addEventListener("input", (e) => {
+    settings[key] = parseFloat(e.target.value);
+    if (displayId) $(displayId).textContent = settings[key].toFixed(2);
+    saveSettings();
+  });
+}
+
+bindCheckbox("setSpeak", "speak");
+bindCheckbox("setTelemetry", "showTelemetry");
+bindCheckbox("setLogPanel", "showLog");
+bindCheckbox("setGrid", "showGrid");
+bindCheckbox("setReduced", "reducedMotion");
+bindCheckbox("setRequireWake", "requireWake");
+
+bindCheckbox("setAlwaysOn", "alwaysOn", (on) => {
+  if (on) {
+    startListening();
+    toast("Always-listening enabled");
+    logLine("Always-listening mode enabled. Mic will stay active.", "ok");
+  } else {
+    stopListening();
+    toast("Always-listening disabled");
+    logLine("Always-listening mode disabled.", "sys");
+  }
+});
+
+$("setWakeWord").addEventListener("input", (e) => {
+  settings.wakeWord = e.target.value.trim() || "jarvis";
+  saveSettings();
+});
+
+$("setLang").addEventListener("change", (e) => {
+  settings.lang = e.target.value;
+  saveSettings();
+  if (recognition) {
+    recognition.lang = settings.lang;
+    if (wantListening) {
+      stopListening();
+      setTimeout(startListening, 300);
+    }
+  }
+  toast("Language updated");
+});
+
+$("setVoice").addEventListener("change", (e) => {
+  settings.voiceName = e.target.value;
+  saveSettings();
+  const v = pickVoiceByName(settings.voiceName);
+  $("voiceName").textContent = (v ? v.name : (jarvisVoice ? jarvisVoice.name : "DEFAULT")).toUpperCase().slice(0, 16);
+});
+
+bindRange("setRate", "rate", "valRate");
+bindRange("setPitch", "pitch", "valPitch");
+bindRange("setVolume", "volume", "valVolume");
+
+$("testVoice").addEventListener("click", () => {
+  userHasInteracted = true;
+  const wasSpeak = settings.speak;
+  settings.speak = true;
+  speak("All systems nominal. Voice interface operational.");
+  if (!wasSpeak) setTimeout(() => { settings.speak = false; }, 100);
+});
+
+$("clearLogBtn").addEventListener("click", () => {
+  logEl.innerHTML = "";
+  logCount = 0;
+  $("logCount").textContent = "0";
+  logLine("Activity log cleared.", "sys");
+  toast("Log cleared");
+});
+
+$("clearMemBtn").addEventListener("click", () => {
+  settings.memories = {};
+  settings.notes = [];
+  saveSettings();
+  applySettings();
+  logLine("All memories and notes erased.", "sys");
+  toast("Memories cleared");
+});
+
+$("resetBtn").addEventListener("click", () => {
+  if (!confirm("Reset all settings to defaults? This will also erase memories and notes.")) return;
+  settings = JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
+  saveSettings();
+  applySettings();
+  if (recognition) recognition.lang = settings.lang;
+  stopListening();
+  logLine("All settings reset to defaults.", "sys");
+  toast("Settings reset");
+});
+
 /* ============================================================
-   8. START
+   13. INPUT HANDLING
+   ============================================================ */
+cmdInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    const val = cmdInput.value.trim();
+    cmdInput.value = "";
+    if (val) { userHasInteracted = true; logLine(val, "user"); handleCommand(val); }
+  }
+});
+
+document.addEventListener("click", () => { userHasInteracted = true; }, { once: true });
+document.addEventListener("keydown", () => { userHasInteracted = true; }, { once: true });
+
+/* ============================================================
+   14. START
    ============================================================ */
 resizeCanvas();
 requestAnimationFrame(loop);
-window.addEventListener("resize", () => { resizeCanvas(); });
+window.addEventListener("resize", resizeCanvas);
 setTimeout(resizeCanvas, 300);
 
-/* keep the reactor lively while idle */
+// idle reactor energy
 setInterval(() => {
   if (!listening) energy = clamp(energy + rand(-0.05, 0.06), 0.1, 0.55);
 }, 1800);
+
+// apply persisted settings on load
+applySettings();
 </script>
 </body>
 </html>
