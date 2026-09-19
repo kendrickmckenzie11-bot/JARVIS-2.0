@@ -37,7 +37,6 @@
   button{font-family:inherit;letter-spacing:inherit;color:inherit}
   ::selection{background:rgba(255,42,42,.35);color:#fff}
 
-  /* ---- background ---- */
   .bg-grid,.bg-vignette,.bg-scan{position:fixed;inset:0;pointer-events:none;z-index:0}
   .bg-grid{
     background:
@@ -55,7 +54,6 @@
 
   #app{position:relative;z-index:1;height:100%;display:grid;grid-template-rows:auto 1fr auto}
 
-  /* ---- header ---- */
   header{
     display:flex;align-items:center;justify-content:space-between;gap:16px;
     padding:12px 20px;border-bottom:1px solid var(--line);
@@ -83,9 +81,7 @@
     font-size:10px;letter-spacing:.2em;border-radius:2px;
     white-space:nowrap;
   }
-  .status-chip .pulse{
-    width:6px;height:6px;border-radius:50%;background:var(--dim2);
-  }
+  .status-chip .pulse{width:6px;height:6px;border-radius:50%;background:var(--dim2)}
   .status-chip.on{color:var(--red);border-color:var(--red-soft);background:rgba(255,42,42,.12)}
   .status-chip.on .pulse{background:var(--red);box-shadow:0 0 8px var(--red);animation:pulseDot 1.4s infinite}
   .status-chip.ok{color:var(--white);border-color:rgba(255,255,255,.3)}
@@ -104,7 +100,6 @@
   .icon-btn.active{background:rgba(255,42,42,.2);border-color:var(--red);color:#fff}
   .icon-btn svg{display:block}
 
-  /* ---- main grid ---- */
   main{
     display:grid;
     grid-template-columns:270px minmax(0,1fr) 340px;
@@ -143,7 +138,6 @@
   .readouts span{color:var(--text)}
   .readouts span.hot{color:var(--red)}
 
-  /* ---- core ---- */
   .core{position:relative;display:flex;align-items:center;justify-content:center;min-height:0}
   #reactor{width:100%;height:100%;display:block}
   .core-overlay{
@@ -156,7 +150,6 @@
   }
   .core-sub{font-size:10px;color:var(--dim);letter-spacing:.24em;margin-top:8px;min-height:14px}
 
-  /* ---- stop button (visible while speaking) ---- */
   .stop-pill{
     position:absolute;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);
     display:inline-flex;align-items:center;gap:8px;
@@ -171,7 +164,6 @@
   .stop-pill:hover{background:var(--red-bright);box-shadow:0 0 32px rgba(255,42,42,.95)}
   .stop-pill svg{width:12px;height:12px;fill:currentColor}
 
-  /* ---- screen preview ---- */
   .screen-preview{
     position:absolute;top:14px;left:14px;z-index:4;
     width:200px;background:rgba(10,10,10,.9);
@@ -198,7 +190,6 @@
     display:inline-block;margin-right:5px;
   }
 
-  /* ---- log ---- */
   #log{
     flex:1;overflow-y:auto;min-height:0;padding-right:6px;
     display:flex;flex-direction:column;gap:7px;
@@ -224,7 +215,6 @@
     animation:pulseDot .9s infinite;vertical-align:middle;
   }
 
-  /* ---- footer ---- */
   footer{
     padding:12px 20px 18px;border-top:1px solid var(--line);
     background:linear-gradient(0deg, rgba(40,5,5,.45), transparent);
@@ -267,7 +257,6 @@
   .hint{text-align:center;color:var(--dim2);font-size:10px;letter-spacing:.2em;margin-top:9px}
   .hint b{color:var(--red-soft);font-weight:500}
 
-  /* ---- boot ---- */
   #boot{
     position:fixed;inset:0;z-index:80;background:var(--bg);
     display:flex;flex-direction:column;align-items:center;justify-content:center;
@@ -285,7 +274,6 @@
   }
   .boot-sub{color:var(--dim);letter-spacing:.4em;font-size:10px;margin-top:-12px}
 
-  /* ---- settings ---- */
   .settings-backdrop{
     position:fixed;inset:0;background:rgba(0,0,0,.7);
     backdrop-filter:blur(2px);z-index:45;
@@ -344,6 +332,8 @@
 
   .setting-help{font-size:10.5px;color:var(--dim2);line-height:1.65;margin:-4px 0 10px}
   .setting-help b{color:var(--red-soft);font-weight:500}
+  .setting-help a{color:var(--red);text-decoration:none;border-bottom:1px dotted var(--red-soft)}
+  .setting-help a:hover{color:#fff;border-bottom-color:#fff}
 
   .switch{
     appearance:none;-webkit-appearance:none;
@@ -400,6 +390,36 @@
   .btn.primary{background:var(--red);color:#fff;border-color:var(--red);font-weight:700}
   .btn.primary:hover{background:var(--red-bright);box-shadow:0 0 22px rgba(255,42,42,.7)}
 
+  /* Model chips */
+  .model-chips{
+    display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;
+  }
+  .model-chip{
+    padding:6px 10px;font-size:10px;
+    background:rgba(255,42,42,.08);
+    border:1px solid var(--line);
+    color:var(--red);cursor:pointer;
+    border-radius:2px;letter-spacing:.04em;
+    transition:all .18s;
+    font-family:inherit;
+    white-space:nowrap;
+  }
+  .model-chip:hover{background:rgba(255,42,42,.22);border-color:var(--red);color:#fff}
+  .model-chip.active{background:var(--red);color:#fff;border-color:var(--red)}
+  .model-chip .v{color:var(--dim2);margin-left:4px;font-size:9px}
+  .model-chip:hover .v,.model-chip.active .v{color:rgba(255,255,255,.7)}
+
+  .key-row{display:flex;gap:6px;align-items:stretch}
+  .key-row .text-input{flex:1}
+  .key-toggle{
+    flex:0 0 auto;background:rgba(255,42,42,.08);
+    border:1px solid var(--line);color:var(--red);
+    padding:0 12px;font-size:10px;letter-spacing:.16em;
+    cursor:pointer;border-radius:2px;
+    transition:all .2s;
+  }
+  .key-toggle:hover{background:rgba(255,42,42,.2);color:#fff}
+
   .settings-footer{
     padding:16px 20px;border-top:1px solid var(--line-soft);
     font-size:10px;color:var(--dim2);letter-spacing:.2em;text-align:center;
@@ -427,7 +447,6 @@
   }
   @keyframes flashFade{from{opacity:1}to{opacity:0}}
 
-  /* ---- responsive ---- */
   @media (max-width:1000px){
     main{grid-template-columns:1fr;grid-template-rows:auto minmax(240px,1fr) minmax(160px,auto);overflow-y:auto}
     main.no-telemetry,main.no-log,main.no-telemetry.no-log{grid-template-columns:1fr}
@@ -458,7 +477,6 @@
 <div class="bg-vignette"></div>
 <div class="bg-scan"></div>
 
-<!-- ================= BOOT ================= -->
 <div id="boot">
   <h1 class="boot-title">A.C.E.</h1>
   <div class="boot-sub">AUTONOMOUS COGNITIVE ENTITY</div>
@@ -466,7 +484,6 @@
   <div id="bootBar"><i></i></div>
 </div>
 
-<!-- ================= APP ================= -->
 <div id="app">
   <header>
     <div class="brand">
@@ -498,10 +515,8 @@
   </header>
 
   <main id="mainGrid">
-    <!-- LEFT: telemetry -->
     <aside class="panel" id="telemetryPanel">
-      <div class="panel-title">System Diagnostics <span class="tag">v7.0</span></div>
-
+      <div class="panel-title">System Diagnostics <span class="tag">v7.1</span></div>
       <div class="stat">
         <div class="row"><span>REACTOR OUTPUT</span><b id="v-pwr">98%</b></div>
         <div class="bar"><i id="b-pwr"></i></div>
@@ -522,7 +537,6 @@
         <div class="row"><span>CORE TEMP</span><b id="v-tmp">--</b></div>
         <div class="bar"><i id="b-tmp"></i></div>
       </div>
-
       <div class="readouts">
         <div>PROTOCOL <span>MARK IX</span></div>
         <div>VOICE <span id="voiceName">SCANNING…</span></div>
@@ -532,10 +546,8 @@
       </div>
     </aside>
 
-    <!-- CENTER: core -->
     <section class="core">
       <canvas id="reactor"></canvas>
-
       <div class="screen-preview" id="screenPreview">
         <canvas id="screenPreviewCanvas" width="320" height="180"></canvas>
         <div class="lbl">
@@ -543,19 +555,16 @@
           <button id="stopScreenBtn" title="Stop sharing">✕</button>
         </div>
       </div>
-
       <div class="core-overlay">
         <div id="statusText">ONLINE</div>
         <div class="core-sub" id="coreSub">ALL SYSTEMS NOMINAL</div>
       </div>
-
       <button class="stop-pill" id="stopSpeakBtn">
         <svg viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="1"/></svg>
         STOP SPEAKING
       </button>
     </section>
 
-    <!-- RIGHT: log -->
     <aside class="panel" id="logPanel">
       <div class="panel-title">Activity Log <span class="tag" id="logCount">0</span></div>
       <div id="log"></div>
@@ -576,7 +585,7 @@
       </button>
     </div>
     <div class="hint">
-      <b>“be quiet”</b> to interrupt · <b>“look at my screen”</b> to enable vision ·
+      <b>“be quiet”</b> to interrupt · <b>“look at my screen”</b> for vision ·
       <b>“open github”</b> · <b>“set a timer for 5 minutes”</b> · <b>“help”</b>
     </div>
   </footer>
@@ -593,49 +602,43 @@
 
   <div class="settings-body">
 
+    <!-- ============ AI (OpenRouter) ============ -->
     <section class="setting-group">
-      <h3>Artificial Intelligence</h3>
+      <h3>OpenRouter AI</h3>
 
       <label class="setting-row col">
         <span>API Key</span>
-        <input type="password" id="setApiKey" class="text-input" placeholder="sk-…" autocomplete="off">
+        <div class="key-row">
+          <input type="password" id="setApiKey" class="text-input" placeholder="sk-or-v1-…" autocomplete="off" spellcheck="false">
+          <button type="button" class="key-toggle" id="toggleKeyBtn">SHOW</button>
+        </div>
       </label>
       <div class="setting-help">
-        Stored in <b>your browser's localStorage only</b>. Since this site is static, the key lives
-        client-side — use a restricted key if you're deploying publicly.
-      </div>
-
-      <label class="setting-row col">
-        <span>API Endpoint</span>
-        <input type="text" id="setApiEndpoint" class="text-input" placeholder="https://api.openai.com/v1/chat/completions">
-      </label>
-      <div class="setting-help">
-        Any OpenAI-compatible endpoint works: OpenAI, OpenRouter, Groq, Together, Ollama, LM Studio, etc.
+        Get a key at <a href="https://openrouter.ai/keys" target="_blank" rel="noopener">openrouter.ai/keys</a>.
+        Stored only in your browser's <b>localStorage</b>.
       </div>
 
       <label class="setting-row col">
         <span>Model</span>
-        <input type="text" id="setModel" class="text-input" placeholder="gpt-4o-mini">
+        <input type="text" id="setModel" class="text-input"
+               placeholder="openai/gpt-4o-mini" autocomplete="off" spellcheck="false">
       </label>
       <div class="setting-help">
-        Use a vision-capable model for screen reading: <b>gpt-4o-mini</b>, <b>gpt-4o</b>,
-        <b>claude-3-5-sonnet</b> (via OpenRouter), etc.
+        Paste the model slug (e.g. <b>openai/gpt-4o-mini</b>) or the full link from
+        <a href="https://openrouter.ai/models" target="_blank" rel="noopener">openrouter.ai/models</a> —
+        the link is auto-converted to a slug.
       </div>
 
-      <label class="setting-row col">
-        <span>System prompt</span>
-        <textarea id="setSystemPrompt" class="text-input" rows="5"></textarea>
-      </label>
-
-      <label class="setting-row">
-        <span>Use AI for everything</span>
-        <input type="checkbox" id="setAiFirst" class="switch">
-      </label>
-      <div class="setting-help">
-        When on, every message goes to the AI (local commands like "open github" still run first).
+      <div class="model-chips" id="modelChips">
+        <button type="button" class="model-chip" data-model="openai/gpt-4o-mini">gpt-4o-mini<span class="v">· vision</span></button>
+        <button type="button" class="model-chip" data-model="openai/gpt-4o">gpt-4o<span class="v">· vision</span></button>
+        <button type="button" class="model-chip" data-model="anthropic/claude-3.5-sonnet">claude-3.5-sonnet<span class="v">· vision</span></button>
+        <button type="button" class="model-chip" data-model="google/gemini-flash-1.5">gemini-flash-1.5<span class="v">· vision</span></button>
+        <button type="button" class="model-chip" data-model="meta-llama/llama-3.1-70b-instruct">llama-3.1-70b</button>
+        <button type="button" class="model-chip" data-model="mistralai/mistral-large">mistral-large</button>
       </div>
 
-      <button class="btn" id="testAiBtn">Test connection</button>
+      <button class="btn" id="testAiBtn" style="margin-top:14px">Test connection</button>
       <button class="btn" id="clearHistoryBtn">Clear conversation history</button>
     </section>
 
@@ -643,9 +646,10 @@
       <h3>Screen Vision</h3>
       <button class="btn" id="shareScreenBtn">Share screen</button>
       <button class="btn danger" id="stopShareBtn" style="display:none">Stop sharing</button>
-      <div class="setting-help">
-        A.C.E. can only see your screen when you're actively sharing. Say <b>"look at my screen"</b>
-        or ask any visual question after sharing.
+      <div class="setting-help" style="margin-top:10px">
+        A.C.E. can only see your screen when you're actively sharing. Say
+        <b>"look at my screen"</b> or ask any visual question after sharing.
+        Use a vision-capable model.
       </div>
       <label class="setting-row">
         <span>Show live preview</span>
@@ -661,16 +665,14 @@
       </label>
       <div class="setting-help">
         Keeps the microphone permanently active — auto-restarts after every silence or error.
-        This is required for <b>“be quiet”</b> mid-speech interrupts.
+        Required for <b>“be quiet”</b> mid-speech interrupts.
       </div>
 
       <label class="setting-row">
         <span>Require wake word</span>
         <input type="checkbox" id="setRequireWake" class="switch">
       </label>
-      <div class="setting-help">
-        When always-on is enabled, only respond after hearing the wake word.
-      </div>
+      <div class="setting-help">When always-on is enabled, only respond after hearing the wake word.</div>
 
       <label class="setting-row col">
         <span>Wake word</span>
@@ -698,32 +700,26 @@
 
     <section class="setting-group">
       <h3>Voice Output</h3>
-
       <label class="setting-row col">
         <span>Voice</span>
         <select id="setVoice" class="text-input"><option value="">System default</option></select>
       </label>
-
       <label class="setting-row col">
         <span>Rate <b id="valRate">1.00</b></span>
         <input type="range" id="setRate" min="0.5" max="1.6" step="0.01" class="range">
       </label>
-
       <label class="setting-row col">
         <span>Pitch <b id="valPitch">0.90</b></span>
         <input type="range" id="setPitch" min="0.1" max="1.5" step="0.01" class="range">
       </label>
-
       <label class="setting-row col">
         <span>Volume <b id="valVolume">1.00</b></span>
         <input type="range" id="setVolume" min="0" max="1" step="0.01" class="range">
       </label>
-
       <label class="setting-row">
         <span>Speak responses</span>
         <input type="checkbox" id="setSpeak" class="switch">
       </label>
-
       <button class="btn" id="testVoice">Test voice</button>
     </section>
 
@@ -754,7 +750,7 @@
       <button class="btn danger" id="resetBtn">Reset all settings</button>
     </section>
 
-    <div class="settings-footer">A.C.E. v7.0 · Autonomous Cognitive Entity · Saved automatically</div>
+    <div class="settings-footer">A.C.E. v7.1 · Autonomous Cognitive Entity · Saved automatically</div>
   </div>
 </aside>
 
@@ -769,17 +765,19 @@
   function rand(a, b) { return a + Math.random() * (b - a); }
   function cap(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
   function round(n) { return Math.round(n * 1e6) / 1e6; }
-  function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c]; }); }
+
+  // ==================== CONSTANTS ====================
+  var OPENROUTER_ENDPOINT = "https://openrouter.ai/api/v1/chat/completions";
+  var OPENROUTER_REFERER  = "https://github.com/";   // OpenRouter courtesy header
+  var OPENROUTER_TITLE    = "A.C.E. Interface";
 
   // ==================== SETTINGS ====================
-  var STORAGE_KEY = "ace.settings.v7";
+  var STORAGE_KEY = "ace.settings.v7.1";
 
   var DEFAULTS = {
-    // AI
+    // OpenRouter AI (only two fields matter now)
     apiKey: "",
-    apiEndpoint: "https://api.openai.com/v1/chat/completions",
-    model: "gpt-4o-mini",
-    aiFirst: false,
+    model: "openai/gpt-4o-mini",
     systemPrompt: "You are A.C.E. — Autonomous Cognitive Entity — a concise, capable AI assistant with a dry, slightly formal tone inspired by JARVIS from Iron Man. Address the user politely as 'sir' or 'ma'am' occasionally. Keep spoken replies short: 1–3 sentences unless the user asks for detail. When an image of the user's screen is provided, describe what's relevant and useful — don't enumerate every pixel. Never use markdown or emoji in replies since they are spoken aloud.",
     // Voice / mic
     alwaysOn: false,
@@ -814,6 +812,8 @@
         s.notes = parsed.notes || [];
       }
     } catch (e) {}
+    // Migration: if an old version had apiEndpoint saved, drop it silently
+    if (s.apiEndpoint) delete s.apiEndpoint;
     return s;
   }
 
@@ -822,6 +822,29 @@
   }
 
   var settings = loadSettings();
+
+  // ==================== MODEL SLUG PARSER ====================
+  // Accepts:
+  //   "openai/gpt-4o-mini"
+  //   "https://openrouter.ai/openai/gpt-4o-mini"
+  //   "https://openrouter.ai/models/openai/gpt-4o-mini"
+  //   "https://openrouter.ai/models/openai/gpt-4o-mini?ref=xyz"
+  // Returns the clean slug: "openai/gpt-4o-mini"
+  function parseModelInput(raw) {
+    if (!raw) return "";
+    var s = String(raw).trim();
+    // Strip protocol
+    s = s.replace(/^https?:\/\//i, "");
+    // Strip domain
+    s = s.replace(/^openrouter\.ai\//i, "");
+    // Strip "models/" prefix if present
+    s = s.replace(/^models\//i, "");
+    // Strip query / hash
+    s = s.split("?")[0].split("#")[0];
+    // Strip trailing slash
+    s = s.replace(/\/+$/, "");
+    return s;
+  }
 
   // ==================== STATE ====================
   var logCount = 0;
@@ -840,7 +863,7 @@
   var pendingAction = null;
   var activeTimers = [];
   var startTime = Date.now();
-  var conversationHistory = [];  // {role, content}
+  var conversationHistory = [];
   var aiBusy = false;
   var screenStream = null;
   var screenVideo = null;
@@ -861,8 +884,7 @@
     var m = document.createElement("span");
     m.className = "m";
     m.textContent = text;
-    row.appendChild(t);
-    row.appendChild(m);
+    row.appendChild(t); row.appendChild(m);
     els.log.appendChild(row);
     els.log.scrollTop = els.log.scrollHeight;
     logCount++;
@@ -907,7 +929,6 @@
     if (!("speechSynthesis" in window)) return;
     allVoices = speechSynthesis.getVoices();
     if (!allVoices.length) return;
-
     var sel = els.setVoice;
     if (sel) {
       var prev = sel.value;
@@ -920,7 +941,6 @@
       }
       sel.value = settings.voiceName || prev || "";
     }
-
     var preferred = ["Daniel", "Google UK English Male", "Microsoft Ryan Online",
                      "Microsoft George Online", "Arthur", "Oliver", "en-GB"];
     jarvisVoice = null;
@@ -938,28 +958,20 @@
       }
     }
     if (!jarvisVoice && allVoices.length) jarvisVoice = allVoices[0];
-
     if (els.voiceName) {
       els.voiceName.textContent = jarvisVoice ? jarvisVoice.name.toUpperCase().slice(0, 16) : "DEFAULT";
     }
   }
-
   function pickVoiceByName(name) {
     if (!name) return null;
-    for (var i = 0; i < allVoices.length; i++) {
-      if (allVoices[i].name === name) return allVoices[i];
-    }
+    for (var i = 0; i < allVoices.length; i++) if (allVoices[i].name === name) return allVoices[i];
     return null;
   }
-
   function speak(text) {
     if (!settings.speak) return;
     if (!("speechSynthesis" in window)) return;
     if (!userHasInteracted) return;
-
-    // Chop overly long text so the speech engine doesn't choke
     var spoken = text.replace(/```[\s\S]*?```/g, " (code block omitted) ").slice(0, 1200);
-
     try {
       speechSynthesis.cancel();
       var u = new SpeechSynthesisUtterance(spoken);
@@ -980,7 +992,6 @@
         if (els.stopSpeakBtn) els.stopSpeakBtn.classList.remove("show");
         if (!listening) setStatus("ONLINE", "ALL SYSTEMS NOMINAL");
         updateChips();
-        // Re-arm the mic immediately after TTS ends if it wasn't running
         if (wantListening && !listening && settings.alwaysOn) scheduleRestart(180);
       };
       u.onend = finish;
@@ -988,7 +999,6 @@
       speechSynthesis.speak(u);
     } catch (e) {}
   }
-
   function stopSpeaking(silent) {
     if (!("speechSynthesis" in window)) return false;
     var was = speaking || speechSynthesis.speaking;
@@ -1019,7 +1029,6 @@
       }, 3600);
     }
   }
-
   function respond(text, opts) {
     opts = opts || {};
     logLine(text, opts.type || "ace");
@@ -1029,40 +1038,23 @@
 
   // ==================== CHIPS ====================
   function updateChips() {
-    // AI chip
     var aiChip = els.aiChip, aiTxt = els.aiChipText;
     if (aiChip && aiTxt) {
-      var configured = !!(settings.apiKey && settings.apiEndpoint && settings.model);
+      var configured = aiConfigured();
       aiChip.className = "status-chip " + (configured ? "ok" : "warn");
       aiTxt.textContent = configured ? ("AI: " + (aiBusy ? "THINKING" : "READY")) : "AI: SET KEY";
     }
-    // Mic chip
     var micChip = els.micChip, micTxt = els.micChipText;
     if (micChip && micTxt) {
-      if (!micSupported) {
-        micChip.className = "status-chip warn";
-        micTxt.textContent = "MIC: N/A";
-      } else if (settings.alwaysOn && wantListening) {
-        micChip.className = "status-chip on";
-        micTxt.textContent = "MIC: ALWAYS";
-      } else if (listening) {
-        micChip.className = "status-chip on";
-        micTxt.textContent = "MIC: LIVE";
-      } else {
-        micChip.className = "status-chip";
-        micTxt.textContent = "MIC: OFF";
-      }
+      if (!micSupported) { micChip.className = "status-chip warn"; micTxt.textContent = "MIC: N/A"; }
+      else if (settings.alwaysOn && wantListening) { micChip.className = "status-chip on"; micTxt.textContent = "MIC: ALWAYS"; }
+      else if (listening) { micChip.className = "status-chip on"; micTxt.textContent = "MIC: LIVE"; }
+      else { micChip.className = "status-chip"; micTxt.textContent = "MIC: OFF"; }
     }
-    // Screen chip
     var scChip = els.screenChip, scTxt = els.screenChipText;
     if (scChip && scTxt) {
-      if (screenStream) {
-        scChip.className = "status-chip on";
-        scTxt.textContent = "SCREEN: LIVE";
-      } else {
-        scChip.className = "status-chip";
-        scTxt.textContent = "SCREEN: OFF";
-      }
+      if (screenStream) { scChip.className = "status-chip on"; scTxt.textContent = "SCREEN: LIVE"; }
+      else { scChip.className = "status-chip"; scTxt.textContent = "SCREEN: OFF"; }
     }
   }
 
@@ -1072,10 +1064,12 @@
   }
   function tickUptime() {
     var s = Math.floor((Date.now() - startTime) / 1000);
-    var hh = String(Math.floor(s / 3600)).padStart(2, "0");
-    var mm = String(Math.floor((s % 3600) / 60)).padStart(2, "0");
-    var ss = String(s % 60).padStart(2, "0");
-    if (els.uptime) els.uptime.textContent = hh + ":" + mm + ":" + ss;
+    if (els.uptime) {
+      els.uptime.textContent =
+        String(Math.floor(s / 3600)).padStart(2, "0") + ":" +
+        String(Math.floor((s % 3600) / 60)).padStart(2, "0") + ":" +
+        String(s % 60).padStart(2, "0");
+    }
   }
 
   // ==================== TELEMETRY ====================
@@ -1099,18 +1093,15 @@
 
   // ==================== ARC REACTOR ====================
   var canvas = null, ctx = null, W = 0, H = 0;
-
   function resizeCanvas() {
     if (!canvas) return;
     var rect = canvas.getBoundingClientRect();
     var dpr = Math.min(window.devicePixelRatio || 1, 2);
-    W = Math.max(rect.width, 1);
-    H = Math.max(rect.height, 1);
+    W = Math.max(rect.width, 1); H = Math.max(rect.height, 1);
     canvas.width = Math.floor(W * dpr);
     canvas.height = Math.floor(H * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
-
   function arcSeg(cx, cy, rot, radius, start, len, lw, color, glow) {
     ctx.save(); ctx.translate(cx, cy); ctx.rotate(rot);
     ctx.beginPath(); ctx.arc(0, 0, radius, start, start + len);
@@ -1118,26 +1109,22 @@
     if (glow) { ctx.shadowBlur = glow; ctx.shadowColor = color; }
     ctx.stroke(); ctx.restore();
   }
-
   function drawReactor(now) {
     if (!ctx) return;
     ctx.clearRect(0, 0, W, H);
     var cx = W / 2, cy = H / 2;
     var R = Math.min(W, H) / 2 - 10;
     if (R <= 0) return;
-
     var motion = settings.reducedMotion ? 0.15 : 1;
     var pulse = Math.sin(now / 900) * 0.5 + 0.5;
     var e = energyCur;
 
-    // Outer ring
     ctx.save(); ctx.translate(cx, cy); ctx.rotate(now / 26000 * motion);
     ctx.beginPath(); ctx.arc(0, 0, R * 0.97, 0, Math.PI * 2);
     ctx.setLineDash([2, 7]); ctx.lineWidth = 1.2;
     ctx.strokeStyle = "rgba(255,42,42,.35)"; ctx.stroke();
     ctx.restore();
 
-    // Tick marks
     ctx.save(); ctx.translate(cx, cy); ctx.rotate(now / 60000 * motion);
     for (var i = 0; i < 72; i++) {
       var a = (i / 72) * Math.PI * 2;
@@ -1152,11 +1139,7 @@
     }
     ctx.restore();
 
-    // Rotating arcs
-    var rotA = now / 5200 * motion;
-    var rotB = -now / 3600 * motion;
-    var rotC = now / 2400 * motion;
-
+    var rotA = now / 5200 * motion, rotB = -now / 3600 * motion, rotC = now / 2400 * motion;
     arcSeg(cx, cy, rotA, R * 0.90, 0, Math.PI * 0.34, 2.4, "rgba(255,42,42,.95)", 16);
     arcSeg(cx, cy, rotA, R * 0.90, Math.PI * 0.62, Math.PI * 0.20, 2.4, "rgba(255,42,42,.55)", 10);
     arcSeg(cx, cy, rotB, R * 0.78, 0, Math.PI * 0.42, 3.2, "rgba(255,255,255,.85)", 18);
@@ -1164,22 +1147,18 @@
     arcSeg(cx, cy, rotC, R * 0.64, 0, Math.PI * 0.24, 1.8, "rgba(255,42,42,.7)", 12);
     arcSeg(cx, cy, rotC, R * 0.64, Math.PI * 0.45, Math.PI * 0.30, 1.8, "rgba(255,42,42,.4)", 8);
 
-    // Sweep
     var sweep = now / 1500 * motion;
     for (var k = 0; k < 14; k++) {
       var alpha = (1 - k / 14) * 0.4;
       arcSeg(cx, cy, sweep - k * 0.045, R * 0.70, 0, 0.05, 6, "rgba(255,255,255," + alpha + ")", 0);
     }
 
-    // Inner ring
     ctx.save(); ctx.translate(cx, cy);
     ctx.beginPath(); ctx.arc(0, 0, R * 0.52, 0, Math.PI * 2);
     ctx.lineWidth = 1;
     ctx.strokeStyle = "rgba(255,42,42," + (0.25 + e * 0.4) + ")";
-    ctx.stroke();
-    ctx.restore();
+    ctx.stroke(); ctx.restore();
 
-    // Core glow
     var coreR = R * 0.20 * (1 + 0.07 * pulse + 0.30 * e);
     var g = ctx.createRadialGradient(cx, cy, 0, cx, cy, coreR * 3.4);
     g.addColorStop(0, "rgba(255,255,255,1)");
@@ -1190,30 +1169,24 @@
     ctx.fillStyle = g;
     ctx.beginPath(); ctx.arc(cx, cy, coreR * 3.4, 0, Math.PI * 2); ctx.fill();
 
-    // Core ring
     ctx.beginPath(); ctx.arc(cx, cy, coreR, 0, Math.PI * 2);
     ctx.lineWidth = 2;
     ctx.strokeStyle = "rgba(255,255,255,.95)";
     ctx.shadowBlur = 26; ctx.shadowColor = "rgba(255,42,42,.95)";
     ctx.stroke(); ctx.shadowBlur = 0;
 
-    // Particles
     if (!settings.reducedMotion) {
-      var n = 26;
-      for (var p = 0; p < n; p++) {
+      for (var p = 0; p < 26; p++) {
         var seed = p * 137.508;
         var ang = (seed + now / (2000 + (p % 7) * 400)) % (Math.PI * 2);
         var rr = R * (0.30 + ((p % 9) / 9) * 0.58);
-        var px = cx + Math.cos(ang) * rr;
-        var py = cy + Math.sin(ang) * rr;
-        var sz = 1 + (p % 3) * 0.6;
-        ctx.beginPath(); ctx.arc(px, py, sz, 0, Math.PI * 2);
+        ctx.beginPath();
+        ctx.arc(cx + Math.cos(ang) * rr, cy + Math.sin(ang) * rr, 1 + (p % 3) * 0.6, 0, Math.PI * 2);
         ctx.fillStyle = "rgba(255," + (60 + Math.floor(e * 60)) + "," + (60 + Math.floor(e * 60)) + "," + (0.3 + 0.5 * e) + ")";
         ctx.fill();
       }
     }
   }
-
   var lastFrame = 0;
   function loop(now) {
     var dt = Math.min(now - lastFrame, 60);
@@ -1228,7 +1201,6 @@
     var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
     micSupported = !!SR;
     if (!micSupported) return;
-
     recognition = new SR();
     recognition.continuous = true;
     recognition.interimResults = true;
@@ -1248,20 +1220,14 @@
       var interim = "", final = "";
       for (var i = ev.resultIndex; i < ev.results.length; i++) {
         var tr = ev.results[i][0].transcript;
-        if (ev.results[i].isFinal) final += tr;
-        else interim += tr;
+        if (ev.results[i].isFinal) final += tr; else interim += tr;
       }
-
       if (interim && !final && els.cmd) els.cmd.value = interim;
       if (!final) return;
-
       var text = final.trim();
       if (!text) return;
       if (els.cmd) els.cmd.value = "";
 
-      // ============ MID-SPEECH INTERRUPT HANDLING ============
-      // While A.C.E. is speaking, the mic picks up its own voice. We only
-      // accept SHORT transcripts that are clearly interrupt commands.
       if (speaking || (window.speechSynthesis && speechSynthesis.speaking)) {
         var words = text.split(/\s+/).filter(Boolean).length;
         if (words <= 5 && INTERRUPT_WORDS.test(text.trim())) {
@@ -1271,13 +1237,9 @@
           setStatus("ONLINE", "AWAITING INPUT");
           return;
         }
-        // Otherwise assume it's our own voice — ignore
         return;
       }
-
-      // Ignore empty / very short noise
       if (text.length < 2) return;
-
       processTranscript(text);
     };
 
@@ -1308,10 +1270,7 @@
       }
       updateChips();
       updateMicAppearance();
-
-      if (wantListening && settings.alwaysOn) {
-        scheduleRestart(260);
-      }
+      if (wantListening && settings.alwaysOn) scheduleRestart(260);
     };
   }
 
@@ -1333,10 +1292,7 @@
     }
     if ("speechSynthesis" in window && !settings.alwaysOn) speechSynthesis.cancel();
     wantListening = true;
-    if (!listening) {
-      try { recognition.start(); }
-      catch (e) { scheduleRestart(500); }
-    }
+    if (!listening) { try { recognition.start(); } catch (e) { scheduleRestart(500); } }
     updateChips();
     updateMicAppearance();
   }
@@ -1356,23 +1312,19 @@
       toast("Voice not supported", "warn");
       return;
     }
-    if (wantListening) stopListening();
-    else startListening();
+    if (wantListening) stopListening(); else startListening();
   }
 
   function processTranscript(text) {
     var needWake = settings.alwaysOn && settings.requireWake;
     var awake = Date.now() < awakeUntil;
-
     if (needWake && !awake) {
       var ww = (settings.wakeWord || "ace").toLowerCase().trim();
       var lower = text.toLowerCase();
       var idx = ww ? lower.indexOf(ww) : -1;
       if (idx === -1) return;
-
       var rest = text.slice(idx + ww.length).replace(/^[\s,.:;!?\-]+/, "").trim();
       logLine(text, "user");
-
       if (!rest) {
         awakeUntil = Date.now() + 9000;
         beep(660, 0.1, 0.08);
@@ -1382,7 +1334,6 @@
       handleCommand(rest);
       return;
     }
-
     if (awake) awakeUntil = 0;
     logLine(text, "user");
     handleCommand(text);
@@ -1398,11 +1349,9 @@
       : "Toggle voice input";
   }
 
-  // ==================== APPLY SETTINGS ====================
   function applySettings() {
     document.body.classList.toggle("no-grid", !settings.showGrid);
     document.body.classList.toggle("reduced-motion", !!settings.reducedMotion);
-
     if (els.telemetryPanel) els.telemetryPanel.classList.toggle("hidden", !settings.showTelemetry);
     if (els.logPanel) els.logPanel.classList.toggle("hidden", !settings.showLog);
     if (els.mainGrid) {
@@ -1412,12 +1361,8 @@
     if (els.memCount) els.memCount.textContent = Object.keys(settings.memories).length;
     if (els.histCount) els.histCount.textContent = Math.floor(conversationHistory.length / 2);
 
-    // Reflect to UI
     if (els.setApiKey) els.setApiKey.value = settings.apiKey || "";
-    if (els.setApiEndpoint) els.setApiEndpoint.value = settings.apiEndpoint || "";
     if (els.setModel) els.setModel.value = settings.model || "";
-    if (els.setSystemPrompt) els.setSystemPrompt.value = settings.systemPrompt || "";
-    if (els.setAiFirst) els.setAiFirst.checked = !!settings.aiFirst;
     if (els.setAlwaysOn) els.setAlwaysOn.checked = !!settings.alwaysOn;
     if (els.setRequireWake) els.setRequireWake.checked = !!settings.requireWake;
     if (els.setWakeWord) els.setWakeWord.value = settings.wakeWord;
@@ -1434,6 +1379,11 @@
     if (els.valRate) els.valRate.textContent = Number(settings.rate).toFixed(2);
     if (els.valPitch) els.valPitch.textContent = Number(settings.pitch).toFixed(2);
     if (els.valVolume) els.valVolume.textContent = Number(settings.volume).toFixed(2);
+
+    // Highlight the active model chip
+    document.querySelectorAll(".model-chip").forEach(function (chip) {
+      chip.classList.toggle("active", chip.getAttribute("data-model") === settings.model);
+    });
 
     updateChips();
     updateMicAppearance();
@@ -1470,7 +1420,6 @@
       screenVideo.muted = true;
       screenVideo.playsInline = true;
       await screenVideo.play();
-
       var track = screenStream.getVideoTracks()[0];
       track.addEventListener("ended", stopScreenShare);
 
@@ -1492,7 +1441,6 @@
       }
     }
   }
-
   function stopScreenShare() {
     if (screenStream) {
       try { screenStream.getTracks().forEach(function (t) { t.stop(); }); } catch (e) {}
@@ -1508,7 +1456,6 @@
     toast("Screen sharing stopped");
     updateChips();
   }
-
   function startPreviewLoop() {
     if (screenPreviewRAF) cancelAnimationFrame(screenPreviewRAF);
     function tick() {
@@ -1517,15 +1464,13 @@
         screenPreviewRAF = requestAnimationFrame(tick);
         return;
       }
-      // Only update when preview visible & tab visible
       if (document.visibilityState === "visible" && settings.screenPreview) {
         var cw = pc.width, ch = pc.height;
         var vw = screenVideo.videoWidth, vh = screenVideo.videoHeight;
         var scale = Math.max(cw / vw, ch / vh);
         var dw = vw * scale, dh = vh * scale;
-        var ox = (cw - dw) / 2, oy = (ch - dh) / 2;
         var pctx = pc.getContext("2d");
-        try { pctx.drawImage(screenVideo, ox, oy, dw, dh); } catch (e) {}
+        try { pctx.drawImage(screenVideo, (cw - dw) / 2, (ch - dh) / 2, dw, dh); } catch (e) {}
       }
       screenPreviewRAF = setTimeout(function () {
         screenPreviewRAF = requestAnimationFrame(tick);
@@ -1533,12 +1478,10 @@
     }
     screenPreviewRAF = requestAnimationFrame(tick);
   }
-
   function captureScreenFrame() {
     if (!screenVideo || !screenVideo.videoWidth) return null;
     var c = document.createElement("canvas");
     var vw = screenVideo.videoWidth, vh = screenVideo.videoHeight;
-    // Resize down to save tokens but keep readable text
     var maxW = 1280;
     var scale = Math.min(1, maxW / vw);
     c.width = Math.round(vw * scale);
@@ -1548,38 +1491,37 @@
     return c.toDataURL("image/jpeg", 0.72);
   }
 
-  // ==================== AI ENGINE ====================
+  // ==================== AI ENGINE (OpenRouter) ====================
   function aiConfigured() {
-    return !!(settings.apiKey && settings.apiEndpoint && settings.model);
+    return !!(settings.apiKey && settings.model);
   }
 
   async function askAI(userText, imageDataUrl) {
     if (!aiConfigured()) throw new Error("AI not configured");
 
     var messages = [{ role: "system", content: settings.systemPrompt }];
-
-    // Trim history: keep last 12 turns, replace images with placeholders
     var hist = conversationHistory.slice(-12);
-    for (var i = 0; i < hist.length; i++) {
-      messages.push(hist[i]);
-    }
+    for (var i = 0; i < hist.length; i++) messages.push(hist[i]);
 
     var userContent;
     if (imageDataUrl) {
       userContent = [
         { type: "text", text: userText || "What's on my screen? Describe anything useful." },
-        { type: "image_url", image_url: { url: imageDataUrl, detail: "auto" } }
+        { type: "image_url", image_url: { url: imageDataUrl } }
       ];
     } else {
       userContent = userText;
     }
     messages.push({ role: "user", content: userContent });
 
-    var res = await fetch(settings.apiEndpoint, {
+    // OpenRouter endpoint, hardcoded. Only key + model come from the user.
+    var res = await fetch(OPENROUTER_ENDPOINT, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": "Bearer " + settings.apiKey
+        "Authorization": "Bearer " + settings.apiKey,
+        "HTTP-Referer": OPENROUTER_REFERER,
+        "X-Title": OPENROUTER_TITLE
       },
       body: JSON.stringify({
         model: settings.model,
@@ -1592,7 +1534,12 @@
     if (!res.ok) {
       var errText = "";
       try { errText = await res.text(); } catch (e) {}
-      throw new Error("HTTP " + res.status + ": " + (errText.slice(0, 200) || res.statusText));
+      var brief = errText;
+      try {
+        var parsed = JSON.parse(errText);
+        if (parsed.error && parsed.error.message) brief = parsed.error.message;
+      } catch (e) {}
+      throw new Error("HTTP " + res.status + ": " + (brief || res.statusText).slice(0, 220));
     }
 
     var data = await res.json();
@@ -1603,7 +1550,6 @@
   }
 
   function pushHistory(role, content) {
-    // Don't store giant base64 images in history
     var safeContent = content;
     if (Array.isArray(content)) {
       safeContent = content.map(function (p) {
@@ -1616,17 +1562,13 @@
     if (els.histCount) els.histCount.textContent = Math.floor(conversationHistory.length / 2);
   }
 
-  async function handleWithAI(userText, imageDataUrl, opts) {
-    opts = opts || {};
+  async function handleWithAI(userText, imageDataUrl) {
     if (!aiConfigured()) {
-      respond("I don't have an API key configured yet. Open settings to add one — then I'll be fully online.");
-      toast("Add an API key in settings", "warn");
+      respond("I'm not connected yet. Open settings and add your OpenRouter API key and model — then I'll be fully online.");
+      toast("Add OpenRouter key in settings", "warn");
       return;
     }
-    if (aiBusy) {
-      respond("One moment, I'm still thinking about the last request.");
-      return;
-    }
+    if (aiBusy) { respond("One moment, I'm still thinking about the last request."); return; }
 
     aiBusy = true;
     updateChips();
@@ -1639,23 +1581,20 @@
     try {
       var reply = await askAI(userText, imageDataUrl);
       if (thinkingRow && thinkingRow.parentNode) thinkingRow.parentNode.removeChild(thinkingRow);
-
       if (!reply) reply = "I don't have anything to add.";
 
-      // Save the turn
       if (imageDataUrl) {
         pushHistory("user", [{ type: "text", text: userText || "What's on my screen?" }, { type: "text", text: "[screen image]" }]);
       } else {
         pushHistory("user", userText);
       }
       pushHistory("assistant", reply);
-
       respond(reply);
     } catch (err) {
       if (thinkingRow && thinkingRow.parentNode) thinkingRow.parentNode.removeChild(thinkingRow);
-      var msg = "I couldn't reach the AI service. " + (err && err.message ? err.message : "");
+      var msg = "I couldn't reach OpenRouter. " + (err && err.message ? err.message : "");
       logLine(msg, "err");
-      respond("I had trouble reaching the AI service. Check your API key and endpoint in settings.", { type: "ace" });
+      respond("I had trouble reaching OpenRouter. Double-check your API key and model in settings.");
     } finally {
       aiBusy = false;
       updateChips();
@@ -1680,7 +1619,6 @@
     activeTimers.push(id);
     return id;
   }
-
   function safeEval(expr) {
     var e = String(expr).toLowerCase().trim();
     e = e.replace(/(\d+(?:\.\d+)?)\s*(?:%|percent)\s*of\s*/g, "($1/100)*");
@@ -1719,7 +1657,6 @@
   var TEMP_ALIASES = { c:"c", celsius:"c", "°c":"c", centigrade:"c",
                        f:"f", fahrenheit:"f", "°f":"f",
                        k:"k", kelvin:"k" };
-
   function convertUnits(val, from, to) {
     from = from.toLowerCase(); to = to.toLowerCase();
     if (TEMP_ALIASES[from] && TEMP_ALIASES[to]) {
@@ -1751,13 +1688,13 @@
     81: "rain showers", 82: "violent rain showers", 95: "a thunderstorm",
     96: "a thunderstorm with hail", 99: "a severe thunderstorm with hail"
   };
-
   function getWeather() {
     return new Promise(function (resolve, reject) {
       if (!navigator.geolocation) return reject(new Error("no-geo"));
       navigator.geolocation.getCurrentPosition(function (pos) {
-        var lat = pos.coords.latitude, lon = pos.coords.longitude;
-        var url = "https://api.open-meteo.com/v1/forecast?latitude=" + lat + "&longitude=" + lon + "&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m";
+        var url = "https://api.open-meteo.com/v1/forecast?latitude=" + pos.coords.latitude +
+                  "&longitude=" + pos.coords.longitude +
+                  "&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m";
         fetch(url).then(function (r) { return r.json(); })
           .then(function (d) { resolve(d.current); })
           .catch(reject);
@@ -1771,13 +1708,11 @@
     respond(prompt);
   }
 
-  // Returns true if the command was fully handled locally.
-  // Returns false to fall through to the AI.
+  // Returns true if handled locally
   function tryLocalCommand(raw) {
     var t = raw.toLowerCase().replace(/[?!.,]+$/g, "").trim();
     var m;
 
-    // ----- Interrupt / quiet -----
     if (/^(?:please\s+)?(?:be quiet|quiet|stop(?: talking)?|shut up|silence|shush|hush|mute|hold on|wait|pause|cancel|enough|that's enough|nevermind|never mind|stop it|shut it)(?:[\s.!?,]*)$/i.test(t)) {
       var was = stopSpeaking(false);
       if (!was) respond("I'm not speaking, but noted.");
@@ -1785,12 +1720,9 @@
       return true;
     }
     if (/^(?:never mind|nevermind|cancel)(?:\s+(?:that|it|the last one))?$/i.test(t) && pendingAction) {
-      pendingAction = null;
-      respond("Cancelled.");
-      return true;
+      pendingAction = null; respond("Cancelled."); return true;
     }
 
-    // ----- Confirmation -----
     if (pendingAction) {
       if (/^(yes|yeah|yep|yup|sure|ok|okay|do it|please do|affirmative|go ahead|confirm)\b/.test(t)) {
         var a = pendingAction; pendingAction = null; a(); return true;
@@ -1800,39 +1732,32 @@
       }
     }
 
-    // ----- Name -----
     if ((m = t.match(/^(?:my name is|call me|i am|i'm)\s+([a-z][a-z '\-]{0,38})$/))) {
       settings.userName = m[1].trim(); saveSettings();
-      respond("Noted. I'll call you " + cap(settings.userName) + ".");
-      return true;
+      respond("Noted. I'll call you " + cap(settings.userName) + "."); return true;
     }
     if (/what(?:'s| is) my name|who am i\b/.test(t)) {
-      respond(settings.userName ? ("You're " + cap(settings.userName) + ", of course.")
-                                : "You haven't told me your name yet.");
+      respond(settings.userName ? ("You're " + cap(settings.userName) + ", of course.") : "You haven't told me your name yet.");
       return true;
     }
 
-    // ----- Memory -----
     if ((m = t.match(/^(?:remember|memorise|memorize|store)(?: that)?\s+(?:my\s+)?(.+?)\s+(?:is|are|equals?)\s+(.+)$/))) {
       var key = m[1].trim().replace(/^my\s+/, "");
       var val = m[2].trim();
       if (key.length > 60 || val.length > 200) { respond("That's a bit long for me to store."); return true; }
       settings.memories[key] = val; saveSettings(); applySettings();
       beep(880, 0.08, 0.08);
-      respond("Stored. I'll remember that your " + key + " is " + val + ".");
-      return true;
+      respond("Stored. I'll remember that your " + key + " is " + val + "."); return true;
     }
     if ((m = t.match(/^(?:what(?:'s| is)|do you remember)\s+my\s+(.+?)$/))) {
       var k2 = m[1].trim();
       if (settings.memories[k2]) { respond("Your " + k2 + " is " + settings.memories[k2] + "."); return true; }
       for (var mk in settings.memories) {
         if (mk.indexOf(k2) > -1 || k2.indexOf(mk) > -1) {
-          respond("Did you mean your " + mk + "? It's " + settings.memories[mk] + ".");
-          return true;
+          respond("Did you mean your " + mk + "? It's " + settings.memories[mk] + "."); return true;
         }
       }
-      respond("I don't have anything stored for \"" + k2 + "\".");
-      return true;
+      respond("I don't have anything stored for \"" + k2 + "\"."); return true;
     }
     if ((m = t.match(/^forget\s+(?:my\s+)?(.+)$/))) {
       var fk = m[1].trim().replace(/^my\s+/, "");
@@ -1847,11 +1772,9 @@
       if (!keys.length) { respond("I haven't stored any memories yet."); return true; }
       var list = keys.map(function (k) { return k + ": " + settings.memories[k]; }).join(". ");
       logLine("Memories — " + list, "sys");
-      respond("I remember " + keys.length + " things. " + list);
-      return true;
+      respond("I remember " + keys.length + " things. " + list); return true;
     }
 
-    // ----- Notes -----
     if ((m = t.match(/^(?:take a note|note that|note down|add note|make a note|write down)\s*:?\s*(.+)$/))) {
       settings.notes.push({ text: m[1].trim(), at: Date.now() });
       saveSettings(); applySettings();
@@ -1863,28 +1786,14 @@
       if (!settings.notes.length) { respond("You don't have any notes."); return true; }
       var nlist = settings.notes.map(function (n, i) { return (i + 1) + ". " + n.text; }).join(". ");
       logLine("Notes — " + nlist, "sys");
-      respond("You have " + settings.notes.length + " note" + (settings.notes.length === 1 ? "" : "s") + ". " + nlist);
-      return true;
+      respond("You have " + settings.notes.length + " note" + (settings.notes.length === 1 ? "" : "s") + ". " + nlist); return true;
     }
     if (/^(?:clear|delete|erase)(?: all)?(?: my)? notes?/.test(t)) {
       var nc = settings.notes.length;
       settings.notes = []; saveSettings(); applySettings();
-      respond("All " + nc + " note" + (nc === 1 ? "" : "s") + " cleared.");
-      return true;
+      respond("All " + nc + " note" + (nc === 1 ? "" : "s") + " cleared."); return true;
     }
 
-    // ----- Greetings (local fast path) -----
-    if (/^(hi|hey|hello|yo|greetings|good (morning|afternoon|evening)|howdy)\b/.test(t)) {
-      // Let AI handle if configured — feels more natural
-      if (aiConfigured() && settings.aiFirst) return false;
-      var h = new Date().getHours();
-      var part = h < 12 ? "Good morning" : h < 18 ? "Good afternoon" : "Good evening";
-      var nameStr = settings.userName ? ", " + cap(settings.userName) : "";
-      respond(part + nameStr + ". All systems are operational. How may I assist you?");
-      return true;
-    }
-
-    // ----- Time / Date -----
     if (/\b(time|clock)\b/.test(t) && !/timetable|timer/.test(t) && !/set a timer/.test(t)) {
       respond("The current time is " + new Date().toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit", hour12: true }) + ".");
       return true;
@@ -1894,17 +1803,6 @@
       return true;
     }
 
-    // ----- Identity -----
-    if (/(who are you|your name|what are you|introduce yourself)/.test(t)) {
-      respond("I am A.C.E. — Autonomous Cognitive Entity. A browser-based interface built to assist you.");
-      return true;
-    }
-    if (/(how are you|status report|system status|systems check)/.test(t)) {
-      respond("All systems nominal. Reactor at 98 percent. Cognition load light.");
-      return true;
-    }
-
-    // ----- Timers -----
     if ((m = t.match(/^(?:set (?:a )?timer(?: for)?|timer for|remind me in|in)\s+(\d+(?:\.\d+)?)\s*(seconds?|secs?|s|minutes?|mins?|m|hours?|hrs?|h)\b(.*)$/))) {
       var tval = parseFloat(m[1]), tunit = m[2];
       var secs = tval;
@@ -1914,29 +1812,24 @@
       var labelMatch = m[3].match(/(?:to|for|about|that)\s+(.+)$/);
       var label = labelMatch ? labelMatch[1].trim() : "";
       setTimer(secs, label);
-      var pretty = secs < 60 ? (Math.round(secs) + " seconds") :
-                   secs < 3600 ? (round(secs / 60) + " minutes") :
-                   (round(secs / 3600) + " hours");
-      respond(label ? ("Timer set for " + pretty + " — " + label + ".") : ("Timer set for " + pretty + "."));
-      return true;
+      var pretty = secs < 60 ? (Math.round(secs) + " seconds") : secs < 3600 ? (round(secs / 60) + " minutes") : (round(secs / 3600) + " hours");
+      respond(label ? ("Timer set for " + pretty + " — " + label + ".") : ("Timer set for " + pretty + ".")); return true;
     }
     if (/^(?:cancel|clear|stop)(?: all)? timers?/.test(t)) {
       var tn = activeTimers.length;
       for (var ti = 0; ti < activeTimers.length; ti++) clearTimeout(activeTimers[ti]);
       activeTimers = [];
-      respond(tn ? ("Cancelled " + tn + " timer" + (tn === 1 ? "" : "s") + ".") : "There are no active timers.");
-      return true;
+      respond(tn ? ("Cancelled " + tn + " timer" + (tn === 1 ? "" : "s") + ".") : "There are no active timers."); return true;
     }
 
-    // ----- Weather -----
     if (/\b(weather|temperature outside|forecast|how hot|how cold)\b/.test(t)) {
       setStatus("PROCESSING", "QUERYING METEOROLOGICAL DATA");
       logLine("Requesting location and weather data…", "sys");
       getWeather().then(function (cur) {
         var desc = WX[cur.weather_code] || "indeterminate conditions";
-        var temp = Math.round(cur.temperature_2m);
-        var feels = Math.round(cur.apparent_temperature);
-        respond("Currently " + temp + " degrees Celsius with " + desc + ". It feels like " + feels + " degrees, with winds at " + Math.round(cur.wind_speed_10m) + " kilometres per hour.");
+        respond("Currently " + Math.round(cur.temperature_2m) + " degrees Celsius with " + desc +
+                ". It feels like " + Math.round(cur.apparent_temperature) + " degrees, with winds at " +
+                Math.round(cur.wind_speed_10m) + " kilometres per hour.");
       }).catch(function (err) {
         if (err.message === "denied") respond("I require location permission to retrieve local weather.");
         else if (err.message === "no-geo") respond("Your browser does not support geolocation.");
@@ -1945,30 +1838,18 @@
       return true;
     }
 
-    // ----- Screen vision commands -----
     var wantScreen = /\b(?:look at|see|read|check|what'?s on|analyse|analyze|describe|scan)\b.*\b(?:my |the |this )?(screen|monitor|display|page|window)\b/i.test(raw)
                   || /^(?:what do you see|can you see (?:my )?(?:screen|this)|take a look)/i.test(t);
     if (wantScreen) {
-      if (!screenStream) {
-        respond("Screen vision isn't active. Click the screen icon in the header, or say 'share my screen'.");
-        return true;
-      }
+      if (!screenStream) { respond("Screen vision isn't active. Click the screen icon in the header, or say 'share my screen'."); return true; }
       var frame = captureScreenFrame();
       if (!frame) { respond("I couldn't capture your screen. Try again."); return true; }
       handleWithAI(raw, frame);
       return true;
     }
-    if (/^(?:share|start sharing|enable)(?: my| the)? screen/.test(t)) {
-      startScreenShare();
-      return true;
-    }
-    if (/^(?:stop|end)(?: sharing| screen share| sharing my screen)/.test(t)) {
-      stopScreenShare();
-      respond("Screen sharing stopped.");
-      return true;
-    }
+    if (/^(?:share|start sharing|enable)(?: my| the)? screen/.test(t)) { startScreenShare(); return true; }
+    if (/^(?:stop|end)(?: sharing| screen share| sharing my screen)/.test(t)) { stopScreenShare(); respond("Screen sharing stopped."); return true; }
 
-    // ----- Open websites -----
     var openMatch = t.match(/^(?:open|launch|go to|navigate to|bring up)\s+(.+)$/);
     if (openMatch) {
       var target = openMatch[1].replace(/\s+(website|site|page|dot com|\.com)$/g, "").trim();
@@ -1979,58 +1860,49 @@
         "twitter": "https://twitter.com", "x": "https://x.com",
         "spotify": "https://open.spotify.com", "chatgpt": "https://chat.openai.com",
         "maps": "https://maps.google.com", "news": "https://news.google.com",
-        "netflix": "https://www.netflix.com", "twitch": "https://www.twitch.tv"
+        "netflix": "https://www.netflix.com", "twitch": "https://www.twitch.tv",
+        "openrouter": "https://openrouter.ai"
       };
       var url = sites[target];
       if (!url && /^[\w-]+(\.[\w-]+)+$/.test(target)) url = "https://" + target;
       if (url) {
         logLine("Opening " + url, "sys");
         window.open(url, "_blank", "noopener");
-        respond("Opening " + target + ".");
-        return true;
+        respond("Opening " + target + "."); return true;
       }
-      respond("I don't have a shortcut for \"" + target + "\". Try a full web address.");
-      return true;
+      respond("I don't have a shortcut for \"" + target + "\". Try a full web address."); return true;
     }
 
-    // ----- Web search -----
     var searchMatch = t.match(/^(?:search|google|look up|find|search for)\s+(?:for\s+)?(.+)$/);
     if (searchMatch) {
       var q = searchMatch[1];
       logLine("Searching the web for: " + q, "sys");
       window.open("https://www.google.com/search?q=" + encodeURIComponent(q), "_blank", "noopener");
-      respond("Searching for " + q + ".");
-      return true;
+      respond("Searching for " + q + "."); return true;
     }
 
-    // ----- Unit conversion -----
     if ((m = t.match(/^(?:convert\s+)?(-?\d+(?:\.\d+)?)\s*(?:degrees?\s+)?([a-z°]+)\s+(?:to|in|into)\s+(?:degrees?\s+)?([a-z°]+)$/))) {
       var cval = parseFloat(m[1]);
       var cres = convertUnits(cval, m[2], m[3]);
       if (cres) { respond(cval + " " + m[2] + " equals " + round(cres.value) + " " + m[3] + "."); return true; }
     }
 
-    // ----- Random -----
     if (/\b(roll|throw)\b.*\b(dice|die|d6|d20)\b/.test(t) || /^roll a? (dice|die)/.test(t)) {
       respond("You rolled a " + (Math.floor(Math.random() * 6) + 1) + "."); return true;
     }
-    if (/\b(flip|toss)\b.*\bcoin\b/.test(t)) {
-      respond(Math.random() < 0.5 ? "Heads." : "Tails."); return true;
-    }
+    if (/\b(flip|toss)\b.*\bcoin\b/.test(t)) { respond(Math.random() < 0.5 ? "Heads." : "Tails."); return true; }
     if ((m = t.match(/random number(?: between)?\s*(\d+)\s*(?:and|to|-)\s*(\d+)/))) {
       var r1 = parseInt(m[1], 10), r2 = parseInt(m[2], 10);
       var lo = Math.min(r1, r2), hi = Math.max(r1, r2);
       respond("Your random number is " + (Math.floor(Math.random() * (hi - lo + 1)) + lo) + "."); return true;
     }
 
-    // ----- Math (only when clearly local) -----
     if (looksLikeMath(t) && /^(?:calculate|compute|what(?:'s| is)|solve|evaluate|eval)\s+/i.test(t)) {
       var cleaned = t.replace(/^(?:calculate|compute|what(?:'s| is)|solve|evaluate|eval)\s+/i, "");
       var mres = safeEval(cleaned);
       if (mres !== null) { respond("The result is " + round(mres) + "."); return true; }
     }
 
-    // ----- Interface -----
     if (/^(?:clear|wipe)(?: the)?(?: activity)?(?: log)?$/.test(t)) {
       if (els.log) els.log.innerHTML = "";
       logCount = 0;
@@ -2055,23 +1927,12 @@
       setStatus("STANDBY", "ENTERING LOW POWER MODE");
       energy = 0.05;
       setTimeout(function () { if (!listening) setStatus("ONLINE", "ALL SYSTEMS NOMINAL"); }, 5000);
-      respond("Entering standby. Wake me when you need me.");
-      return true;
+      respond("Entering standby. Wake me when you need me."); return true;
     }
     if (/^(?:clear|reset|forget)\s+(?:our\s+|the\s+)?conversation|^(?:new|fresh)\s+conversation/.test(t)) {
       conversationHistory = [];
       if (els.histCount) els.histCount.textContent = "0";
       respond("Conversation memory cleared."); return true;
-    }
-    if (/^(help|commands|what can i say|list commands)$/.test(t)) {
-      if (aiConfigured()) {
-        // Let AI give a dynamic help
-        return false;
-      }
-      var help = "I can tell the time and date, report the weather, set timers, take notes, remember things, convert units, do calculations, open websites, run web searches, and — with an API key configured — answer anything you ask. Say 'be quiet' any time to interrupt me.";
-      logLine("Available protocols: " + help, "sys");
-      respond(help);
-      return true;
     }
 
     return false;
@@ -2081,26 +1942,14 @@
     var raw = String(input).trim();
     if (!raw) return;
 
-    // Always allow interrupts to run instantly
-    if (INTERRUPT_WORDS.test(raw.trim())) {
-      stopSpeaking(false);
-      return;
-    }
+    if (INTERRUPT_WORDS.test(raw.trim())) { stopSpeaking(false); return; }
 
-    // Try local commands first (fast, free)
-    try {
-      if (tryLocalCommand(raw)) return;
-    } catch (e) {
-      console.error("Local command error:", e);
-    }
+    try { if (tryLocalCommand(raw)) return; } catch (e) { console.error("Local command error:", e); }
 
-    // Otherwise go to AI
-    if (aiConfigured()) {
-      handleWithAI(raw, null);
-    } else {
-      // No AI — fall back to a helpful message
-      respond("I don't have a local response for that. Open settings and add an API key so I can think about it properly.", { type: "warn" });
-      toast("Add an API key to unlock AI", "warn");
+    if (aiConfigured()) handleWithAI(raw, null);
+    else {
+      respond("I don't have a local response for that. Open settings and add your OpenRouter API key — then I'll be fully online.", { type: "warn" });
+      toast("Add OpenRouter key in settings", "warn");
     }
   }
 
@@ -2109,7 +1958,7 @@
     ["INITIALISING A.C.E. CORE", "OK"],
     ["LOADING COGNITIVE RUNTIME", "OK"],
     ["MOUNTING VISION SUBSYSTEM", "OK"],
-    ["ESTABLISHING SECURE UPLINK", "OK"],
+    ["CONNECTING TO OPENROUTER", "…"],
     ["CALIBRATING VOICE INTERFACE", "OK"],
     ["LOADING COMMAND PROTOCOLS", "312"],
     ["REACTOR OUTPUT", "98.4%"],
@@ -2120,26 +1969,24 @@
     var box = els.bootLog;
     var bar = els.bootBar ? els.bootBar.firstElementChild : null;
     if (!box) return Promise.resolve();
-
     var i = 0;
     function step() {
       if (i >= BOOT_LINES.length) {
         return sleep(380).then(function () {
           els.boot.classList.add("done");
           logLine("A.C.E. online. Standing by.", "ace");
-          if (!aiConfigured()) {
-            logLine("No API key configured — add one in settings for full AI capability.", "warn");
-          }
+          if (!aiConfigured()) logLine("OpenRouter not configured — add key + model in settings.", "warn");
+          else logLine("OpenRouter ready — model: " + settings.model, "ok");
           if (settings.alwaysOn) {
             logLine("Always-listening mode active.", "ok");
-            setTimeout(function () {
-              if (userHasInteracted) startListening();
-            }, 500);
+            setTimeout(function () { if (userHasInteracted) startListening(); }, 500);
           }
         });
       }
       var line = BOOT_LINES[i];
       var label = line[0], status = line[1];
+      // Reflect OpenRouter connection state
+      if (label === "CONNECTING TO OPENROUTER") status = aiConfigured() ? "OK" : "PENDING";
       var dots = ".".repeat(Math.max(4, 42 - label.length));
       var row = document.createElement("div");
       row.innerHTML = label + ' <span style="color:#6a1a1a">' + dots + '</span> <span class="ok">' + status + "</span>";
@@ -2172,9 +2019,8 @@
       stopScreenBtn: $("stopScreenBtn"), stopShareBtn: $("stopShareBtn"),
       shareScreenBtn: $("shareScreenBtn"),
       stopSpeakBtn: $("stopSpeakBtn"),
-      // settings
-      setApiKey: $("setApiKey"), setApiEndpoint: $("setApiEndpoint"), setModel: $("setModel"),
-      setSystemPrompt: $("setSystemPrompt"), setAiFirst: $("setAiFirst"),
+      setApiKey: $("setApiKey"), toggleKeyBtn: $("toggleKeyBtn"),
+      setModel: $("setModel"),
       testAiBtn: $("testAiBtn"), clearHistoryBtn: $("clearHistoryBtn"),
       setScreenPreview: $("setScreenPreview"),
       setAlwaysOn: $("setAlwaysOn"), setRequireWake: $("setRequireWake"),
@@ -2209,33 +2055,19 @@
       saveSettings();
     });
   }
-  function bindText(id, key, live) {
-    var el = els[id];
-    if (!el) return;
-    var handler = function (e) {
-      settings[key] = e.target.value;
-      saveSettings();
-      updateChips();
-    };
-    el.addEventListener(live ? "input" : "change", handler);
-  }
 
   function bindAll() {
-    // Header / nav
     if (els.settingsBtn) els.settingsBtn.addEventListener("click", function () { userHasInteracted = true; toggleSettings(); });
     if (els.settingsClose) els.settingsClose.addEventListener("click", closeSettings);
     if (els.settingsBackdrop) els.settingsBackdrop.addEventListener("click", closeSettings);
-    document.addEventListener("keydown", function (e) {
-      if (e.key === "Escape") closeSettings();
-    });
+    document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeSettings(); });
 
     if (els.micBtn) els.micBtn.addEventListener("click", toggleMic);
     if (els.stopSpeakBtn) els.stopSpeakBtn.addEventListener("click", function () { stopSpeaking(false); });
 
     if (els.screenBtn) els.screenBtn.addEventListener("click", function () {
       userHasInteracted = true;
-      if (screenStream) stopScreenShare();
-      else startScreenShare();
+      if (screenStream) stopScreenShare(); else startScreenShare();
     });
     if (els.shareScreenBtn) els.shareScreenBtn.addEventListener("click", startScreenShare);
     if (els.stopShareBtn) els.stopShareBtn.addEventListener("click", stopScreenShare);
@@ -2251,34 +2083,82 @@
       });
     }
 
-    // First interaction unlock
     document.addEventListener("click", function () { userHasInteracted = true; }, { once: true });
     document.addEventListener("keydown", function () { userHasInteracted = true; }, { once: true });
 
-    // AI settings
-    bindText("setApiKey", "apiKey");
-    bindText("setApiEndpoint", "apiEndpoint");
-    bindText("setModel", "model");
-    var sp = els.setSystemPrompt;
-    if (sp) sp.addEventListener("change", function (e) { settings.systemPrompt = e.target.value; saveSettings(); });
-    bindCheckbox("setAiFirst", "aiFirst");
+    // ---- OpenRouter API key ----
+    if (els.setApiKey) {
+      els.setApiKey.addEventListener("input", function (e) {
+        settings.apiKey = e.target.value.trim();
+        saveSettings();
+        updateChips();
+      });
+    }
+    if (els.toggleKeyBtn) {
+      els.toggleKeyBtn.addEventListener("click", function () {
+        var k = els.setApiKey;
+        if (!k) return;
+        if (k.type === "password") { k.type = "text"; els.toggleKeyBtn.textContent = "HIDE"; }
+        else { k.type = "password"; els.toggleKeyBtn.textContent = "SHOW"; }
+      });
+    }
+
+    // ---- Model ----
+    if (els.setModel) {
+      // Live parse as they type so a pasted URL auto-cleans on blur
+      els.setModel.addEventListener("input", function (e) {
+        settings.model = e.target.value.trim();
+        saveSettings();
+        updateChips();
+        document.querySelectorAll(".model-chip").forEach(function (chip) {
+          chip.classList.toggle("active", chip.getAttribute("data-model") === settings.model);
+        });
+      });
+      els.setModel.addEventListener("blur", function (e) {
+        var cleaned = parseModelInput(e.target.value);
+        if (cleaned && cleaned !== e.target.value) {
+          e.target.value = cleaned;
+          settings.model = cleaned;
+          saveSettings();
+          updateChips();
+          document.querySelectorAll(".model-chip").forEach(function (chip) {
+            chip.classList.toggle("active", chip.getAttribute("data-model") === cleaned);
+          });
+          toast("Model slug cleaned up");
+        }
+      });
+    }
+
+    // ---- Model chip quick-picks ----
+    document.querySelectorAll(".model-chip").forEach(function (chip) {
+      chip.addEventListener("click", function () {
+        var model = chip.getAttribute("data-model");
+        if (!model) return;
+        settings.model = model;
+        saveSettings();
+        if (els.setModel) els.setModel.value = model;
+        document.querySelectorAll(".model-chip").forEach(function (c) {
+          c.classList.toggle("active", c === chip);
+        });
+        updateChips();
+        toast("Model set to " + model);
+      });
+    });
 
     if (els.testAiBtn) {
       els.testAiBtn.addEventListener("click", async function () {
         userHasInteracted = true;
-        if (!aiConfigured()) {
-          toast("Fill in key, endpoint, and model", "warn");
-          return;
-        }
+        if (!aiConfigured()) { toast("Enter your API key and model", "warn"); return; }
         els.testAiBtn.textContent = "Testing…";
         els.testAiBtn.disabled = true;
         try {
           var reply = await askAI("Say 'A.C.E. online' — nothing else.", null);
-          logLine("AI connection OK — " + reply.slice(0, 80), "ok");
-          toast("AI connected");
-          speak("AI connection verified.");
+          logLine("OpenRouter OK — model: " + settings.model, "ok");
+          logLine("Reply: " + reply.slice(0, 100), "ace");
+          toast("Connected to OpenRouter");
+          speak("OpenRouter connection verified.");
         } catch (err) {
-          logLine("AI connection failed: " + (err && err.message || err), "err");
+          logLine("OpenRouter error: " + (err && err.message || err), "err");
           toast("Connection failed", "warn");
         } finally {
           els.testAiBtn.textContent = "Test connection";
@@ -2295,11 +2175,12 @@
         logLine("Conversation history cleared.", "sys");
       });
     }
+
     bindCheckbox("setScreenPreview", "screenPreview", function (on) {
       if (els.screenPreview) els.screenPreview.classList.toggle("on", on && !!screenStream);
     });
 
-    // Mic settings
+    // ---- Mic ----
     bindCheckbox("setRequireWake", "requireWake");
     bindCheckbox("setAlwaysOn", "alwaysOn", function (on) {
       if (on) {
@@ -2336,7 +2217,7 @@
       });
     }
 
-    // Voice settings
+    // ---- Voice ----
     if (els.setVoice) {
       els.setVoice.addEventListener("change", function (e) {
         settings.voiceName = e.target.value;
@@ -2361,13 +2242,13 @@
       });
     }
 
-    // UI settings
+    // ---- UI ----
     bindCheckbox("setTelemetry", "showTelemetry");
     bindCheckbox("setLogPanel", "showLog");
     bindCheckbox("setGrid", "showGrid");
     bindCheckbox("setReduced", "reducedMotion");
 
-    // Data
+    // ---- Data ----
     if (els.clearLogBtn) els.clearLogBtn.addEventListener("click", function () {
       if (els.log) els.log.innerHTML = "";
       logCount = 0;
@@ -2394,7 +2275,6 @@
       toast("Settings reset");
     });
 
-    // Resize
     window.addEventListener("resize", resizeCanvas);
   }
 
@@ -2414,11 +2294,8 @@
       els.voiceName.textContent = "UNSUPPORTED";
     }
 
-    if (!micSupported) {
-      logLine("Speech recognition unsupported — use Chrome or Edge for voice.", "warn");
-    }
+    if (!micSupported) logLine("Speech recognition unsupported — use Chrome or Edge for voice.", "warn");
 
-    // Timers
     setInterval(tickClock, 1000); tickClock();
     setInterval(tickUptime, 1000); tickUptime();
     setInterval(updateStats, 1400); updateStats();
@@ -2426,14 +2303,12 @@
       if (!listening && !aiBusy) energy = clamp(energy + rand(-0.05, 0.06), 0.1, 0.55);
     }, 1800);
 
-    // Canvas
     resizeCanvas();
     lastFrame = performance.now();
     requestAnimationFrame(loop);
     setTimeout(resizeCanvas, 200);
     setTimeout(resizeCanvas, 600);
 
-    // Safety net: never let the boot screen stick
     setTimeout(function () {
       if (els.boot && !els.boot.classList.contains("done")) {
         els.boot.classList.add("done");
