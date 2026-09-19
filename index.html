@@ -11,7 +11,6 @@
 
   :root{
     --cyan:#00e5ff;
-    --cyan-soft:rgba(0,229,255,.18);
     --bg:#03060c;
     --panel:rgba(8,18,30,.55);
     --border:rgba(0,229,255,.18);
@@ -41,7 +40,6 @@
     mask-image:radial-gradient(circle at 50% 50%, #000 25%, transparent 78%);
   }
 
-  /* ---------- layout ---------- */
   .app{
     position:relative;z-index:1;
     height:100vh;height:100dvh;
@@ -96,7 +94,6 @@
     min-height:0;
   }
 
-  /* ---------- reactor ---------- */
   .core-panel{
     display:flex;flex-direction:column;align-items:center;justify-content:center;
     gap:20px;padding:24px;overflow:hidden;
@@ -166,7 +163,6 @@
   .wave.active span:nth-child(6){animation-delay:.10s}
   @keyframes wave{0%,100%{height:8px}50%{height:32px}}
 
-  /* ---------- chat ---------- */
   .chat-panel{display:flex;flex-direction:column;overflow:hidden}
 
   .messages{
@@ -248,7 +244,6 @@
     70%{box-shadow:0 0 0 10px rgba(0,255,157,0)}
   }
 
-  /* ---------- modal ---------- */
   .modal-backdrop{
     position:fixed;inset:0;z-index:50;display:none;
     place-items:center;padding:20px;
@@ -299,7 +294,6 @@
     border-color:rgba(0,229,255,.5);color:#eafcff;
   }
 
-  /* ---------- responsive ---------- */
   @media (max-width:880px){
     main{grid-template-columns:1fr;grid-template-rows:auto 1fr}
     .core-panel{flex-direction:row;gap:16px;padding:14px 18px;justify-content:flex-start}
@@ -322,12 +316,12 @@
       </div>
     </div>
     <div class="top-actions">
-      <button class="icon-btn" id="clearBtn" title="New session" aria-label="New session">
+      <button type="button" class="icon-btn" id="clearBtn" title="New session" aria-label="New session">
         <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M3 12a9 9 0 1 0 3-6.7"/><polyline points="3 4 3 10 9 10"/>
         </svg>
       </button>
-      <button class="icon-btn" id="settingsBtn" title="Settings" aria-label="Settings">
+      <button type="button" class="icon-btn" id="settingsBtn" title="Settings" aria-label="Settings">
         <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="3"/>
           <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9v.09a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
@@ -459,7 +453,7 @@ const STORAGE_KEY = "ace.settings.v1";
 
 function loadStored() {
   try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }
-  catch { return {}; }
+  catch (e) { return {}; }
 }
 
 const stored = loadStored();
@@ -485,12 +479,21 @@ const reactorEl  = document.getElementById("reactor");
 const statusEl   = document.getElementById("status");
 const waveEl     = document.getElementById("wave");
 const modalEl    = document.getElementById("modal");
+const clearBtn   = document.getElementById("clearBtn");
+const settingsBtn= document.getElementById("settingsBtn");
+const cancelBtn  = document.getElementById("cancelBtn");
+const saveBtn    = document.getElementById("saveBtn");
+const apiKeyInput= document.getElementById("apiKeyInput");
+const modelInput = document.getElementById("modelInput");
+const voiceSelect= document.getElementById("voiceSelect");
+const voiceToggle= document.getElementById("voiceToggle");
 
 /* ---------------- state ---------------- */
 let history = [];
 let isBusy = false;
 let isListening = false;
 let currentAudio = null;
+let recognition = null;
 
 /* ---------------- UI helpers ---------------- */
 const STATE_LABELS = {
@@ -521,7 +524,7 @@ function autoGrow() {
   inputEl.style.height = Math.min(inputEl.scrollHeight, 120) + "px";
 }
 
-/* ---------------- speech synthesis (fallback voice) ---------------- */
+/* ---------------- speech synthesis fallback ---------------- */
 let voices = [];
 
 function refreshVoices() {
@@ -537,20 +540,20 @@ const PREFERRED_VOICES = [
   "Google UK English Male",
   "Microsoft Ryan Online (Natural) - English (United Kingdom)",
   "Microsoft Guy Online (Natural) - English (United States)",
-  "Microsoft Aria Online (Natural) - English (United States)",
   "Google US English",
-  "Daniel", "Oliver", "Arthur", "Serena", "Samantha", "Alex"
+  "Daniel", "Oliver", "Arthur"
 ];
 
 function pickVoice() {
   if (!voices.length) return null;
-  for (const name of PREFERRED_VOICES) {
-    const exact = voices.find(v => v.name === name);
+  for (let i = 0; i < PREFERRED_VOICES.length; i++) {
+    const name = PREFERRED_VOICES[i];
+    const exact = voices.find(function(v){ return v.name === name; });
     if (exact) return exact;
-    const partial = voices.find(v => v.name.includes(name));
+    const partial = voices.find(function(v){ return v.name.indexOf(name) !== -1; });
     if (partial) return partial;
   }
-  return voices.find(v => v.lang && v.lang.toLowerCase().startsWith("en")) || voices[0];
+  return voices.find(function(v){ return v.lang && v.lang.toLowerCase().indexOf("en") === 0; }) || voices[0];
 }
 
 function browserSpeak(text) {
@@ -563,8 +566,8 @@ function browserSpeak(text) {
   u.rate = 1.0;
   u.pitch = 0.95;
   u.volume = 1;
-  u.onend = () => setState("");
-  u.onerror = () => setState("");
+  u.onend = function(){ setState(""); };
+  u.onerror = function(){ setState(""); };
 
   setState("speaking");
   speechSynthesis.speak(u);
@@ -573,4 +576,279 @@ function browserSpeak(text) {
 /* ---------------- text cleanup for TTS ---------------- */
 function stripForSpeech(text) {
   return String(text)
-    .replace(/
+    .replace(/```[\s\S]*?```/g, " code block ")
+    .replace(/`([^`]+)`/g, "$1")
+    .replace(/[*_#>~]/g, "")
+    .replace(/\[(.*?)\]\(.*?\)/g, "$1")
+    .replace(/^\s*[-•]\s+/gm, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+/* ---------------- OpenAI TTS ---------------- */
+async function speak(text) {
+  if (!settings.voiceEnabled) { setState(""); return; }
+
+  const clean = stripForSpeech(text);
+  if (!clean) { setState(""); return; }
+
+  if (currentAudio) {
+    try { currentAudio.pause(); } catch(e){}
+    currentAudio = null;
+  }
+  if (window.speechSynthesis) speechSynthesis.cancel();
+
+  if (!settings.apiKey) {
+    browserSpeak(clean);
+    return;
+  }
+
+  try {
+    setState("speaking");
+    const res = await fetch("https://api.openai.com/v1/audio/speech", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + settings.apiKey
+      },
+      body: JSON.stringify({
+        model: settings.ttsModel,
+        voice: settings.voice,
+        input: clean,
+        response_format: "mp3"
+      })
+    });
+
+    if (!res.ok) throw new Error("TTS " + res.status);
+
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const audio = new Audio(url);
+    currentAudio = audio;
+    audio.onended = function(){
+      setState("");
+      URL.revokeObjectURL(url);
+      currentAudio = null;
+    };
+    audio.onerror = function(){
+      setState("");
+      URL.revokeObjectURL(url);
+      currentAudio = null;
+    };
+    await audio.play();
+  } catch (err) {
+    console.warn("OpenAI TTS failed, falling back to browser voice:", err);
+    browserSpeak(clean);
+  }
+}
+
+/* ---------------- OpenAI chat ---------------- */
+async function askACE(userText) {
+  if (!settings.apiKey) {
+    addMessage("ace error", "No API key set. Click the ⚙ gear icon in the top right and paste your OpenAI API key, then press Save.");
+    setState("");
+    return;
+  }
+
+  const messages = [{ role: "system", content: ACE_CONFIG.SYSTEM_PROMPT }]
+    .concat(history)
+    .concat([{ role: "user", content: userText }]);
+
+  const res = await fetch("https://api.openai.com/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer " + settings.apiKey
+    },
+    body: JSON.stringify({
+      model: settings.model,
+      messages: messages,
+      temperature: 0.7,
+      max_tokens: 400
+    })
+  });
+
+  if (!res.ok) {
+    let detail = "";
+    try {
+      const errJson = await res.json();
+      detail = (errJson.error && errJson.error.message) ? errJson.error.message : "";
+    } catch(e){}
+    throw new Error("API error " + res.status + (detail ? ": " + detail : ""));
+  }
+
+  const data = await res.json();
+  const reply = data.choices && data.choices[0] && data.choices[0].message
+    ? data.choices[0].message.content.trim()
+    : "";
+
+  if (!reply) throw new Error("Empty response from model.");
+
+  history.push({ role: "user", content: userText });
+  history.push({ role: "assistant", content: reply });
+
+  addMessage("ace", reply);
+  await speak(reply);
+}
+
+/* ---------------- send handler ---------------- */
+async function handleSend() {
+  const text = inputEl.value.trim();
+  if (!text || isBusy) return;
+
+  addMessage("user", text);
+  inputEl.value = "";
+  autoGrow();
+
+  isBusy = true;
+  sendBtn.disabled = true;
+  setState("thinking");
+
+  try {
+    await askACE(text);
+  } catch (err) {
+    console.error(err);
+    addMessage("ace error", "I'm having trouble reaching my cognitive core. " + err.message);
+    setState("");
+  } finally {
+    isBusy = false;
+    sendBtn.disabled = false;
+    if (!reactorEl.classList.contains("speaking")) setState("");
+    inputEl.focus();
+  }
+}
+
+/* ---------------- composer events ---------------- */
+composerEl.addEventListener("submit", function(e){
+  e.preventDefault();
+  handleSend();
+});
+
+inputEl.addEventListener("input", autoGrow);
+
+inputEl.addEventListener("keydown", function(e){
+  if (e.key === "Enter" && !e.shiftKey) {
+    e.preventDefault();
+    handleSend();
+  }
+});
+
+/* ---------------- clear button ---------------- */
+clearBtn.addEventListener("click", function(){
+  history = [];
+  messagesEl.innerHTML = "";
+  if (currentAudio) { try { currentAudio.pause(); } catch(e){} currentAudio = null; }
+  if (window.speechSynthesis) speechSynthesis.cancel();
+  setState("");
+  greet(true);
+});
+
+/* ---------------- settings modal ---------------- */
+function openModal() {
+  apiKeyInput.value = settings.apiKey;
+  modelInput.value = settings.model;
+  voiceSelect.value = settings.voice;
+  voiceToggle.value = settings.voiceEnabled ? "on" : "off";
+  modalEl.classList.add("open");
+  setTimeout(function(){ apiKeyInput.focus(); }, 50);
+}
+
+function closeModal() {
+  modalEl.classList.remove("open");
+}
+
+settingsBtn.addEventListener("click", openModal);
+cancelBtn.addEventListener("click", closeModal);
+
+modalEl.addEventListener("click", function(e){
+  if (e.target === modalEl) closeModal();
+});
+
+document.addEventListener("keydown", function(e){
+  if (e.key === "Escape" && modalEl.classList.contains("open")) closeModal();
+});
+
+saveBtn.addEventListener("click", function(){
+  settings.apiKey = apiKeyInput.value.trim();
+  settings.model = modelInput.value.trim() || ACE_CONFIG.MODEL;
+  settings.voice = voiceSelect.value;
+  settings.voiceEnabled = voiceToggle.value === "on";
+  persistSettings();
+  closeModal();
+  addMessage("ace", "Configuration saved. I'm ready when you are, sir.");
+});
+
+/* ---------------- voice input ---------------- */
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+if (SpeechRecognition) {
+  recognition = new SpeechRecognition();
+  recognition.continuous = false;
+  recognition.interimResults = false;
+  recognition.lang = "en-US";
+
+  recognition.onstart = function(){
+    isListening = true;
+    micBtn.classList.add("recording");
+    setState("listening");
+  };
+
+  recognition.onresult = function(event){
+    const transcript = event.results[0][0].transcript;
+    inputEl.value = transcript;
+    autoGrow();
+    handleSend();
+  };
+
+  recognition.onerror = function(event){
+    console.warn("Speech recognition error:", event.error);
+    isListening = false;
+    micBtn.classList.remove("recording");
+    setState("");
+  };
+
+  recognition.onend = function(){
+    isListening = false;
+    micBtn.classList.remove("recording");
+    if (!reactorEl.classList.contains("speaking")) setState("");
+  };
+}
+
+micBtn.addEventListener("click", function(){
+  if (!recognition) {
+    addMessage("ace error", "Voice input isn't supported in this browser. Try Chrome or Edge.");
+    return;
+  }
+  if (isListening) {
+    recognition.stop();
+  } else {
+    if (currentAudio) { try { currentAudio.pause(); } catch(e){} currentAudio = null; }
+    if (window.speechSynthesis) speechSynthesis.cancel();
+    try { recognition.start(); } catch(e){}
+  }
+});
+
+/* ---------------- welcome ---------------- */
+function greet(isReset) {
+  const msg = isReset
+    ? "Fresh session initialized. What do you need, sir?"
+    : "ACE online. All systems nominal. How may I assist you?";
+  addMessage("ace", msg);
+}
+
+function init() {
+  greet(false);
+  inputEl.focus();
+  autoGrow();
+
+  if (!settings.apiKey) {
+    setTimeout(function(){
+      addMessage("ace", "One moment, sir. I don't have an API key yet. Click the gear icon in the top right to enter one.");
+    }, 400);
+  }
+}
+
+init();
+</script>
+</body>
+</html>
