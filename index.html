@@ -233,18 +233,18 @@
 <div class="modal-backdrop" id="modal">
   <div class="modal">
     <h2>Configuration</h2>
-    <p class="sub">Works with an OpenAI key (<code>sk-…</code>) or an OpenRouter key (<code>sk-or-v1-…</code>). The provider is auto-detected.</p>
+    <p class="sub">Works with an OpenAI key (<code>sk-…</code>) or an OpenRouter key (<code>sk-or-v1-…</code>). Auto-detected.</p>
 
     <div class="field">
       <label for="apiKeyInput">API Key</label>
       <input type="password" id="apiKeyInput" placeholder="sk-…  or  sk-or-v1-…" spellcheck="false" />
-      <div class="hint">Stored locally in your browser only. Never sent anywhere except the provider's API.</div>
+      <div class="hint">Stored locally in your browser only.</div>
     </div>
 
     <div class="field">
       <label for="modelInput">Model</label>
       <input type="text" id="modelInput" placeholder="gpt-4o-mini  or  openai/gpt-4o-mini" spellcheck="false" />
-      <div class="hint">OpenRouter uses full paths, e.g. <code>openai/gpt-4o-mini</code>, <code>anthropic/claude-3.5-sonnet</code>, <code>google/gemini-flash-1.5</code>.</div>
+      <div class="hint">OpenRouter needs the full path, e.g. <code>openai/gpt-4o-mini</code>.</div>
     </div>
 
     <div class="field">
@@ -282,7 +282,7 @@
    ===================================================================== */
 
 var ACE_CONFIG = {
-  API_KEY: "",                       // optional — never commit a real key
+  API_KEY: "",
   MODEL: "gpt-4o-mini",
   TTS_MODEL: "gpt-4o-mini-tts",
   VOICE: "onyx",
@@ -307,7 +307,6 @@ function providerFor(apiKey) {
     return {
       name: "OpenRouter",
       chatUrl: "https://openrouter.ai/api/v1/chat/completions",
-      ttsUrl: null,
       supportsTTS: false
     };
   }
@@ -337,7 +336,7 @@ function persistSettings() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
 }
 
-/* ---------------- DOM refs ---------------- */
+/* ---------------- DOM ---------------- */
 var messagesEl = document.getElementById("messages");
 var inputEl    = document.getElementById("input");
 var composerEl = document.getElementById("composer");
@@ -384,7 +383,7 @@ function autoGrow() {
   inputEl.style.height = Math.min(inputEl.scrollHeight, 120) + "px";
 }
 
-/* ---------------- browser voice (fallback + OpenRouter) ---------------- */
+/* ---------------- browser voice ---------------- */
 var voices = [];
 function refreshVoices() {
   if (window.speechSynthesis) voices = speechSynthesis.getVoices() || [];
@@ -419,16 +418,14 @@ function browserSpeak(text) {
   var u = new SpeechSynthesisUtterance(text);
   var v = pickVoice();
   if (v) u.voice = v;
-  u.rate = 1.0;
-  u.pitch = 0.95;
-  u.volume = 1;
+  u.rate = 1.0; u.pitch = 0.95; u.volume = 1;
   u.onend = function(){ setState(""); };
   u.onerror = function(){ setState(""); };
   setState("speaking");
   speechSynthesis.speak(u);
 }
 
-/* ---------------- text cleanup for TTS ---------------- */
+/* ---------------- text cleanup ---------------- */
 function stripForSpeech(text) {
   var s = String(text);
   s = s.replace(/```[\s\S]*?```/g, " code block ");
@@ -440,7 +437,7 @@ function stripForSpeech(text) {
   return s.trim();
 }
 
-/* ---------------- speak (OpenAI TTS or browser) ---------------- */
+/* ---------------- speak ---------------- */
 function speak(text) {
   if (!settings.voiceEnabled) { setState(""); return Promise.resolve(); }
   var clean = stripForSpeech(text);
@@ -501,49 +498,68 @@ function askACE(userText) {
   }
 
   var provider = providerFor(settings.apiKey);
-  var messages = [{ role: "system", content: ACE_CONFIG.SYSTEM_PROMPT }]
-    .concat(history)
-    .concat([{ role: "user", content: userText }]);
+
+  // Build a clean message array — every content must be a plain string
+  var messages = [];
+  messages.push({ role: "system", content: String(ACE_CONFIG.SYSTEM_PROMPT) });
+
+  history.forEach(function(m){
+    if (!m || (m.role !== "user" && m.role !== "assistant")) return;
+    var c = (m.content == null) ? "" : String(m.content);
+    if (c.length) messages.push({ role: m.role, content: c });
+  });
+
+  messages.push({ role: "user", content: String(userText) });
+
+  var body = {
+    model: settings.model,
+    messages: messages,
+    temperature: 0.7,
+    max_tokens: 400
+  };
+
+  console.log("[ACE] → " + provider.name + " request:", JSON.parse(JSON.stringify(body)));
 
   var headers = {
     "Content-Type": "application/json",
     "Authorization": "Bearer " + settings.apiKey
   };
-  // OpenRouter recommends these (optional but nice)
-  if (provider.name === "OpenRouter") {
-    headers["HTTP-Referer"] = location.origin || "https://localhost";
-    headers["X-Title"] = "ACE";
-  }
 
   return fetch(provider.chatUrl, {
     method: "POST",
     headers: headers,
-    body: JSON.stringify({
-      model: settings.model,
-      messages: messages,
-      temperature: 0.7,
-      max_tokens: 400
-    })
+    body: JSON.stringify(body)
   }).then(function(res){
     if (!res.ok) {
-      return res.text().then(function(body){
+      return res.text().then(function(raw){
+        console.error("[ACE] ← " + provider.name + " " + res.status + " body:", raw);
         var detail = "";
         try {
-          var j = JSON.parse(body);
+          var j = JSON.parse(raw);
           if (j.error && j.error.message) detail = j.error.message;
-        } catch(e){}
+          else if (j.message) detail = j.message;
+        } catch (e) { detail = raw.slice(0, 200); }
         throw new Error(provider.name + " " + res.status + (detail ? ": " + detail : ""));
       });
     }
     return res.json();
   }).then(function(data){
     var reply = "";
-    if (data.choices && data.choices[0] && data.choices[0].message) {
-      reply = (data.choices[0].message.content || "").trim();
+    var msg = data.choices && data.choices[0] && data.choices[0].message;
+    if (msg) {
+      if (typeof msg.content === "string") {
+        reply = msg.content.trim();
+      } else if (Array.isArray(msg.content)) {
+        reply = msg.content.map(function(p){
+          if (typeof p === "string") return p;
+          if (p && typeof p.text === "string") return p.text;
+          return "";
+        }).join(" ").trim();
+      }
     }
     if (!reply) throw new Error("Empty response from model.");
 
-    history.push({ role: "user", content: userText });
+    history.push({ role: "user", content: String(userText) });
     history.push({ role: "assistant", content: reply });
 
     addMessage("ace", reply);
@@ -551,7 +567,7 @@ function askACE(userText) {
   });
 }
 
-/* ---------------- send handler ---------------- */
+/* ---------------- send ---------------- */
 function handleSend() {
   var text = inputEl.value.trim();
   if (!text || isBusy) return;
@@ -576,7 +592,6 @@ function handleSend() {
   });
 }
 
-/* ---------------- composer events ---------------- */
 composerEl.addEventListener("submit", function(e){
   e.preventDefault();
   handleSend();
@@ -589,7 +604,7 @@ inputEl.addEventListener("keydown", function(e){
   }
 });
 
-/* ---------------- clear / new session ---------------- */
+/* ---------------- new session ---------------- */
 clearBtn.addEventListener("click", function(){
   history = [];
   messagesEl.innerHTML = "";
@@ -675,7 +690,7 @@ micBtn.addEventListener("click", function(){
   }
 });
 
-/* ---------------- welcome ---------------- */
+/* ---------------- boot ---------------- */
 function greet(isReset) {
   var msg = isReset
     ? "Fresh session initialized. What do you need, sir?"
