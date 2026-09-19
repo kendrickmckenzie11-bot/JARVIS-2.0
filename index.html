@@ -10,26 +10,21 @@
     --red:#ff2a2a;
     --red-bright:#ff4444;
     --red-soft:rgba(255,42,42,.55);
-    --red-glow:rgba(255,42,42,.35);
     --line:rgba(255,42,42,.22);
     --line-soft:rgba(255,42,42,.09);
     --panel:rgba(20,20,20,.72);
     --panel-solid:rgba(15,15,15,.97);
     --bg:#0d0d0d;
-    --bg-alt:#141414;
     --text:#f2f2f2;
     --dim:#8a8a8a;
     --dim2:#4d4d4d;
     --white:#ffffff;
-    --ok:#eaeaea;
     --warn:#ffa02a;
     --danger:#ff2a2a;
-
     --font-serif: 'Georgia', 'Cambria', 'Palatino Linotype', 'Times New Roman', serif;
     --font-sans:  'Optima', 'Candara', 'Segoe UI', 'Helvetica Neue', 'Gill Sans', sans-serif;
     --font-mono:  'Consolas', 'Monaco', 'Menlo', 'Courier New', monospace;
   }
-
   *{box-sizing:border-box}
   html,body{height:100%}
   body{
@@ -40,71 +35,24 @@
   }
   button,input,select,textarea{font-family:inherit;letter-spacing:inherit;color:inherit}
   ::selection{background:rgba(255,42,42,.35);color:#fff}
-
-  .brand h1,
-  .panel-title,
-  .settings-header h2,
-  .setting-group h3,
-  .boot-title,
-  #statusText,
-  .stop-pill,
-  .btn{
-    font-family:var(--font-serif);
-  }
-  .readouts span, .stat .row b, #clock, #uptime, #memCount, #histCount, #logCount{
-    font-family:var(--font-mono);
-    font-variant-numeric:tabular-nums;
-    letter-spacing:0;
-  }
-
+  .brand h1,.panel-title,.settings-header h2,.setting-group h3,.boot-title,#statusText,.stop-pill,.btn{font-family:var(--font-serif)}
+  .readouts span, .stat .row b, #clock, #uptime, #memCount, #histCount, #logCount{font-family:var(--font-mono);font-variant-numeric:tabular-nums;letter-spacing:0}
   .bg-grid,.bg-vignette,.bg-scan{position:fixed;inset:0;pointer-events:none;z-index:0}
-  .bg-grid{
-    background:
-      radial-gradient(circle at 50% 42%, rgba(255,42,42,.10), transparent 60%),
-      linear-gradient(rgba(255,42,42,.045) 1px, transparent 1px) 0 0/100% 42px,
-      linear-gradient(90deg, rgba(255,42,42,.045) 1px, transparent 1px) 0 0/42px 100%;
-  }
+  .bg-grid{background:radial-gradient(circle at 50% 42%, rgba(255,42,42,.10), transparent 60%),linear-gradient(rgba(255,42,42,.045) 1px, transparent 1px) 0 0/100% 42px,linear-gradient(90deg, rgba(255,42,42,.045) 1px, transparent 1px) 0 0/42px 100%}
   body.no-grid .bg-grid{display:none}
   .bg-vignette{background:radial-gradient(circle at 50% 50%, transparent 42%, rgba(0,0,0,.82) 100%)}
-  .bg-scan{
-    background:repeating-linear-gradient(to bottom, rgba(255,42,42,.03) 0 1px, transparent 1px 3px);
-    mix-blend-mode:screen;opacity:.45;
-  }
+  .bg-scan{background:repeating-linear-gradient(to bottom, rgba(255,42,42,.03) 0 1px, transparent 1px 3px);mix-blend-mode:screen;opacity:.45}
   body.reduced-motion .bg-scan{display:none}
-
   #app{position:relative;z-index:1;height:100%;display:grid;grid-template-rows:auto 1fr auto}
-
-  header{
-    display:flex;align-items:center;justify-content:space-between;gap:16px;
-    padding:12px 22px;border-bottom:1px solid var(--line);
-    background:linear-gradient(180deg, rgba(40,5,5,.45), transparent);
-  }
+  header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 22px;border-bottom:1px solid var(--line);background:linear-gradient(180deg, rgba(40,5,5,.45), transparent)}
   .brand{display:flex;align-items:center;gap:14px}
-  .brand .dot{
-    width:9px;height:9px;border-radius:50%;
-    background:var(--red);box-shadow:0 0 12px var(--red);
-    animation:blink 2.4s infinite;
-  }
+  .brand .dot{width:9px;height:9px;border-radius:50%;background:var(--red);box-shadow:0 0 12px var(--red);animation:blink 2.4s infinite}
   @keyframes blink{0%,92%{opacity:1}94%,100%{opacity:.25}}
-  .brand h1{
-    margin:0;font-size:17px;font-weight:700;letter-spacing:.5em;
-    color:#fff;text-shadow:0 0 16px rgba(255,42,42,.75);
-  }
-  .brand small{
-    color:var(--dim);letter-spacing:.28em;font-size:10px;
-    display:block;margin-top:3px;
-    font-family:var(--font-serif);font-style:italic;
-  }
+  .brand h1{margin:0;font-size:17px;font-weight:700;letter-spacing:.5em;color:#fff;text-shadow:0 0 16px rgba(255,42,42,.75)}
+  .brand small{color:var(--dim);letter-spacing:.28em;font-size:10px;display:block;margin-top:3px;font-family:var(--font-serif);font-style:italic}
   .head-right{display:flex;align-items:center;gap:10px;color:var(--dim);font-size:11px;flex-wrap:wrap;justify-content:flex-end}
   #clock{color:var(--red);text-shadow:0 0 10px rgba(255,42,42,.5)}
-
-  .status-chip{
-    display:inline-flex;align-items:center;gap:6px;
-    padding:4px 10px;border:1px solid var(--line);
-    background:rgba(255,42,42,.06);color:var(--dim);
-    font-size:10px;letter-spacing:.22em;border-radius:2px;
-    white-space:nowrap;font-family:var(--font-serif);font-style:italic;
-  }
+  .status-chip{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border:1px solid var(--line);background:rgba(255,42,42,.06);color:var(--dim);font-size:10px;letter-spacing:.22em;border-radius:2px;white-space:nowrap;font-family:var(--font-serif);font-style:italic}
   .status-chip .pulse{width:6px;height:6px;border-radius:50%;background:var(--dim2)}
   .status-chip.on{color:var(--red);border-color:var(--red-soft);background:rgba(255,42,42,.12)}
   .status-chip.on .pulse{background:var(--red);box-shadow:0 0 8px var(--red);animation:pulseDot 1.4s infinite}
@@ -113,115 +61,42 @@
   .status-chip.warn{color:var(--warn);border-color:rgba(255,160,42,.5)}
   .status-chip.warn .pulse{background:var(--warn);box-shadow:0 0 8px var(--warn)}
   @keyframes pulseDot{0%,100%{opacity:1}50%{opacity:.35}}
-
-  .icon-btn{
-    width:36px;height:36px;display:grid;place-items:center;
-    background:transparent;border:1px solid var(--line);
-    color:var(--red);cursor:pointer;border-radius:2px;
-    transition:all .2s;font-size:16px;line-height:1;padding:0;
-  }
+  .icon-btn{width:36px;height:36px;display:grid;place-items:center;background:transparent;border:1px solid var(--line);color:var(--red);cursor:pointer;border-radius:2px;transition:all .2s;font-size:16px;line-height:1;padding:0}
   .icon-btn:hover{border-color:var(--red);background:rgba(255,42,42,.1);box-shadow:0 0 14px rgba(255,42,42,.3)}
   .icon-btn.active{background:rgba(255,42,42,.2);border-color:var(--red);color:#fff}
   .icon-btn svg{display:block}
-
-  main{
-    display:grid;
-    grid-template-columns:280px minmax(0,1fr) 360px;
-    gap:16px;padding:16px 22px;min-height:0;
-  }
+  main{display:grid;grid-template-columns:280px minmax(0,1fr) 360px;gap:16px;padding:16px 22px;min-height:0}
   main.no-telemetry{grid-template-columns:minmax(0,1fr) 360px}
   main.no-log{grid-template-columns:280px minmax(0,1fr)}
   main.no-telemetry.no-log{grid-template-columns:minmax(0,1fr)}
-
-  .panel{
-    position:relative;background:var(--panel);border:1px solid var(--line);
-    backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
-    padding:14px;display:flex;flex-direction:column;min-height:0;
-    clip-path:polygon(0 14px,14px 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%);
-  }
+  .panel{position:relative;background:var(--panel);border:1px solid var(--line);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);padding:14px;display:flex;flex-direction:column;min-height:0;clip-path:polygon(0 14px,14px 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%)}
   .panel.hidden{display:none}
-  .panel-title{
-    display:flex;align-items:center;justify-content:space-between;
-    font-size:11px;letter-spacing:.3em;color:var(--red);
-    text-transform:uppercase;margin-bottom:12px;
-    padding-bottom:8px;border-bottom:1px solid var(--line-soft);
-    font-weight:600;font-style:italic;
-  }
+  .panel-title{display:flex;align-items:center;justify-content:space-between;font-size:11px;letter-spacing:.3em;color:var(--red);text-transform:uppercase;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--line-soft);font-weight:600;font-style:italic}
   .panel-title .tag{color:var(--dim);letter-spacing:.14em;font-family:var(--font-mono);font-style:normal;font-size:10px}
-
   .stat{margin-bottom:11px}
   .stat .row{display:flex;justify-content:space-between;font-size:10.5px;color:var(--dim);margin-bottom:5px;letter-spacing:.06em}
   .stat .row b{color:var(--text);font-weight:500}
   .bar{height:5px;background:rgba(255,42,42,.08);border:1px solid var(--line-soft);overflow:hidden}
-  .bar i{
-    display:block;height:100%;width:0;
-    background:linear-gradient(90deg, rgba(255,42,42,.4), var(--red));
-    box-shadow:0 0 10px rgba(255,42,42,.6);
-    transition:width .6s cubic-bezier(.4,0,.2,1);
-  }
+  .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg, rgba(255,42,42,.4), var(--red));box-shadow:0 0 10px rgba(255,42,42,.6);transition:width .6s cubic-bezier(.4,0,.2,1)}
   .readouts{margin-top:auto;padding-top:12px;border-top:1px solid var(--line-soft);font-size:10.5px;color:var(--dim);line-height:2}
   .readouts span{color:var(--text)}
-  .readouts span.hot{color:var(--red)}
-
   .core{position:relative;display:flex;align-items:center;justify-content:center;min-height:0}
   #reactor{width:100%;height:100%;display:block}
-  .core-overlay{
-    position:absolute;inset:0;display:flex;flex-direction:column;
-    align-items:center;justify-content:center;pointer-events:none;text-align:center;padding:0 20px;
-  }
-  #statusText{
-    font-size:13px;letter-spacing:.5em;color:var(--red);
-    text-shadow:0 0 14px rgba(255,42,42,.8);text-transform:uppercase;
-    font-style:italic;
-  }
+  .core-overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;text-align:center;padding:0 20px}
+  #statusText{font-size:13px;letter-spacing:.5em;color:var(--red);text-shadow:0 0 14px rgba(255,42,42,.8);text-transform:uppercase;font-style:italic}
   .core-sub{font-size:10.5px;color:var(--dim);letter-spacing:.3em;margin-top:8px;min-height:14px;font-style:italic}
-
-  .stop-pill{
-    position:absolute;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);
-    display:inline-flex;align-items:center;gap:8px;
-    padding:9px 18px;background:var(--red);color:#fff;
-    border:0;border-radius:2px;cursor:pointer;
-    font-size:11px;letter-spacing:.3em;font-weight:600;font-style:italic;
-    opacity:0;visibility:hidden;transition:all .25s;
-    box-shadow:0 0 24px rgba(255,42,42,.7);
-    pointer-events:auto;z-index:5;
-  }
+  .stop-pill{position:absolute;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);display:inline-flex;align-items:center;gap:8px;padding:9px 18px;background:var(--red);color:#fff;border:0;border-radius:2px;cursor:pointer;font-size:11px;letter-spacing:.3em;font-weight:600;font-style:italic;opacity:0;visibility:hidden;transition:all .25s;box-shadow:0 0 24px rgba(255,42,42,.7);pointer-events:auto;z-index:5}
   .stop-pill.show{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0)}
-  .stop-pill:hover{background:var(--red-bright);box-shadow:0 0 32px rgba(255,42,42,.95)}
+  .stop-pill:hover{background:var(--red-bright)}
   .stop-pill svg{width:12px;height:12px;fill:currentColor}
-
-  .screen-preview{
-    position:absolute;top:14px;left:14px;z-index:4;
-    width:220px;background:rgba(10,10,10,.9);
-    border:1px solid var(--line);border-radius:2px;
-    overflow:hidden;display:none;pointer-events:auto;
-    box-shadow:0 0 20px rgba(0,0,0,.6);
-  }
+  .screen-preview{position:absolute;top:14px;left:14px;z-index:4;width:220px;background:rgba(10,10,10,.9);border:1px solid var(--line);border-radius:2px;overflow:hidden;display:none;pointer-events:auto;box-shadow:0 0 20px rgba(0,0,0,.6)}
   .screen-preview.on{display:block;animation:fadeIn .35s}
   .screen-preview canvas{display:block;width:100%;height:auto;background:#000}
-  .screen-preview .lbl{
-    display:flex;align-items:center;justify-content:space-between;
-    padding:6px 9px;background:rgba(255,42,42,.15);
-    border-top:1px solid var(--line);
-    font-size:9.5px;letter-spacing:.28em;color:var(--red);
-    font-style:italic;
-  }
-  .screen-preview .lbl button{
-    background:transparent;border:0;color:var(--red);
-    cursor:pointer;font-size:11px;padding:0 2px;line-height:1;
-  }
+  .screen-preview .lbl{display:flex;align-items:center;justify-content:space-between;padding:6px 9px;background:rgba(255,42,42,.15);border-top:1px solid var(--line);font-size:9.5px;letter-spacing:.28em;color:var(--red);font-style:italic}
+  .screen-preview .lbl button{background:transparent;border:0;color:var(--red);cursor:pointer;font-size:11px;padding:0 2px;line-height:1}
   .screen-preview .lbl button:hover{color:#fff}
-  .screen-preview .live-dot{
-    width:5px;height:5px;border-radius:50%;background:var(--red);
-    box-shadow:0 0 6px var(--red);animation:pulseDot 1.4s infinite;
-    display:inline-block;margin-right:5px;
-  }
-
-  #log{
-    flex:1;overflow-y:auto;min-height:0;padding-right:6px;
-    display:flex;flex-direction:column;gap:7px;
-    scrollbar-width:thin;scrollbar-color:rgba(255,42,42,.35) transparent;
-  }
+  .screen-preview .live-dot{width:5px;height:5px;border-radius:50%;background:var(--red);box-shadow:0 0 6px var(--red);animation:pulseDot 1.4s infinite;display:inline-block;margin-right:5px}
+  #log{flex:1;overflow-y:auto;min-height:0;padding-right:6px;display:flex;flex-direction:column;gap:7px;scrollbar-width:thin;scrollbar-color:rgba(255,42,42,.35) transparent}
   #log::-webkit-scrollbar{width:5px}
   #log::-webkit-scrollbar-thumb{background:rgba(255,42,42,.35)}
   .log-line{display:flex;gap:8px;line-height:1.55;animation:fadeIn .3s ease}
@@ -236,245 +111,84 @@
   .log-line.warn .m{color:var(--warn)}
   .log-line.ok .m{color:var(--white)}
   .log-line.err .m{color:var(--red)}
-  .thinking .m::after{
-    content:'';display:inline-block;width:6px;height:6px;margin-left:6px;
-    border-radius:50%;background:var(--red);
-    animation:pulseDot .9s infinite;vertical-align:middle;
-  }
-
-  footer{
-    padding:12px 22px 18px;border-top:1px solid var(--line);
-    background:linear-gradient(0deg, rgba(40,5,5,.45), transparent);
-  }
-  .console{
-    display:flex;align-items:center;gap:12px;
-    border:1px solid var(--line);background:rgba(15,10,10,.75);padding:8px 12px;
-    clip-path:polygon(0 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%);
-  }
+  .thinking .m::after{content:'';display:inline-block;width:6px;height:6px;margin-left:6px;border-radius:50%;background:var(--red);animation:pulseDot .9s infinite;vertical-align:middle}
+  footer{padding:12px 22px 18px;border-top:1px solid var(--line);background:linear-gradient(0deg, rgba(40,5,5,.45), transparent)}
+  .console{display:flex;align-items:center;gap:12px;border:1px solid var(--line);background:rgba(15,10,10,.75);padding:8px 12px;clip-path:polygon(0 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%)}
   .console .prompt{color:var(--red);font-size:15px;font-weight:700;font-family:var(--font-serif)}
-  #cmd{
-    flex:1;background:transparent;border:0;outline:0;
-    color:var(--text);font-size:13.5px;letter-spacing:.03em;
-  }
+  #cmd{flex:1;background:transparent;border:0;outline:0;color:var(--text);font-size:13.5px;letter-spacing:.03em}
   #cmd::placeholder{color:var(--dim2);font-style:italic}
-
-  .mic{
-    position:relative;width:46px;height:46px;flex:0 0 auto;border-radius:50%;
-    border:1px solid var(--red-soft);
-    background:radial-gradient(circle at 50% 40%, rgba(255,42,42,.22), rgba(255,42,42,.03));
-    color:var(--red);cursor:pointer;display:grid;place-items:center;
-    transition:transform .15s, box-shadow .25s, background .25s;
-    padding:0;
-  }
+  .mic{position:relative;width:46px;height:46px;flex:0 0 auto;border-radius:50%;border:1px solid var(--red-soft);background:radial-gradient(circle at 50% 40%, rgba(255,42,42,.22), rgba(255,42,42,.03));color:var(--red);cursor:pointer;display:grid;place-items:center;transition:transform .15s, box-shadow .25s, background .25s;padding:0}
   .mic:hover{transform:scale(1.06);box-shadow:0 0 18px rgba(255,42,42,.45)}
-  .mic.listening{
-    background:radial-gradient(circle at 50% 40%, rgba(255,42,42,.55), rgba(255,42,42,.1));
-    box-shadow:0 0 28px rgba(255,42,42,.85);
-    animation:pulseBtn 1.3s infinite;
-  }
+  .mic.listening{background:radial-gradient(circle at 50% 40%, rgba(255,42,42,.55), rgba(255,42,42,.1));box-shadow:0 0 28px rgba(255,42,42,.85);animation:pulseBtn 1.3s infinite}
   @keyframes pulseBtn{0%,100%{transform:scale(1)}50%{transform:scale(1.09)}}
-  .mic.always{
-    border-color:var(--red);
-    background:radial-gradient(circle at 50% 40%, rgba(255,42,42,.4), rgba(255,42,42,.06));
-    color:#fff;box-shadow:0 0 22px rgba(255,42,42,.55);
-  }
+  .mic.always{border-color:var(--red);background:radial-gradient(circle at 50% 40%, rgba(255,42,42,.4), rgba(255,42,42,.06));color:#fff;box-shadow:0 0 22px rgba(255,42,42,.55)}
   .mic.always.listening{box-shadow:0 0 34px rgba(255,42,42,.9)}
   .mic.muted{opacity:.4}
-
   .hint{text-align:center;color:var(--dim2);font-size:10.5px;letter-spacing:.22em;margin-top:9px;font-style:italic}
   .hint b{color:var(--red-soft);font-weight:500;font-style:normal}
-
-  #boot{
-    position:fixed;inset:0;z-index:80;background:var(--bg);
-    display:flex;flex-direction:column;align-items:center;justify-content:center;
-    gap:20px;padding:24px;transition:opacity .8s, visibility .8s;
-  }
+  #boot{position:fixed;inset:0;z-index:80;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:24px;transition:opacity .8s, visibility .8s}
   #boot.done{opacity:0;visibility:hidden;pointer-events:none}
   #bootLog{width:min(580px,90vw);font-size:12px;line-height:2;color:var(--red-soft);min-height:200px;font-family:var(--font-mono)}
   #bootLog div{opacity:0;animation:fadeIn .25s forwards}
   #bootLog .ok{color:var(--red)}
   #bootBar{width:min(580px,90vw);height:2px;background:rgba(255,42,42,.14);overflow:hidden}
   #bootBar i{display:block;height:100%;width:0;background:var(--red);box-shadow:0 0 12px var(--red);transition:width .35s}
-  .boot-title{
-    font-size:34px;letter-spacing:.6em;color:#fff;font-weight:700;
-    text-shadow:0 0 30px rgba(255,42,42,.9);margin:0;
-  }
+  .boot-title{font-size:34px;letter-spacing:.6em;color:#fff;font-weight:700;text-shadow:0 0 30px rgba(255,42,42,.9);margin:0}
   .boot-sub{color:var(--dim);letter-spacing:.5em;font-size:10px;margin-top:-12px;font-style:italic}
-
-  .settings-backdrop{
-    position:fixed;inset:0;background:rgba(0,0,0,.7);
-    backdrop-filter:blur(2px);z-index:45;
-    opacity:0;visibility:hidden;transition:opacity .3s, visibility .3s;
-  }
+  .settings-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(2px);z-index:45;opacity:0;visibility:hidden;transition:opacity .3s, visibility .3s}
   body.settings-open .settings-backdrop{opacity:1;visibility:visible}
-
-  .settings-panel{
-    position:fixed;top:0;right:0;bottom:0;width:min(480px,96vw);
-    background:var(--panel-solid);border-left:1px solid var(--line);
-    z-index:50;display:flex;flex-direction:column;
-    transform:translateX(105%);
-    transition:transform .38s cubic-bezier(.4,0,.2,1);
-    box-shadow:-30px 0 60px rgba(0,0,0,.75);
-  }
+  .settings-panel{position:fixed;top:0;right:0;bottom:0;width:min(480px,96vw);background:var(--panel-solid);border-left:1px solid var(--line);z-index:50;display:flex;flex-direction:column;transform:translateX(105%);transition:transform .38s cubic-bezier(.4,0,.2,1);box-shadow:-30px 0 60px rgba(0,0,0,.75)}
   body.settings-open .settings-panel{transform:translateX(0)}
-
-  .settings-header{
-    display:flex;align-items:center;justify-content:space-between;
-    padding:16px 22px;border-bottom:1px solid var(--line);
-    background:linear-gradient(180deg, rgba(60,5,5,.4), transparent);
-    flex:0 0 auto;
-  }
-  .settings-header h2{
-    margin:0;font-size:13px;letter-spacing:.5em;color:var(--red);
-    text-transform:uppercase;font-weight:700;font-style:italic;
-    text-shadow:0 0 12px rgba(255,42,42,.5);
-  }
-  .settings-body{
-    flex:1;overflow-y:auto;padding:18px 22px 30px;
-    scrollbar-width:thin;scrollbar-color:rgba(255,42,42,.3) transparent;
-  }
+  .settings-header{display:flex;align-items:center;justify-content:space-between;padding:16px 22px;border-bottom:1px solid var(--line);background:linear-gradient(180deg, rgba(60,5,5,.4), transparent);flex:0 0 auto}
+  .settings-header h2{margin:0;font-size:13px;letter-spacing:.5em;color:var(--red);text-transform:uppercase;font-weight:700;font-style:italic;text-shadow:0 0 12px rgba(255,42,42,.5)}
+  .settings-body{flex:1;overflow-y:auto;padding:18px 22px 30px;scrollbar-width:thin;scrollbar-color:rgba(255,42,42,.3) transparent}
   .settings-body::-webkit-scrollbar{width:6px}
   .settings-body::-webkit-scrollbar-thumb{background:rgba(255,42,42,.3);border-radius:3px}
-
   .setting-group{margin-bottom:26px;padding-bottom:20px;border-bottom:1px solid var(--line-soft)}
   .setting-group:last-of-type{border-bottom:0}
-  .setting-group h3{
-    margin:0 0 14px;font-size:11px;letter-spacing:.35em;
-    color:var(--red);text-transform:uppercase;font-weight:700;font-style:italic;
-    display:flex;align-items:center;gap:8px;
-  }
+  .setting-group h3{margin:0 0 14px;font-size:11px;letter-spacing:.35em;color:var(--red);text-transform:uppercase;font-weight:700;font-style:italic;display:flex;align-items:center;gap:8px}
   .setting-group h3::after{content:'';flex:1;height:1px;background:var(--line-soft)}
-
-  .setting-row{
-    display:flex;align-items:center;justify-content:space-between;
-    gap:14px;padding:9px 0;font-size:12.5px;color:var(--text);
-    cursor:pointer;user-select:none;
-  }
+  .setting-row{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:9px 0;font-size:12.5px;color:var(--text);cursor:pointer;user-select:none}
   .setting-row.col{flex-direction:column;align-items:stretch;gap:8px;cursor:default}
-  .setting-row.col > span{
-    display:flex;justify-content:space-between;align-items:center;
-    color:var(--dim);font-size:11.5px;letter-spacing:.06em;
-  }
+  .setting-row.col > span{display:flex;justify-content:space-between;align-items:center;color:var(--dim);font-size:11.5px;letter-spacing:.06em}
   .setting-row.col > span b{color:var(--red);font-weight:600;font-family:var(--font-mono);font-size:11px}
-
   .setting-help{font-size:11px;color:var(--dim2);line-height:1.7;margin:-4px 0 10px;font-style:italic}
   .setting-help b{color:var(--red-soft);font-weight:500;font-style:normal}
   .setting-help a{color:var(--red);text-decoration:none;border-bottom:1px dotted var(--red-soft)}
   .setting-help a:hover{color:#fff;border-bottom-color:#fff}
-
-  .switch{
-    appearance:none;-webkit-appearance:none;
-    width:42px;height:22px;border-radius:11px;
-    background:rgba(255,42,42,.12);border:1px solid var(--line);
-    position:relative;cursor:pointer;flex:0 0 auto;
-    transition:background .25s, border-color .25s, box-shadow .25s;
-  }
-  .switch::after{
-    content:'';position:absolute;top:2px;left:2px;
-    width:16px;height:16px;border-radius:50%;
-    background:#666;transition:all .25s;
-  }
+  .switch{appearance:none;-webkit-appearance:none;width:42px;height:22px;border-radius:11px;background:rgba(255,42,42,.12);border:1px solid var(--line);position:relative;cursor:pointer;flex:0 0 auto;transition:background .25s, border-color .25s, box-shadow .25s}
+  .switch::after{content:'';position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#666;transition:all .25s}
   .switch:checked{background:rgba(255,42,42,.4);border-color:var(--red);box-shadow:0 0 12px rgba(255,42,42,.4)}
   .switch:checked::after{left:22px;background:#fff;box-shadow:0 0 10px var(--red)}
-
-  .text-input{
-    width:100%;background:rgba(0,0,0,.5);
-    border:1px solid var(--line);color:var(--text);
-    font-size:12.5px;
-    padding:10px 12px;border-radius:2px;outline:0;
-    resize:vertical;
-  }
+  .text-input{width:100%;background:rgba(0,0,0,.5);border:1px solid var(--line);color:var(--text);font-size:12.5px;padding:10px 12px;border-radius:2px;outline:0;resize:vertical}
   .text-input:focus{border-color:var(--red-soft);box-shadow:0 0 12px rgba(255,42,42,.25)}
-  select.text-input{cursor:pointer}
+  select.text-input{cursor:pointer;background-image:linear-gradient(45deg, transparent 50%, var(--red) 50%),linear-gradient(135deg, var(--red) 50%, transparent 50%);background-position:calc(100% - 18px) 50%,calc(100% - 13px) 50%;background-size:5px 5px,5px 5px;background-repeat:no-repeat;padding-right:34px;appearance:none;-webkit-appearance:none}
   select.text-input option{background:#141414;color:var(--text)}
-
-  input[type=range].range{
-    -webkit-appearance:none;appearance:none;
-    width:100%;height:4px;border-radius:2px;
-    background:rgba(255,42,42,.18);outline:0;cursor:pointer;
-  }
-  input[type=range].range::-webkit-slider-thumb{
-    -webkit-appearance:none;appearance:none;
-    width:14px;height:14px;border-radius:50%;
-    background:var(--red);box-shadow:0 0 12px rgba(255,42,42,.85);cursor:pointer;border:0;
-  }
-  input[type=range].range::-moz-range-thumb{
-    width:14px;height:14px;border-radius:50%;border:0;
-    background:var(--red);box-shadow:0 0 12px rgba(255,42,42,.85);cursor:pointer;
-  }
-
-  .btn{
-    display:block;width:100%;margin-top:8px;
-    background:rgba(255,42,42,.08);border:1px solid var(--line);
-    color:var(--red);padding:11px 14px;font-size:11px;
-    letter-spacing:.28em;text-transform:uppercase;cursor:pointer;
-    border-radius:2px;transition:all .2s;font-weight:600;font-style:italic;
-  }
+  input[type=range].range{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:2px;background:rgba(255,42,42,.18);outline:0;cursor:pointer}
+  input[type=range].range::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:14px;height:14px;border-radius:50%;background:var(--red);box-shadow:0 0 12px rgba(255,42,42,.85);cursor:pointer;border:0}
+  input[type=range].range::-moz-range-thumb{width:14px;height:14px;border-radius:50%;border:0;background:var(--red);box-shadow:0 0 12px rgba(255,42,42,.85);cursor:pointer}
+  .btn{display:block;width:100%;margin-top:8px;background:rgba(255,42,42,.08);border:1px solid var(--line);color:var(--red);padding:11px 14px;font-size:11px;letter-spacing:.28em;text-transform:uppercase;cursor:pointer;border-radius:2px;transition:all .2s;font-weight:600;font-style:italic}
   .btn:hover{background:rgba(255,42,42,.2);border-color:var(--red);box-shadow:0 0 16px rgba(255,42,42,.35);color:#fff}
   .btn:active{transform:translateY(1px)}
   .btn.danger{color:var(--danger);border-color:rgba(255,42,42,.4);background:rgba(255,42,42,.08)}
   .btn.danger:hover{background:rgba(255,42,42,.25);color:#fff}
-  .btn.primary{background:var(--red);color:#fff;border-color:var(--red);font-weight:700}
-  .btn.primary:hover{background:var(--red-bright);box-shadow:0 0 22px rgba(255,42,42,.7)}
-  .btn.small{font-size:10px;padding:8px 12px;letter-spacing:.22em}
-
-  .model-chips{
-    display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;
-  }
-  .model-chip{
-    padding:6px 10px;font-size:10px;
-    background:rgba(255,42,42,.08);
-    border:1px solid var(--line);
-    color:var(--red);cursor:pointer;
-    border-radius:2px;letter-spacing:.06em;
-    transition:all .18s;
-    font-family:var(--font-mono);
-    white-space:nowrap;
-  }
+  .model-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+  .model-chip{padding:6px 10px;font-size:10px;background:rgba(255,42,42,.08);border:1px solid var(--line);color:var(--red);cursor:pointer;border-radius:2px;letter-spacing:.06em;transition:all .18s;font-family:var(--font-mono);white-space:nowrap}
   .model-chip:hover{background:rgba(255,42,42,.22);border-color:var(--red);color:#fff}
   .model-chip.active{background:var(--red);color:#fff;border-color:var(--red)}
   .model-chip .v{color:var(--dim2);margin-left:4px;font-size:9px}
   .model-chip:hover .v,.model-chip.active .v{color:rgba(255,255,255,.7)}
-
   .key-row{display:flex;gap:6px;align-items:stretch}
   .key-row .text-input{flex:1}
-  .key-toggle{
-    flex:0 0 auto;background:rgba(255,42,42,.08);
-    border:1px solid var(--line);color:var(--red);
-    padding:0 12px;font-size:10px;letter-spacing:.2em;
-    cursor:pointer;border-radius:2px;
-    transition:all .2s;font-weight:600;
-  }
+  .key-toggle{flex:0 0 auto;background:rgba(255,42,42,.08);border:1px solid var(--line);color:var(--red);padding:0 12px;font-size:10px;letter-spacing:.2em;cursor:pointer;border-radius:2px;transition:all .2s;font-weight:600}
   .key-toggle:hover{background:rgba(255,42,42,.2);color:#fff}
-
-  .settings-footer{
-    padding:16px 22px;border-top:1px solid var(--line-soft);
-    font-size:10.5px;color:var(--dim2);letter-spacing:.24em;text-align:center;
-    flex:0 0 auto;font-style:italic;
-  }
-
-  .toast{
-    position:fixed;bottom:110px;left:50%;
-    transform:translate(-50%,20px);
-    background:rgba(255,42,42,.15);
-    border:1px solid var(--red-soft);color:#fff;
-    padding:11px 22px;font-size:11px;letter-spacing:.26em;
-    text-transform:uppercase;opacity:0;transition:all .3s;
-    z-index:70;pointer-events:none;border-radius:2px;
-    box-shadow:0 0 24px rgba(255,42,42,.35);
-    white-space:nowrap;max-width:90vw;overflow:hidden;text-overflow:ellipsis;
-    font-family:var(--font-serif);font-style:italic;
-  }
+  .key-badge{display:inline-block;padding:3px 8px;font-size:9.5px;letter-spacing:.2em;background:rgba(255,42,42,.15);border:1px solid var(--red-soft);color:var(--red);border-radius:2px;font-family:var(--font-mono);margin-left:8px;text-transform:uppercase}
+  .settings-footer{padding:16px 22px;border-top:1px solid var(--line-soft);font-size:10.5px;color:var(--dim2);letter-spacing:.24em;text-align:center;flex:0 0 auto;font-style:italic}
+  .toast{position:fixed;bottom:110px;left:50%;transform:translate(-50%,20px);background:rgba(255,42,42,.15);border:1px solid var(--red-soft);color:#fff;padding:11px 22px;font-size:11px;letter-spacing:.26em;text-transform:uppercase;opacity:0;transition:all .3s;z-index:70;pointer-events:none;border-radius:2px;box-shadow:0 0 24px rgba(255,42,42,.35);white-space:nowrap;max-width:90vw;overflow:hidden;text-overflow:ellipsis;font-family:var(--font-serif);font-style:italic}
   .toast.show{opacity:1;transform:translate(-50%,0)}
   .toast.warn{background:rgba(255,160,42,.14);border-color:rgba(255,160,42,.55);color:var(--warn)}
-
-  body.flash::before{
-    content:'';position:fixed;inset:0;z-index:65;
-    background:radial-gradient(circle at 50% 50%, rgba(255,42,42,.4), transparent 70%);
-    pointer-events:none;animation:flashFade 1.2s ease-out forwards;
-  }
+  body.flash::before{content:'';position:fixed;inset:0;z-index:65;background:radial-gradient(circle at 50% 50%, rgba(255,42,42,.4), transparent 70%);pointer-events:none;animation:flashFade 1.2s ease-out forwards}
   @keyframes flashFade{from{opacity:1}to{opacity:0}}
-
   @media (max-width:1000px){
     main{grid-template-columns:1fr;grid-template-rows:auto minmax(240px,1fr) minmax(160px,auto);overflow-y:auto}
     main.no-telemetry,main.no-log,main.no-telemetry.no-log{grid-template-columns:1fr}
@@ -544,27 +258,12 @@
 
   <main id="mainGrid">
     <aside class="panel" id="telemetryPanel">
-      <div class="panel-title">System Diagnostics <span class="tag">v7.3</span></div>
-      <div class="stat">
-        <div class="row"><span>REACTOR OUTPUT</span><b id="v-pwr">98%</b></div>
-        <div class="bar"><i id="b-pwr"></i></div>
-      </div>
-      <div class="stat">
-        <div class="row"><span>COGNITION LOAD</span><b id="v-cpu">--</b></div>
-        <div class="bar"><i id="b-cpu"></i></div>
-      </div>
-      <div class="stat">
-        <div class="row"><span>MEMORY BANK</span><b id="v-mem">--</b></div>
-        <div class="bar"><i id="b-mem"></i></div>
-      </div>
-      <div class="stat">
-        <div class="row"><span>UPLINK</span><b id="v-net">--</b></div>
-        <div class="bar"><i id="b-net"></i></div>
-      </div>
-      <div class="stat">
-        <div class="row"><span>CORE TEMP</span><b id="v-tmp">--</b></div>
-        <div class="bar"><i id="b-tmp"></i></div>
-      </div>
+      <div class="panel-title">System Diagnostics <span class="tag">v7.4</span></div>
+      <div class="stat"><div class="row"><span>REACTOR OUTPUT</span><b id="v-pwr">98%</b></div><div class="bar"><i id="b-pwr"></i></div></div>
+      <div class="stat"><div class="row"><span>COGNITION LOAD</span><b id="v-cpu">--</b></div><div class="bar"><i id="b-cpu"></i></div></div>
+      <div class="stat"><div class="row"><span>MEMORY BANK</span><b id="v-mem">--</b></div><div class="bar"><i id="b-mem"></i></div></div>
+      <div class="stat"><div class="row"><span>UPLINK</span><b id="v-net">--</b></div><div class="bar"><i id="b-net"></i></div></div>
+      <div class="stat"><div class="row"><span>CORE TEMP</span><b id="v-tmp">--</b></div><div class="bar"><i id="b-tmp"></i></div></div>
       <div class="readouts">
         <div>PROTOCOL <span>MARK IX</span></div>
         <div>VOICE <span id="voiceName">SCANNING…</span></div>
@@ -578,10 +277,7 @@
       <canvas id="reactor"></canvas>
       <div class="screen-preview" id="screenPreview">
         <canvas id="screenPreviewCanvas" width="360" height="203"></canvas>
-        <div class="lbl">
-          <span><span class="live-dot"></span>SCREEN LIVE</span>
-          <button id="stopScreenBtn" title="Stop sharing">✕</button>
-        </div>
+        <div class="lbl"><span><span class="live-dot"></span>SCREEN LIVE</span><button id="stopScreenBtn" title="Stop sharing">✕</button></div>
       </div>
       <div class="core-overlay">
         <div id="statusText">ONLINE</div>
@@ -602,8 +298,7 @@
   <footer>
     <div class="console">
       <span class="prompt">&gt;</span>
-      <input id="cmd" type="text" autocomplete="off" spellcheck="false"
-             placeholder="Ask A.C.E. anything… or press the mic" />
+      <input id="cmd" type="text" autocomplete="off" spellcheck="false" placeholder="Ask A.C.E. anything… or press the mic" />
       <button class="mic" id="micBtn" title="Toggle voice input" aria-label="Toggle voice input">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
           <rect x="9" y="3" width="6" height="11" rx="3"/>
@@ -633,8 +328,7 @@
       <h3>User Profile</h3>
       <label class="setting-row col">
         <span>Your name</span>
-        <input type="text" id="setUserName" class="text-input"
-               placeholder="e.g. Tony" autocomplete="off" maxlength="40">
+        <input type="text" id="setUserName" class="text-input" placeholder="e.g. Tony" autocomplete="off" maxlength="40">
       </label>
       <div class="setting-help">
         A.C.E. will address you by name and remember it across sessions. You can also just say
@@ -646,7 +340,7 @@
       <h3>OpenRouter AI</h3>
 
       <label class="setting-row col">
-        <span>API Key</span>
+        <span>API Key <span id="keySourceBadge" class="key-badge" style="display:none">HARDCODED</span></span>
         <div class="key-row">
           <input type="password" id="setApiKey" class="text-input" placeholder="sk-or-v1-…" autocomplete="off" spellcheck="false">
           <button type="button" class="key-toggle" id="toggleKeyBtn">SHOW</button>
@@ -654,13 +348,12 @@
       </label>
       <div class="setting-help">
         Get a key at <a href="https://openrouter.ai/keys" target="_blank" rel="noopener">openrouter.ai/keys</a>.
-        Stored only in your browser's <b>localStorage</b>.
+        If a key is hardcoded in the script it will be used automatically; entering a key here overrides it.
       </div>
 
       <label class="setting-row col">
         <span>Chat Model</span>
-        <input type="text" id="setModel" class="text-input"
-               placeholder="openai/gpt-4o-mini" autocomplete="off" spellcheck="false">
+        <input type="text" id="setModel" class="text-input" placeholder="openai/gpt-4o-mini" autocomplete="off" spellcheck="false">
       </label>
       <div class="setting-help">
         Paste the slug (<b>openai/gpt-4o-mini</b>) or the full link from
@@ -677,41 +370,40 @@
       </div>
 
       <label class="setting-row col" style="margin-top:14px">
-        <span>Vision Model <i style="color:var(--dim2);font-style:italic;font-weight:400">(optional — leave blank to use Chat Model)</i></span>
-        <input type="text" id="setVisionModel" class="text-input"
-               placeholder="openai/gpt-4o-mini" autocomplete="off" spellcheck="false">
+        <span>Vision Model <i style="color:var(--dim2);font-style:italic;font-weight:400">(optional — blank uses Chat Model)</i></span>
+        <input type="text" id="setVisionModel" class="text-input" placeholder="openai/gpt-4o-mini" autocomplete="off" spellcheck="false">
       </label>
-      <div class="setting-help">
-        Screen vision requires a vision-capable model. If your chat model can't see images,
-        set a separate vision model here — it will be used only when you share your screen.
-      </div>
-
-      <label class="setting-row col" style="margin-top:14px">
-        <span>TTS Model <i style="color:var(--dim2);font-style:italic;font-weight:400">(optional — leave blank for browser voice)</i></span>
-        <input type="text" id="setTtsModel" class="text-input"
-               placeholder="deepgram/flux-tts:free" autocomplete="off" spellcheck="false">
-      </label>
-      <div class="setting-help">
-        Paste a TTS model slug from <a href="https://openrouter.ai/models?output_modalities=speech" target="_blank" rel="noopener">openrouter.ai/models</a>
-        (filter by <b>Speech</b> output). <b>deepgram/flux-tts:free</b> is free and sounds far more human than the browser default.
-      </div>
-
-      <label class="setting-row col">
-        <span>TTS Voice</span>
-        <input type="text" id="setTtsVoice" class="text-input"
-               placeholder="flux-cliff-en" autocomplete="off" spellcheck="false">
-      </label>
-      <div class="setting-help">
-        Deepgram Flux voices use the format <b>flux-{name}-en</b>. Good picks for A.C.E.: 
-        <b>flux-cliff-en</b> (deep, confident, mature), <b>flux-colin-en</b> (British, authoritative),
-        <b>flux-miles-en</b> (calm, professional). See the full catalog in the
-        <a href="https://developers.deepgram.com/docs/flux-tts/voices" target="_blank" rel="noopener">Deepgram docs</a>.
-      </div>
 
       <button class="btn" id="testAiBtn" style="margin-top:14px">Test chat connection</button>
       <button class="btn" id="testVisionBtn">Test vision connection</button>
-      <button class="btn" id="testTtsBtn">Test TTS voice</button>
       <button class="btn" id="clearHistoryBtn">Clear conversation history</button>
+    </section>
+
+    <section class="setting-group">
+      <h3>Voice Engine</h3>
+
+      <label class="setting-row col">
+        <span>TTS Provider</span>
+        <select id="setTtsModel" class="text-input">
+          <option value="">— Browser voice (free, robotic) —</option>
+          <option value="deepgram/flux-tts:free">Deepgram Flux (free, most human)</option>
+          <option value="openai/gpt-4o-mini-tts">OpenAI TTS (gpt-4o-mini-tts)</option>
+          <option value="x-ai/grok-voice-tts-1.0">xAI Grok Voice</option>
+          <option value="mistralai/voxtral-mini-tts-2603">Mistral Voxtral Mini</option>
+          <option value="__custom__">Custom model slug…</option>
+        </select>
+      </label>
+      <input type="text" id="setTtsModelCustom" class="text-input" style="display:none;margin-top:6px" placeholder="provider/model-slug" autocomplete="off" spellcheck="false">
+
+      <label class="setting-row col" style="margin-top:14px">
+        <span>Voice</span>
+        <select id="setTtsVoice" class="text-input"></select>
+      </label>
+      <input type="text" id="setTtsVoiceCustom" class="text-input" style="display:none;margin-top:6px" placeholder="voice-id" autocomplete="off" spellcheck="false">
+
+      <div class="setting-help" id="ttsVoiceHelp" style="margin-top:8px"></div>
+
+      <button class="btn" id="testTtsBtn" style="margin-top:14px">Test voice</button>
     </section>
 
     <section class="setting-group">
@@ -721,7 +413,6 @@
       <div class="setting-help" style="margin-top:10px">
         After sharing, ask <b>“look at my screen”</b>, <b>“what's on my screen”</b>,
         <b>“read this page”</b>, or <b>“describe what you see”</b>.
-        Check the activity log for diagnostics if it fails.
       </div>
       <label class="setting-row">
         <span>Show live preview</span>
@@ -731,7 +422,6 @@
         <span>Verbose vision logging</span>
         <input type="checkbox" id="setVisionDebug" class="switch">
       </label>
-      <div class="setting-help">Logs the request payload and full API response to help diagnose issues.</div>
     </section>
 
     <section class="setting-group">
@@ -749,7 +439,6 @@
         <span>Require wake word</span>
         <input type="checkbox" id="setRequireWake" class="switch">
       </label>
-      <div class="setting-help">When always-on is enabled, only respond after hearing the wake word.</div>
 
       <label class="setting-row col">
         <span>Wake word</span>
@@ -776,9 +465,12 @@
     </section>
 
     <section class="setting-group">
-      <h3>Voice Output</h3>
+      <h3>Browser Voice Fallback</h3>
+      <div class="setting-help" style="margin-top:-4px;margin-bottom:10px">
+        Used only if the TTS provider above is blank or fails.
+      </div>
       <label class="setting-row col">
-        <span>Browser Voice <i style="color:var(--dim2);font-style:italic;font-weight:400">(fallback if TTS model is blank or fails)</i></span>
+        <span>Browser voice</span>
         <select id="setVoice" class="text-input"><option value="">System default</option></select>
       </label>
       <label class="setting-row col">
@@ -802,22 +494,10 @@
 
     <section class="setting-group">
       <h3>Interface</h3>
-      <label class="setting-row">
-        <span>Telemetry panel</span>
-        <input type="checkbox" id="setTelemetry" class="switch">
-      </label>
-      <label class="setting-row">
-        <span>Activity log panel</span>
-        <input type="checkbox" id="setLogPanel" class="switch">
-      </label>
-      <label class="setting-row">
-        <span>Grid background</span>
-        <input type="checkbox" id="setGrid" class="switch">
-      </label>
-      <label class="setting-row">
-        <span>Reduced motion</span>
-        <input type="checkbox" id="setReduced" class="switch">
-      </label>
+      <label class="setting-row"><span>Telemetry panel</span><input type="checkbox" id="setTelemetry" class="switch"></label>
+      <label class="setting-row"><span>Activity log panel</span><input type="checkbox" id="setLogPanel" class="switch"></label>
+      <label class="setting-row"><span>Grid background</span><input type="checkbox" id="setGrid" class="switch"></label>
+      <label class="setting-row"><span>Reduced motion</span><input type="checkbox" id="setReduced" class="switch"></label>
     </section>
 
     <section class="setting-group">
@@ -827,13 +507,32 @@
       <button class="btn danger" id="resetBtn">Reset all settings</button>
     </section>
 
-    <div class="settings-footer">A.C.E. v7.3 · Autonomous Cognitive Entity · Saved automatically</div>
+    <div class="settings-footer">A.C.E. v7.4 · Autonomous Cognitive Entity · Saved automatically</div>
   </div>
 </aside>
 
 <script>
 (function () {
   "use strict";
+
+  /* ============================================================
+     ⚙️  HARDCODED API KEY
+     Paste your OpenRouter key between the quotes below to skip
+     entering it in the settings panel every time.
+     Leave it as "" if you'd rather enter it through the UI.
+     Anything you type into the settings panel will override it.
+     ============================================================ */
+  var HARDCODED_API_KEY = "";   // e.g. "sk-or-v1-abc123def456..."
+
+  /* ============================================================
+     ⚙️  HARDCODED DEFAULTS (optional)
+     Set default chat / vision / TTS model + voice here.
+     ============================================================ */
+  var HARDCODED_CHAT_MODEL   = "openai/gpt-4o-mini";
+  var HARDCODED_VISION_MODEL = "";
+  var HARDCODED_TTS_MODEL    = "deepgram/flux-tts:free";
+  var HARDCODED_TTS_VOICE    = "flux-cliff-en";
+  /* ============================================================ */
 
   // ==================== UTILITIES ====================
   function $(id) { return document.getElementById(id); }
@@ -850,8 +549,46 @@
   var OPENROUTER_REFERER  = "https://github.com/";
   var OPENROUTER_TITLE    = "A.C.E. Interface";
 
+  // ==================== TTS VOICE CATALOG ====================
+  // Voice lists keyed by TTS model slug. Each entry has {id, label}.
+  var TTS_VOICES = {
+    "deepgram/flux-tts:free": [
+      { id: "flux-cliff-en",  label: "Cliff — deep, confident, mature (recommended)" },
+      { id: "flux-colin-en",  label: "Colin — British, warm, trustworthy, authoritative" },
+      { id: "flux-miles-en",  label: "Miles — American, clear, calm, professional" },
+      { id: "flux-sean-en",   label: "Sean — British, mature, friendly, calming" },
+      { id: "flux-kit-en",    label: "Kit — British, young adult, energetic" },
+      { id: "flux-james-en",  label: "James — British, deep, commanding" },
+      { id: "flux-oliver-en", label: "Oliver — British, warm, smooth" },
+      { id: "flux-luke-en",   label: "Luke — American, neutral, professional" },
+      { id: "flux-lily-en",   label: "Lily — female, bright, clear" },
+      { id: "flux-aria-en",   label: "Aria — female, warm, expressive" },
+      { id: "flux-lucy-en",   label: "Lucy — female, British, gentle" },
+      { id: "flux-emma-en",   label: "Emma — female, neutral" }
+    ],
+    "openai/gpt-4o-mini-tts": [
+      { id: "onyx",    label: "Onyx — deep, authoritative" },
+      { id: "echo",    label: "Echo — male, calm, measured" },
+      { id: "fable",   label: "Fable — British, warm, storyteller" },
+      { id: "alloy",   label: "Alloy — neutral, balanced" },
+      { id: "nova",    label: "Nova — female, bright" },
+      { id: "shimmer", label: "Shimmer — female, soft" }
+    ],
+    "x-ai/grok-voice-tts-1.0": [
+      { id: "Eve", label: "Eve — female, calm" },
+      { id: "Ara", label: "Ara — female, warm" },
+      { id: "Rex", label: "Rex — male, deep" },
+      { id: "Sal", label: "Sal — male, smooth" },
+      { id: "Leo", label: "Leo — male, confident" }
+    ],
+    "mistralai/voxtral-mini-tts-2603": [
+      { id: "en_paul_neutral",  label: "Paul — neutral male" },
+      { id: "en_emma_neutral",  label: "Emma — neutral female" }
+    ]
+  };
+
   // ==================== SETTINGS ====================
-  var STORAGE_KEY = "ace.settings.v7.3";
+  var STORAGE_KEY = "ace.settings.v7.4";
 
   var DEFAULT_SYSTEM_PROMPT =
     "You are A.C.E. — Autonomous Cognitive Entity — a concise, capable AI assistant with a " +
@@ -864,17 +601,14 @@
     "though you were speaking to someone in the room.";
 
   var DEFAULTS = {
-    // OpenRouter
     apiKey: "",
-    model: "openai/gpt-4o-mini",
-    visionModel: "",
-    ttsModel: "deepgram/flux-tts:free",
-    ttsVoice: "flux-cliff-en",
+    model: HARDCODED_CHAT_MODEL,
+    visionModel: HARDCODED_VISION_MODEL,
+    ttsModel: HARDCODED_TTS_MODEL,
+    ttsVoice: HARDCODED_TTS_VOICE,
     systemPrompt: DEFAULT_SYSTEM_PROMPT,
     visionDebug: false,
-    // User
     userName: "",
-    // Voice / mic
     alwaysOn: false,
     requireWake: false,
     wakeWord: "ace",
@@ -884,13 +618,11 @@
     pitch: 0.90,
     volume: 1.0,
     speak: true,
-    // UI
     showTelemetry: true,
     showLog: true,
     showGrid: true,
     reducedMotion: false,
     screenPreview: true,
-    // Data
     memories: {},
     notes: []
   };
@@ -913,6 +645,16 @@
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(settings)); } catch (e) {}
   }
   var settings = loadSettings();
+
+  // Effective API key — settings value wins, otherwise the hardcoded one
+  function effectiveApiKey() {
+    var k = (settings.apiKey || "").trim();
+    if (k) return k;
+    return (HARDCODED_API_KEY || "").trim();
+  }
+  function isUsingHardcodedKey() {
+    return !settings.apiKey && !!(HARDCODED_API_KEY && HARDCODED_API_KEY.trim());
+  }
 
   // ==================== MODEL SLUG PARSER ====================
   function parseModelInput(raw) {
@@ -949,8 +691,8 @@
   var screenVideo = null;
   var screenPreviewRAF = null;
   var screenWarmupAt = 0;
-  var currentAudio = null;   // <audio> element for OpenRouter TTS
-  var ttsAudioUrl = null;    // object URL to revoke
+  var currentAudio = null;
+  var ttsAudioUrl = null;
 
   var INTERRUPT_WORDS = /^(?:(?:please\s+)?(?:be quiet|quiet|stop(?: talking)?|shut up|silence|shush|hush|mute|hold on|wait|pause|cancel|enough|that's enough|thats enough|nevermind|never mind|stop it|shut it)\b[\s.!?,]*)+$/i;
 
@@ -998,8 +740,7 @@
       if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       var o = audioCtx.createOscillator();
       var g = audioCtx.createGain();
-      o.type = "sine";
-      o.frequency.value = freq || 660;
+      o.type = "sine"; o.frequency.value = freq || 660;
       g.gain.setValueAtTime(vol || 0.1, audioCtx.currentTime);
       g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + (dur || 0.12));
       o.connect(g); g.connect(audioCtx.destination);
@@ -1007,7 +748,7 @@
     } catch (e) {}
   }
 
-  // ==================== BROWSER SPEECH SYNTHESIS (fallback) ====================
+  // ==================== BROWSER TTS (fallback) ====================
   function refreshVoices() {
     if (!("speechSynthesis" in window)) return;
     allVoices = speechSynthesis.getVoices();
@@ -1024,8 +765,7 @@
       }
       sel.value = settings.voiceName || prev || "";
     }
-    var preferred = ["Daniel", "Google UK English Male", "Microsoft Ryan Online",
-                     "Microsoft George Online", "Arthur", "Oliver", "en-GB"];
+    var preferred = ["Daniel", "Google UK English Male", "Microsoft Ryan Online", "Arthur", "Oliver", "en-GB"];
     jarvisVoice = null;
     for (var p = 0; p < preferred.length; p++) {
       for (var v = 0; v < allVoices.length; v++) {
@@ -1081,7 +821,7 @@
 
   // ==================== OPENROUTER TTS ====================
   function ttsConfigured() {
-    return !!(settings.apiKey && settings.ttsModel);
+    return !!(effectiveApiKey() && settings.ttsModel);
   }
 
   async function speak(text) {
@@ -1090,46 +830,37 @@
 
     var spoken = text.replace(/```[\s\S]*?```/g, " (code block omitted) ").slice(0, 2000);
 
-    // Fall back to browser if no TTS model is configured
-    if (!ttsConfigured()) {
-      browserSpeak(spoken);
-      return;
-    }
+    if (!ttsConfigured()) { browserSpeak(spoken); return; }
 
     try {
-      // Stop any browser speech that might be running
       if ("speechSynthesis" in window) speechSynthesis.cancel();
       stopAudio();
-
       setStatus("SPEAKING", "SYNTHESISING VOICE");
       speaking = true;
       if (els.stopSpeakBtn) els.stopSpeakBtn.classList.add("show");
       updateChips();
       energy = Math.max(energy, 0.7);
 
-      var body = {
-        model: settings.ttsModel,
-        input: spoken,
-        voice: settings.ttsVoice || "flux-cliff-en",
-        response_format: "mp3"
-      };
-
       var res = await fetch(OPENROUTER_TTS_ENDPOINT, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": "Bearer " + settings.apiKey,
+          "Authorization": "Bearer " + effectiveApiKey(),
           "HTTP-Referer": OPENROUTER_REFERER,
           "X-Title": OPENROUTER_TITLE
         },
-        body: JSON.stringify(body)
+        body: JSON.stringify({
+          model: settings.ttsModel,
+          input: spoken,
+          voice: settings.ttsVoice || "flux-cliff-en",
+          response_format: "mp3"
+        })
       });
 
       if (!res.ok) {
         var errTxt = "";
         try { errTxt = await res.text(); } catch (e) {}
-        // Fall back to browser voice on any failure
-        logLine("TTS fell back to browser voice (HTTP " + res.status + ")", "warn");
+        logLine("TTS failed (HTTP " + res.status + ") — falling back to browser voice.", "warn");
         speaking = false;
         if (els.stopSpeakBtn) els.stopSpeakBtn.classList.remove("show");
         browserSpeak(spoken);
@@ -1157,11 +888,10 @@
       };
       currentAudio.onended = done;
       currentAudio.onerror = function () {
-        logLine("TTS audio playback failed — using browser voice.", "warn");
+        logLine("TTS playback failed — using browser voice.", "warn");
         done();
         browserSpeak(spoken);
       };
-
       currentAudio.play();
     } catch (err) {
       logLine("TTS request failed: " + (err && err.message || err), "warn");
@@ -1181,23 +911,16 @@
       ttsAudioUrl = null;
     }
   }
-
   function stopSpeaking(silent) {
     var was = speaking;
-    if (currentAudio) {
-      was = was || !currentAudio.paused;
-      stopAudio();
-    }
+    if (currentAudio) { was = was || !currentAudio.paused; stopAudio(); }
     if ("speechSynthesis" in window) {
       was = was || speechSynthesis.speaking;
       try { speechSynthesis.cancel(); } catch (e) {}
     }
     speaking = false;
     if (els.stopSpeakBtn) els.stopSpeakBtn.classList.remove("show");
-    if (!silent && was) {
-      logLine("Speech interrupted.", "sys");
-      setStatus("ONLINE", "ALL SYSTEMS NOMINAL");
-    }
+    if (!silent && was) { logLine("Speech interrupted.", "sys"); setStatus("ONLINE", "ALL SYSTEMS NOMINAL"); }
     updateChips();
     if (wantListening && !listening && settings.alwaysOn) scheduleRestart(160);
     return was;
@@ -1530,11 +1253,15 @@
     if (els.memCount) els.memCount.textContent = Object.keys(settings.memories).length;
     if (els.histCount) els.histCount.textContent = Math.floor(conversationHistory.length / 2);
 
-    if (els.setApiKey) els.setApiKey.value = settings.apiKey || "";
+    if (els.setApiKey) {
+      els.setApiKey.value = settings.apiKey || "";
+      els.setApiKey.placeholder = isUsingHardcodedKey() ? "(using hardcoded key)" : "sk-or-v1-…";
+    }
+    if (els.keySourceBadge) {
+      els.keySourceBadge.style.display = isUsingHardcodedKey() ? "inline-block" : "none";
+    }
     if (els.setModel) els.setModel.value = settings.model || "";
     if (els.setVisionModel) els.setVisionModel.value = settings.visionModel || "";
-    if (els.setTtsModel) els.setTtsModel.value = settings.ttsModel || "";
-    if (els.setTtsVoice) els.setTtsVoice.value = settings.ttsVoice || "";
     if (els.setUserName) els.setUserName.value = settings.userName || "";
     if (els.setAlwaysOn) els.setAlwaysOn.checked = !!settings.alwaysOn;
     if (els.setRequireWake) els.setRequireWake.checked = !!settings.requireWake;
@@ -1558,7 +1285,113 @@
       chip.classList.toggle("active", chip.getAttribute("data-model") === settings.model);
     });
 
+    // Sync TTS dropdowns
+    syncTtsDropdowns();
+
     updateChips(); updateMicAppearance();
+  }
+
+  // ==================== TTS DROPDOWNS ====================
+  function syncTtsDropdowns() {
+    var modelSel = els.setTtsModel;
+    if (!modelSel) return;
+
+    // If the saved model isn't one of the known options, pick "custom"
+    var known = false;
+    for (var i = 0; i < modelSel.options.length; i++) {
+      if (modelSel.options[i].value === settings.ttsModel && settings.ttsModel !== "__custom__") {
+        known = true; break;
+      }
+    }
+    if (settings.ttsModel === "" ) {
+      modelSel.value = "";
+      if (els.setTtsModelCustom) els.setTtsModelCustom.style.display = "none";
+    } else if (known) {
+      modelSel.value = settings.ttsModel;
+      if (els.setTtsModelCustom) els.setTtsModelCustom.style.display = "none";
+    } else {
+      modelSel.value = "__custom__";
+      if (els.setTtsModelCustom) {
+        els.setTtsModelCustom.style.display = "block";
+        els.setTtsModelCustom.value = settings.ttsModel;
+      }
+    }
+
+    populateVoiceDropdown(settings.ttsModel);
+    updateTtsHelp(settings.ttsModel);
+  }
+
+  function populateVoiceDropdown(model) {
+    var voiceSel = els.setTtsVoice;
+    if (!voiceSel) return;
+
+    var list = TTS_VOICES[model];
+    voiceSel.innerHTML = "";
+
+    if (!list || !list.length) {
+      // No catalog for this model — show a generic free-text option
+      var opt = document.createElement("option");
+      opt.value = "__custom__";
+      opt.textContent = "Custom voice id…";
+      voiceSel.appendChild(opt);
+      voiceSel.value = "__custom__";
+      if (els.setTtsVoiceCustom) {
+        els.setTtsVoiceCustom.style.display = "block";
+        els.setTtsVoiceCustom.value = settings.ttsVoice || "";
+      }
+      return;
+    }
+
+    for (var i = 0; i < list.length; i++) {
+      var o = document.createElement("option");
+      o.value = list[i].id;
+      o.textContent = list[i].label;
+      voiceSel.appendChild(o);
+    }
+    var custom = document.createElement("option");
+    custom.value = "__custom__";
+    custom.textContent = "Custom voice id…";
+    voiceSel.appendChild(custom);
+
+    // Select the saved voice if present, otherwise the first
+    var matched = false;
+    for (var j = 0; j < list.length; j++) {
+      if (list[j].id === settings.ttsVoice) { voiceSel.value = settings.ttsVoice; matched = true; break; }
+    }
+    if (!matched) {
+      if (settings.ttsVoice) {
+        voiceSel.value = "__custom__";
+        if (els.setTtsVoiceCustom) {
+          els.setTtsVoiceCustom.style.display = "block";
+          els.setTtsVoiceCustom.value = settings.ttsVoice;
+        }
+      } else {
+        voiceSel.value = list[0].id;
+        settings.ttsVoice = list[0].id;
+        saveSettings();
+        if (els.setTtsVoiceCustom) els.setTtsVoiceCustom.style.display = "none";
+      }
+    } else {
+      if (els.setTtsVoiceCustom) els.setTtsVoiceCustom.style.display = "none";
+    }
+  }
+
+  function updateTtsHelp(model) {
+    var help = els.ttsVoiceHelp;
+    if (!help) return;
+    if (!model) {
+      help.innerHTML = "No TTS provider selected — A.C.E. will use the browser's built-in voice (robotic).";
+    } else if (model === "deepgram/flux-tts:free") {
+      help.innerHTML = "Deepgram Flux is free and the most human-sounding option. <b>Cliff</b> or <b>Colin</b> match A.C.E.'s tone best.";
+    } else if (model === "openai/gpt-4o-mini-tts") {
+      help.innerHTML = "OpenAI TTS — <b>onyx</b> and <b>fable</b> are the closest to A.C.E.'s register.";
+    } else if (model === "x-ai/grok-voice-tts-1.0") {
+      help.innerHTML = "xAI Grok Voice — 20+ languages, natural pacing.";
+    } else if (model === "mistralai/voxtral-mini-tts-2603") {
+      help.innerHTML = "Mistral Voxtral — supports voice cloning if you have a reference audio clip.";
+    } else {
+      help.innerHTML = "Custom provider — enter any voice id the model accepts.";
+    }
   }
 
   // ==================== SETTINGS PANEL ====================
@@ -1651,17 +1484,12 @@
   function captureScreenFrame() {
     if (!screenVideo) return { error: "No screen stream." };
     if (screenVideo.readyState < 2) return { error: "Screen stream not ready (readyState " + screenVideo.readyState + ")." };
-    if (!screenVideo.videoWidth || !screenVideo.videoHeight) {
-      return { error: "Screen stream has no dimensions yet — try again in a second." };
-    }
-    if (Date.now() - screenWarmupAt < 400) {
-      return { error: "Screen stream is still warming up — try again in a moment." };
-    }
+    if (!screenVideo.videoWidth || !screenVideo.videoHeight) return { error: "Screen stream has no dimensions yet." };
+    if (Date.now() - screenWarmupAt < 400) return { error: "Screen stream is still warming up." };
     try {
       var c = document.createElement("canvas");
       var vw = screenVideo.videoWidth, vh = screenVideo.videoHeight;
-      var maxW = 1280;
-      var scale = Math.min(1, maxW / vw);
+      var scale = Math.min(1, 1280 / vw);
       c.width = Math.max(1, Math.round(vw * scale));
       c.height = Math.max(1, Math.round(vh * scale));
       var cc = c.getContext("2d");
@@ -1673,8 +1501,8 @@
     }
   }
 
-  // ==================== AI ENGINE (OpenRouter) ====================
-  function aiConfigured() { return !!(settings.apiKey && settings.model); }
+  // ==================== AI ENGINE ====================
+  function aiConfigured() { return !!(effectiveApiKey() && settings.model); }
   function effectiveVisionModel() { return (settings.visionModel && settings.visionModel.trim()) || settings.model; }
 
   function buildSystemPrompt() {
@@ -1687,10 +1515,8 @@
 
   async function askAI(userText, imageDataUrl) {
     if (!aiConfigured()) throw new Error("AI not configured");
-
     var model = imageDataUrl ? effectiveVisionModel() : settings.model;
     var messages = [{ role: "system", content: buildSystemPrompt() }];
-
     var hist = conversationHistory.slice(-12);
     for (var i = 0; i < hist.length; i++) messages.push(hist[i]);
 
@@ -1700,33 +1526,23 @@
         { type: "text", text: userText || "What's on my screen? Describe anything useful." },
         { type: "image_url", image_url: { url: imageDataUrl, detail: "auto" } }
       ];
-    } else {
-      userContent = userText;
-    }
+    } else userContent = userText;
     messages.push({ role: "user", content: userContent });
-
-    var payload = {
-      model: model,
-      messages: messages,
-      temperature: 0.6,
-      max_tokens: 700
-    };
-
-    if (settings.visionDebug && imageDataUrl) {
-      logLine("Vision payload → model=" + model +
-              ", image=" + Math.round(imageDataUrl.length / 1024) + "KB base64, " +
-              "messages=" + messages.length, "sys");
-    }
 
     var res = await fetch(OPENROUTER_ENDPOINT, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": "Bearer " + settings.apiKey,
+        "Authorization": "Bearer " + effectiveApiKey(),
         "HTTP-Referer": OPENROUTER_REFERER,
         "X-Title": OPENROUTER_TITLE
       },
-      body: JSON.stringify(payload)
+      body: JSON.stringify({
+        model: model,
+        messages: messages,
+        temperature: 0.6,
+        max_tokens: 700
+      })
     });
 
     var rawBody = "";
@@ -1741,16 +1557,13 @@
           else if (parsedErr.error.message) brief = parsedErr.error.message;
         }
       } catch (e) {}
-      if (settings.visionDebug && rawBody) logLine("Raw error body: " + rawBody.slice(0, 400), "err");
       throw new Error("HTTP " + res.status + " — " + (brief || res.statusText).slice(0, 240));
     }
 
     var data;
     try { data = JSON.parse(rawBody); }
-    catch (e) { throw new Error("Invalid JSON from server: " + rawBody.slice(0, 160)); }
-
+    catch (e) { throw new Error("Invalid JSON: " + rawBody.slice(0, 160)); }
     if (!data.choices || !data.choices[0] || !data.choices[0].message) {
-      if (settings.visionDebug) logLine("Unexpected shape: " + rawBody.slice(0, 400), "err");
       throw new Error("Unexpected response shape");
     }
     var content = data.choices[0].message.content;
@@ -1775,7 +1588,7 @@
 
   async function handleWithAI(userText, imageDataUrl) {
     if (!aiConfigured()) {
-      respond("I'm not connected yet. Open settings and add your OpenRouter API key and model — then I'll be fully online.");
+      respond("I'm not connected yet. Open settings and add your OpenRouter API key and model.");
       toast("Add OpenRouter key in settings", "warn"); return;
     }
     if (aiBusy) { respond("One moment — I'm still thinking about the last request."); return; }
@@ -1783,39 +1596,28 @@
     aiBusy = true; updateChips(); energy = 0.9;
     setStatus("THINKING", imageDataUrl ? "ANALYSING SCREEN" : "PROCESSING QUERY");
 
-    var label = imageDataUrl ? "Analysing your screen…" : "Thinking…";
-    var thinkingRow = logLine(label, "sys");
+    var thinkingRow = logLine(imageDataUrl ? "Analysing your screen…" : "Thinking…", "sys");
     if (thinkingRow) thinkingRow.classList.add("thinking");
 
     try {
       var reply = await askAI(userText, imageDataUrl);
       if (thinkingRow && thinkingRow.parentNode) thinkingRow.parentNode.removeChild(thinkingRow);
       if (!reply) reply = "I don't have anything to add.";
-
       if (imageDataUrl) {
         pushHistory("user", [{ type: "text", text: userText || "What's on my screen?" }, { type: "text", text: "[screen image]" }]);
-      } else {
-        pushHistory("user", userText);
-      }
+      } else pushHistory("user", userText);
       pushHistory("assistant", reply);
       respond(reply);
     } catch (err) {
       if (thinkingRow && thinkingRow.parentNode) thinkingRow.parentNode.removeChild(thinkingRow);
       var detail = err && err.message ? err.message : String(err);
       logLine("AI error: " + detail, "err");
-
       var userMsg = "I had trouble reaching the AI service. ";
-      if (/404|model/i.test(detail) && imageDataUrl) {
-        userMsg = "The vision model rejected the request. Try setting a different Vision Model in settings — gpt-4o-mini and claude-3.5-sonnet both work well.";
-      } else if (/404|model/i.test(detail)) {
-        userMsg = "The model name doesn't seem to exist on OpenRouter. Check the model slug in settings.";
-      } else if (/401|403|auth/i.test(detail)) {
-        userMsg = "The API key was rejected. Double-check it in settings.";
-      } else if (/402|insufficient|credit|quota/i.test(detail)) {
-        userMsg = "OpenRouter says you're out of credits or quota. Top up and try again.";
-      } else if (/429|rate/i.test(detail)) {
-        userMsg = "Rate limited by OpenRouter — give it a moment and try again.";
-      }
+      if (/404|model/i.test(detail) && imageDataUrl) userMsg = "The vision model rejected the request. Try a different Vision Model.";
+      else if (/404|model/i.test(detail)) userMsg = "The model name doesn't exist on OpenRouter. Check the slug in settings.";
+      else if (/401|403|auth/i.test(detail)) userMsg = "The API key was rejected. Double-check it in settings.";
+      else if (/402|insufficient|credit|quota/i.test(detail)) userMsg = "OpenRouter says you're out of credits.";
+      else if (/429|rate/i.test(detail)) userMsg = "Rate limited — give it a moment.";
       respond(userMsg);
     } finally {
       aiBusy = false; updateChips();
@@ -1827,8 +1629,7 @@
   function setTimer(seconds, label) {
     var id = setTimeout(function () {
       var msg = label ? ("Timer complete — " + label + ".") : "Your timer has finished.";
-      logLine(msg, "ace");
-      setStatus("ALERT", "TIMER COMPLETE");
+      logLine(msg, "ace"); setStatus("ALERT", "TIMER COMPLETE");
       energy = 1; flashScreen();
       beep(660, 0.18, 0.15);
       setTimeout(function () { beep(880, 0.18, 0.15); }, 220);
@@ -1837,8 +1638,7 @@
       var i = activeTimers.indexOf(id);
       if (i > -1) activeTimers.splice(i, 1);
     }, seconds * 1000);
-    activeTimers.push(id);
-    return id;
+    activeTimers.push(id); return id;
   }
   function safeEval(expr) {
     var e = String(expr).toLowerCase().trim();
@@ -1861,62 +1661,33 @@
     return /[+\-*/x×÷^%]|\b(plus|minus|times|divided|multiplied|percent|of)\b/i.test(s);
   }
   var UNIT_GROUPS = {
-    length: { km:1000, kilometer:1000, kilometers:1000, m:1, meter:1, meters:1, metre:1, metres:1,
-              cm:0.01, centimeter:0.01, centimeters:0.01, mm:0.001,
-              mi:1609.344, mile:1609.344, miles:1609.344,
-              ft:0.3048, foot:0.3048, feet:0.3048,
-              in:0.0254, inch:0.0254, inches:0.0254,
-              yd:0.9144, yard:0.9144, yards:0.9144 },
-    weight: { kg:1000, kilogram:1000, kilograms:1000, g:1, gram:1, grams:1, mg:0.001,
-              lb:453.592, lbs:453.592, pound:453.592, pounds:453.592,
-              oz:28.3495, ounce:28.3495, ounces:28.3495, st:6350.29, stone:6350.29 },
-    volume: { l:1, liter:1, liters:1, litre:1, litres:1, ml:0.001,
-              gal:3.78541, gallon:3.78541, gallons:3.78541,
-              cup:0.236588, cups:0.236588, pint:0.473176, pints:0.473176 }
+    length: { km:1000, kilometer:1000, kilometers:1000, m:1, meter:1, meters:1, metre:1, metres:1, cm:0.01, centimeter:0.01, centimeters:0.01, mm:0.001, mi:1609.344, mile:1609.344, miles:1609.344, ft:0.3048, foot:0.3048, feet:0.3048, in:0.0254, inch:0.0254, inches:0.0254, yd:0.9144, yard:0.9144, yards:0.9144 },
+    weight: { kg:1000, kilogram:1000, kilograms:1000, g:1, gram:1, grams:1, mg:0.001, lb:453.592, lbs:453.592, pound:453.592, pounds:453.592, oz:28.3495, ounce:28.3495, ounces:28.3495, st:6350.29, stone:6350.29 },
+    volume: { l:1, liter:1, liters:1, litre:1, litres:1, ml:0.001, gal:3.78541, gallon:3.78541, gallons:3.78541, cup:0.236588, cups:0.236588, pint:0.473176, pints:0.473176 }
   };
-  var TEMP_ALIASES = { c:"c", celsius:"c", "°c":"c", centigrade:"c",
-                       f:"f", fahrenheit:"f", "°f":"f",
-                       k:"k", kelvin:"k" };
+  var TEMP_ALIASES = { c:"c", celsius:"c", "°c":"c", centigrade:"c", f:"f", fahrenheit:"f", "°f":"f", k:"k", kelvin:"k" };
   function convertUnits(val, from, to) {
     from = from.toLowerCase(); to = to.toLowerCase();
     if (TEMP_ALIASES[from] && TEMP_ALIASES[to]) {
-      var f = TEMP_ALIASES[from], t = TEMP_ALIASES[to];
-      var c;
-      if (f === "c") c = val;
-      else if (f === "f") c = (val - 32) * 5 / 9;
-      else c = val - 273.15;
+      var f = TEMP_ALIASES[from], t = TEMP_ALIASES[to], c;
+      if (f === "c") c = val; else if (f === "f") c = (val - 32) * 5 / 9; else c = val - 273.15;
       var out;
-      if (t === "c") out = c;
-      else if (t === "f") out = c * 9 / 5 + 32;
-      else out = c + 273.15;
+      if (t === "c") out = c; else if (t === "f") out = c * 9 / 5 + 32; else out = c + 273.15;
       return { value: out, unit: to };
     }
     for (var gname in UNIT_GROUPS) {
       var group = UNIT_GROUPS[gname];
-      if (group[from] != null && group[to] != null) {
-        return { value: (val * group[from]) / group[to], unit: to };
-      }
+      if (group[from] != null && group[to] != null) return { value: (val * group[from]) / group[to], unit: to };
     }
     return null;
   }
-  var WX = {
-    0: "clear skies", 1: "mainly clear", 2: "partly cloudy", 3: "overcast",
-    45: "foggy", 48: "freezing fog", 51: "light drizzle", 53: "drizzle",
-    55: "heavy drizzle", 61: "light rain", 63: "rain", 65: "heavy rain",
-    71: "light snow", 73: "snow", 75: "heavy snow", 80: "rain showers",
-    81: "rain showers", 82: "violent rain showers", 95: "a thunderstorm",
-    96: "a thunderstorm with hail", 99: "a severe thunderstorm with hail"
-  };
+  var WX = { 0:"clear skies",1:"mainly clear",2:"partly cloudy",3:"overcast",45:"foggy",48:"freezing fog",51:"light drizzle",53:"drizzle",55:"heavy drizzle",61:"light rain",63:"rain",65:"heavy rain",71:"light snow",73:"snow",75:"heavy snow",80:"rain showers",81:"rain showers",82:"violent rain showers",95:"a thunderstorm",96:"a thunderstorm with hail",99:"a severe thunderstorm with hail" };
   function getWeather() {
     return new Promise(function (resolve, reject) {
       if (!navigator.geolocation) return reject(new Error("no-geo"));
       navigator.geolocation.getCurrentPosition(function (pos) {
-        var url = "https://api.open-meteo.com/v1/forecast?latitude=" + pos.coords.latitude +
-                  "&longitude=" + pos.coords.longitude +
-                  "&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m";
-        fetch(url).then(function (r) { return r.json(); })
-          .then(function (d) { resolve(d.current); })
-          .catch(reject);
+        var url = "https://api.open-meteo.com/v1/forecast?latitude=" + pos.coords.latitude + "&longitude=" + pos.coords.longitude + "&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m";
+        fetch(url).then(function (r) { return r.json(); }).then(function (d) { resolve(d.current); }).catch(reject);
       }, function () { reject(new Error("denied")); }, { timeout: 9000 });
     });
   }
@@ -1930,34 +1701,25 @@
 
     if (/^(?:please\s+)?(?:be quiet|quiet|stop(?: talking)?|shut up|silence|shush|hush|mute|hold on|wait|pause|cancel|enough|that's enough|nevermind|never mind|stop it|shut it)(?:[\s.!?,]*)$/i.test(t)) {
       var was = stopSpeaking(false);
-      if (!was) respond("I'm not speaking, but noted.");
-      else beep(440, 0.09, 0.1);
+      if (!was) respond("I'm not speaking, but noted."); else beep(440, 0.09, 0.1);
       return true;
     }
     if (/^(?:never mind|nevermind|cancel)(?:\s+(?:that|it|the last one))?$/i.test(t) && pendingAction) {
       pendingAction = null; respond("Cancelled."); return true;
     }
     if (pendingAction) {
-      if (/^(yes|yeah|yep|yup|sure|ok|okay|do it|please do|affirmative|go ahead|confirm)\b/.test(t)) {
-        var a = pendingAction; pendingAction = null; a(); return true;
-      }
-      if (/^(no|nope|nah|negative|cancel|nevermind|never mind|stop)\b/.test(t)) {
-        pendingAction = null; respond("Cancelled."); return true;
-      }
+      if (/^(yes|yeah|yep|yup|sure|ok|okay|do it|please do|affirmative|go ahead|confirm)\b/.test(t)) { var a = pendingAction; pendingAction = null; a(); return true; }
+      if (/^(no|nope|nah|negative|cancel|nevermind|never mind|stop)\b/.test(t)) { pendingAction = null; respond("Cancelled."); return true; }
     }
-
     if ((m = t.match(/^(?:my name is|call me|i am|i'm)\s+([a-z][a-z '\-]{0,38})$/))) {
       settings.userName = cap(m[1].trim()); saveSettings(); applySettings();
       respond("Noted. I'll call you " + settings.userName + "."); return true;
     }
     if (/what(?:'s| is) my name|who am i\b/.test(t)) {
-      respond(settings.userName ? ("You're " + settings.userName + ", of course.") : "You haven't told me your name yet.");
-      return true;
+      respond(settings.userName ? ("You're " + settings.userName + ", of course.") : "You haven't told me your name yet."); return true;
     }
-
     if ((m = t.match(/^(?:remember|memorise|memorize|store)(?: that)?\s+(?:my\s+)?(.+?)\s+(?:is|are|equals?)\s+(.+)$/))) {
-      var key = m[1].trim().replace(/^my\s+/, "");
-      var val = m[2].trim();
+      var key = m[1].trim().replace(/^my\s+/, ""), val = m[2].trim();
       if (key.length > 60 || val.length > 200) { respond("That's a bit long for me to store."); return true; }
       settings.memories[key] = val; saveSettings(); applySettings();
       beep(880, 0.08, 0.08);
@@ -1967,18 +1729,14 @@
       var k2 = m[1].trim();
       if (settings.memories[k2]) { respond("Your " + k2 + " is " + settings.memories[k2] + "."); return true; }
       for (var mk in settings.memories) {
-        if (mk.indexOf(k2) > -1 || k2.indexOf(mk) > -1) {
-          respond("Did you mean your " + mk + "? It's " + settings.memories[mk] + "."); return true;
-        }
+        if (mk.indexOf(k2) > -1 || k2.indexOf(mk) > -1) { respond("Did you mean your " + mk + "? It's " + settings.memories[mk] + "."); return true; }
       }
       respond("I don't have anything stored for \"" + k2 + "\"."); return true;
     }
     if ((m = t.match(/^forget\s+(?:my\s+)?(.+)$/))) {
       var fk = m[1].trim().replace(/^my\s+/, "");
-      if (settings.memories[fk]) {
-        delete settings.memories[fk]; saveSettings(); applySettings();
-        respond("Forgotten: " + fk + ".");
-      } else respond("I don't have a memory for \"" + fk + "\".");
+      if (settings.memories[fk]) { delete settings.memories[fk]; saveSettings(); applySettings(); respond("Forgotten: " + fk + "."); }
+      else respond("I don't have a memory for \"" + fk + "\".");
       return true;
     }
     if (/^(?:list|show|what do you)(?: me)?(?: my)? memories/.test(t)) {
@@ -1988,13 +1746,10 @@
       logLine("Memories — " + list, "sys");
       respond("I remember " + keys.length + " things. " + list); return true;
     }
-
     if ((m = t.match(/^(?:take a note|note that|note down|add note|make a note|write down)\s*:?\s*(.+)$/))) {
-      settings.notes.push({ text: m[1].trim(), at: Date.now() });
-      saveSettings(); applySettings();
+      settings.notes.push({ text: m[1].trim(), at: Date.now() }); saveSettings(); applySettings();
       beep(880, 0.08, 0.08);
-      respond("Note saved. You now have " + settings.notes.length + " note" + (settings.notes.length === 1 ? "" : "s") + ".");
-      return true;
+      respond("Note saved. You now have " + settings.notes.length + " note" + (settings.notes.length === 1 ? "" : "s") + "."); return true;
     }
     if (/^(?:read|show|list|what are)(?: me)?(?: my)? notes?/.test(t)) {
       if (!settings.notes.length) { respond("You don't have any notes."); return true; }
@@ -2003,26 +1758,19 @@
       respond("You have " + settings.notes.length + " note" + (settings.notes.length === 1 ? "" : "s") + ". " + nlist); return true;
     }
     if (/^(?:clear|delete|erase)(?: all)?(?: my)? notes?/.test(t)) {
-      var nc = settings.notes.length;
-      settings.notes = []; saveSettings(); applySettings();
+      var nc = settings.notes.length; settings.notes = []; saveSettings(); applySettings();
       respond("All " + nc + " note" + (nc === 1 ? "" : "s") + " cleared."); return true;
     }
-
     if (/\b(time|clock)\b/.test(t) && !/timetable|timer/.test(t) && !/set a timer/.test(t)) {
-      respond("The current time is " + new Date().toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit", hour12: true }) + ".");
-      return true;
+      respond("The current time is " + new Date().toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit", hour12: true }) + "."); return true;
     }
     if (/\b(date|day|today)\b/.test(t) && !/update/.test(t)) {
-      respond("Today is " + new Date().toLocaleDateString(undefined, { weekday: "long", day: "numeric", month: "long", year: "numeric" }) + ".");
-      return true;
+      respond("Today is " + new Date().toLocaleDateString(undefined, { weekday: "long", day: "numeric", month: "long", year: "numeric" }) + "."); return true;
     }
-
     if ((m = t.match(/^(?:set (?:a )?timer(?: for)?|timer for|remind me in|in)\s+(\d+(?:\.\d+)?)\s*(seconds?|secs?|s|minutes?|mins?|m|hours?|hrs?|h)\b(.*)$/))) {
-      var tval = parseFloat(m[1]), tunit = m[2];
-      var secs = tval;
-      if (/^m/.test(tunit)) secs = tval * 60;
-      else if (/^h/.test(tunit)) secs = tval * 3600;
-      if (secs <= 0 || secs > 86400) { respond("Please choose a duration between 1 second and 24 hours."); return true; }
+      var tval = parseFloat(m[1]), tunit = m[2], secs = tval;
+      if (/^m/.test(tunit)) secs = tval * 60; else if (/^h/.test(tunit)) secs = tval * 3600;
+      if (secs <= 0 || secs > 86400) { respond("Please choose between 1 second and 24 hours."); return true; }
       var labelMatch = m[3].match(/(?:to|for|about|that)\s+(.+)$/);
       var label = labelMatch ? labelMatch[1].trim() : "";
       setTimer(secs, label);
@@ -2035,15 +1783,12 @@
       activeTimers = [];
       respond(tn ? ("Cancelled " + tn + " timer" + (tn === 1 ? "" : "s") + ".") : "There are no active timers."); return true;
     }
-
     if (/\b(weather|temperature outside|forecast|how hot|how cold)\b/.test(t)) {
       setStatus("PROCESSING", "QUERYING METEOROLOGICAL DATA");
       logLine("Requesting location and weather data…", "sys");
       getWeather().then(function (cur) {
         var desc = WX[cur.weather_code] || "indeterminate conditions";
-        respond("Currently " + Math.round(cur.temperature_2m) + " degrees Celsius with " + desc +
-                ". It feels like " + Math.round(cur.apparent_temperature) + " degrees, with winds at " +
-                Math.round(cur.wind_speed_10m) + " kilometres per hour.");
+        respond("Currently " + Math.round(cur.temperature_2m) + " degrees Celsius with " + desc + ". It feels like " + Math.round(cur.apparent_temperature) + " degrees, with winds at " + Math.round(cur.wind_speed_10m) + " kilometres per hour.");
       }).catch(function (err) {
         if (err.message === "denied") respond("I require location permission to retrieve local weather.");
         else if (err.message === "no-geo") respond("Your browser does not support geolocation.");
@@ -2056,21 +1801,12 @@
       /\b(?:look at|look|see|read|check|what'?s on|what is on|analyse|analyze|describe|scan|view|examine|inspect|look over|take a look at)\b[\s\S]{0,60}\b(?:my |the |this |a )?(screen|monitor|display|page|window|browser|website|site|tab|desktop)\b/i.test(raw)
       || /\b(?:can you see|do you see|are you seeing|what do you see|what am i looking at|what is this|what'?s this|read this|read that|look here|look there)\b/i.test(t)
       || /^(?:screen|vision)\s*(?:check|test|look|read|analyse|analyze)$/i.test(t);
-
     if (wantScreen) {
-      if (!screenStream) {
-        respond("Screen vision isn't active. Click the screen icon in the header, or say 'share my screen'.");
-        return true;
-      }
+      if (!screenStream) { respond("Screen vision isn't active. Click the screen icon in the header, or say 'share my screen'."); return true; }
       var cap = captureScreenFrame();
-      if (cap.error) {
-        logLine("Screen capture: " + cap.error, "warn");
-        respond("I couldn't capture your screen — " + cap.error);
-        return true;
-      }
+      if (cap.error) { logLine("Screen capture: " + cap.error, "warn"); respond("I couldn't capture your screen — " + cap.error); return true; }
       logLine("Captured screen: " + cap.width + "×" + cap.height + ", ~" + bytes(Math.round(cap.bytes * 0.75)) + " JPEG", "sys");
-      handleWithAI(raw, cap.dataUrl);
-      return true;
+      handleWithAI(raw, cap.dataUrl); return true;
     }
     if (/^(?:share|start sharing|enable)(?: my| the)? screen/.test(t)) { startScreenShare(); return true; }
     if (/^(?:stop|end)(?: sharing| screen share| sharing my screen)/.test(t)) { stopScreenShare(); respond("Screen sharing stopped."); return true; }
@@ -2078,26 +1814,12 @@
     var openMatch = t.match(/^(?:open|launch|go to|navigate to|bring up)\s+(.+)$/);
     if (openMatch) {
       var target = openMatch[1].replace(/\s+(website|site|page|dot com|\.com)$/g, "").trim();
-      var sites = {
-        "youtube": "https://www.youtube.com", "google": "https://www.google.com",
-        "github": "https://www.github.com", "gmail": "https://mail.google.com",
-        "reddit": "https://www.reddit.com", "wikipedia": "https://www.wikipedia.org",
-        "twitter": "https://twitter.com", "x": "https://x.com",
-        "spotify": "https://open.spotify.com", "chatgpt": "https://chat.openai.com",
-        "maps": "https://maps.google.com", "news": "https://news.google.com",
-        "netflix": "https://www.netflix.com", "twitch": "https://www.twitch.tv",
-        "openrouter": "https://openrouter.ai"
-      };
+      var sites = { "youtube":"https://www.youtube.com","google":"https://www.google.com","github":"https://www.github.com","gmail":"https://mail.google.com","reddit":"https://www.reddit.com","wikipedia":"https://www.wikipedia.org","twitter":"https://twitter.com","x":"https://x.com","spotify":"https://open.spotify.com","chatgpt":"https://chat.openai.com","maps":"https://maps.google.com","news":"https://news.google.com","netflix":"https://www.netflix.com","twitch":"https://www.twitch.tv","openrouter":"https://openrouter.ai" };
       var url = sites[target];
       if (!url && /^[\w-]+(\.[\w-]+)+$/.test(target)) url = "https://" + target;
-      if (url) {
-        logLine("Opening " + url, "sys");
-        window.open(url, "_blank", "noopener");
-        respond("Opening " + target + "."); return true;
-      }
-      respond("I don't have a shortcut for \"" + target + "\". Try a full web address."); return true;
+      if (url) { logLine("Opening " + url, "sys"); window.open(url, "_blank", "noopener"); respond("Opening " + target + "."); return true; }
+      respond("I don't have a shortcut for \"" + target + "\"."); return true;
     }
-
     var searchMatch = t.match(/^(?:search|google|look up|find|search for)\s+(?:for\s+)?(.+)$/);
     if (searchMatch) {
       var q = searchMatch[1];
@@ -2105,49 +1827,33 @@
       window.open("https://www.google.com/search?q=" + encodeURIComponent(q), "_blank", "noopener");
       respond("Searching for " + q + "."); return true;
     }
-
     if ((m = t.match(/^(?:convert\s+)?(-?\d+(?:\.\d+)?)\s*(?:degrees?\s+)?([a-z°]+)\s+(?:to|in|into)\s+(?:degrees?\s+)?([a-z°]+)$/))) {
-      var cval = parseFloat(m[1]);
-      var cres = convertUnits(cval, m[2], m[3]);
+      var cval = parseFloat(m[1]), cres = convertUnits(cval, m[2], m[3]);
       if (cres) { respond(cval + " " + m[2] + " equals " + round(cres.value) + " " + m[3] + "."); return true; }
     }
-
-    if (/\b(roll|throw)\b.*\b(dice|die|d6|d20)\b/.test(t) || /^roll a? (dice|die)/.test(t)) {
-      respond("You rolled a " + (Math.floor(Math.random() * 6) + 1) + "."); return true;
-    }
+    if (/\b(roll|throw)\b.*\b(dice|die|d6|d20)\b/.test(t) || /^roll a? (dice|die)/.test(t)) { respond("You rolled a " + (Math.floor(Math.random() * 6) + 1) + "."); return true; }
     if (/\b(flip|toss)\b.*\bcoin\b/.test(t)) { respond(Math.random() < 0.5 ? "Heads." : "Tails."); return true; }
     if ((m = t.match(/random number(?: between)?\s*(\d+)\s*(?:and|to|-)\s*(\d+)/))) {
-      var r1 = parseInt(m[1], 10), r2 = parseInt(m[2], 10);
-      var lo = Math.min(r1, r2), hi = Math.max(r1, r2);
+      var r1 = parseInt(m[1], 10), r2 = parseInt(m[2], 10), lo = Math.min(r1, r2), hi = Math.max(r1, r2);
       respond("Your random number is " + (Math.floor(Math.random() * (hi - lo + 1)) + lo) + "."); return true;
     }
-
     if (looksLikeMath(t) && /^(?:calculate|compute|what(?:'s| is)|solve|evaluate|eval)\s+/i.test(t)) {
       var cleaned = t.replace(/^(?:calculate|compute|what(?:'s| is)|solve|evaluate|eval)\s+/i, "");
       var mres = safeEval(cleaned);
       if (mres !== null) { respond("The result is " + round(mres) + "."); return true; }
     }
-
     if (/^(?:clear|wipe)(?: the)?(?: activity)?(?: log)?$/.test(t)) {
-      if (els.log) els.log.innerHTML = "";
-      logCount = 0;
+      if (els.log) els.log.innerHTML = ""; logCount = 0;
       if (els.logCount) els.logCount.textContent = "0";
       logLine("Activity log cleared.", "sys");
       respond("Log cleared."); return true;
     }
     if (/(full ?screen|maximise|maximize)/.test(t)) {
-      if (!document.fullscreenElement) {
-        if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen();
-        respond("Entering full screen.");
-      } else {
-        if (document.exitFullscreen) document.exitFullscreen();
-        respond("Exiting full screen.");
-      }
+      if (!document.fullscreenElement) { if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen(); respond("Entering full screen."); }
+      else { if (document.exitFullscreen) document.exitFullscreen(); respond("Exiting full screen."); }
       return true;
     }
-    if (/^(?:open|show)\s+(?:the\s+)?settings|^(?:settings|preferences)$/.test(t)) {
-      openSettings(); respond("Opening settings."); return true;
-    }
+    if (/^(?:open|show)\s+(?:the\s+)?settings|^(?:settings|preferences)$/.test(t)) { openSettings(); respond("Opening settings."); return true; }
     if (/(shut down|power off|standby|sleep mode|good night)/.test(t)) {
       setStatus("STANDBY", "ENTERING LOW POWER MODE");
       energy = 0.05;
@@ -2159,7 +1865,6 @@
       if (els.histCount) els.histCount.textContent = "0";
       respond("Conversation memory cleared."); return true;
     }
-
     return false;
   }
 
@@ -2170,7 +1875,7 @@
     try { if (tryLocalCommand(raw)) return; } catch (e) { console.error("Local command error:", e); }
     if (aiConfigured()) handleWithAI(raw, null);
     else {
-      respond("I don't have a local response for that. Open settings and add your OpenRouter API key — then I'll be fully online.", { type: "warn" });
+      respond("I don't have a local response for that. Open settings and add your OpenRouter API key.", { type: "warn" });
       toast("Add OpenRouter key in settings", "warn");
     }
   }
@@ -2199,10 +1904,10 @@
           logLine("A.C.E. online. Standing by.", "ace");
           if (settings.userName) logLine("Good to see you, " + settings.userName + ".", "ace");
           if (!aiConfigured()) logLine("OpenRouter not configured — add key + model in settings.", "warn");
-          else logLine("OpenRouter ready — chat: " + settings.model +
-                       (settings.visionModel ? ", vision: " + settings.visionModel : ""), "ok");
+          else logLine("OpenRouter ready — chat: " + settings.model + (settings.visionModel ? ", vision: " + settings.visionModel : ""), "ok");
           if (ttsConfigured()) logLine("TTS engine: " + settings.ttsModel + " (" + settings.ttsVoice + ")", "ok");
           else logLine("No TTS model set — using browser voice.", "sys");
+          if (isUsingHardcodedKey()) logLine("API key loaded from hardcoded config.", "ok");
           if (settings.alwaysOn) {
             logLine("Always-listening mode active.", "ok");
             setTimeout(function () { if (userHasInteracted) startListening(); }, 500);
@@ -2230,25 +1935,23 @@
     els = {
       boot: $("boot"), bootLog: $("bootLog"), bootBar: $("bootBar"),
       clock: $("clock"), uptime: $("uptime"),
-      statusText: $("statusText"), coreSub: $("coreSub"),
-      reactor: $("reactor"),
-      log: $("log"), logCount: $("logCount"),
-      cmd: $("cmd"), micBtn: $("micBtn"),
+      statusText: $("statusText"), coreSub: $("coreSub"), reactor: $("reactor"),
+      log: $("log"), logCount: $("logCount"), cmd: $("cmd"), micBtn: $("micBtn"),
       voiceName: $("voiceName"), memCount: $("memCount"), histCount: $("histCount"),
       telemetryPanel: $("telemetryPanel"), logPanel: $("logPanel"), mainGrid: $("mainGrid"),
       aiChip: $("aiChip"), aiChipText: $("aiChipText"),
       micChip: $("micChip"), micChipText: $("micChipText"),
       screenChip: $("screenChip"), screenChipText: $("screenChipText"),
       settingsBtn: $("settingsBtn"), settingsClose: $("settingsClose"), settingsBackdrop: $("settingsBackdrop"),
-      screenBtn: $("screenBtn"), screenPreview: $("screenPreview"),
-      screenPreviewCanvas: $("screenPreviewCanvas"),
-      stopScreenBtn: $("stopScreenBtn"), stopShareBtn: $("stopShareBtn"),
-      shareScreenBtn: $("shareScreenBtn"),
+      screenBtn: $("screenBtn"), screenPreview: $("screenPreview"), screenPreviewCanvas: $("screenPreviewCanvas"),
+      stopScreenBtn: $("stopScreenBtn"), stopShareBtn: $("stopShareBtn"), shareScreenBtn: $("shareScreenBtn"),
       stopSpeakBtn: $("stopSpeakBtn"),
       setUserName: $("setUserName"),
-      setApiKey: $("setApiKey"), toggleKeyBtn: $("toggleKeyBtn"),
+      setApiKey: $("setApiKey"), toggleKeyBtn: $("toggleKeyBtn"), keySourceBadge: $("keySourceBadge"),
       setModel: $("setModel"), setVisionModel: $("setVisionModel"),
-      setTtsModel: $("setTtsModel"), setTtsVoice: $("setTtsVoice"),
+      setTtsModel: $("setTtsModel"), setTtsModelCustom: $("setTtsModelCustom"),
+      setTtsVoice: $("setTtsVoice"), setTtsVoiceCustom: $("setTtsVoiceCustom"),
+      ttsVoiceHelp: $("ttsVoiceHelp"),
       testAiBtn: $("testAiBtn"), testVisionBtn: $("testVisionBtn"), testTtsBtn: $("testTtsBtn"),
       clearHistoryBtn: $("clearHistoryBtn"),
       setScreenPreview: $("setScreenPreview"), setVisionDebug: $("setVisionDebug"),
@@ -2267,17 +1970,14 @@
 
   // ==================== EVENT BINDING ====================
   function bindCheckbox(id, key, onChange) {
-    var el = els[id];
-    if (!el) return;
+    var el = els[id]; if (!el) return;
     el.addEventListener("change", function (e) {
-      settings[key] = e.target.checked;
-      saveSettings(); applySettings();
+      settings[key] = e.target.checked; saveSettings(); applySettings();
       if (onChange) onChange(e.target.checked);
     });
   }
   function bindRange(id, key, displayId) {
-    var el = els[id];
-    if (!el) return;
+    var el = els[id]; if (!el) return;
     el.addEventListener("input", function (e) {
       settings[key] = parseFloat(e.target.value);
       if (els[displayId]) els[displayId].textContent = settings[key].toFixed(2);
@@ -2315,40 +2015,38 @@
     document.addEventListener("click", function () { userHasInteracted = true; }, { once: true });
     document.addEventListener("keydown", function () { userHasInteracted = true; }, { once: true });
 
+    // ---- User name ----
     if (els.setUserName) {
       els.setUserName.addEventListener("input", function (e) {
-        settings.userName = e.target.value.trim();
-        saveSettings();
+        settings.userName = e.target.value.trim(); saveSettings();
       });
       els.setUserName.addEventListener("blur", function (e) {
         var v = e.target.value.trim();
-        if (v && v !== cap(v)) {
-          e.target.value = cap(v);
-          settings.userName = cap(v);
-          saveSettings();
-        }
+        if (v && v !== cap(v)) { e.target.value = cap(v); settings.userName = cap(v); saveSettings(); }
       });
     }
 
+    // ---- API key ----
     if (els.setApiKey) {
       els.setApiKey.addEventListener("input", function (e) {
         settings.apiKey = e.target.value.trim();
         saveSettings(); updateChips();
+        if (els.keySourceBadge) els.keySourceBadge.style.display = isUsingHardcodedKey() ? "inline-block" : "none";
+        if (els.setApiKey) els.setApiKey.placeholder = isUsingHardcodedKey() ? "(using hardcoded key)" : "sk-or-v1-…";
       });
     }
     if (els.toggleKeyBtn) {
       els.toggleKeyBtn.addEventListener("click", function () {
-        var k = els.setApiKey;
-        if (!k) return;
+        var k = els.setApiKey; if (!k) return;
         if (k.type === "password") { k.type = "text"; els.toggleKeyBtn.textContent = "HIDE"; }
         else { k.type = "password"; els.toggleKeyBtn.textContent = "SHOW"; }
       });
     }
 
+    // ---- Chat model ----
     if (els.setModel) {
       els.setModel.addEventListener("input", function (e) {
-        settings.model = e.target.value.trim();
-        saveSettings(); updateChips();
+        settings.model = e.target.value.trim(); saveSettings(); updateChips();
         document.querySelectorAll(".model-chip").forEach(function (chip) {
           chip.classList.toggle("active", chip.getAttribute("data-model") === settings.model);
         });
@@ -2356,9 +2054,7 @@
       els.setModel.addEventListener("blur", function (e) {
         var cleaned = parseModelInput(e.target.value);
         if (cleaned && cleaned !== e.target.value) {
-          e.target.value = cleaned;
-          settings.model = cleaned;
-          saveSettings(); updateChips();
+          e.target.value = cleaned; settings.model = cleaned; saveSettings(); updateChips();
           document.querySelectorAll(".model-chip").forEach(function (chip) {
             chip.classList.toggle("active", chip.getAttribute("data-model") === cleaned);
           });
@@ -2367,120 +2063,128 @@
       });
     }
     if (els.setVisionModel) {
-      els.setVisionModel.addEventListener("input", function (e) {
-        settings.visionModel = e.target.value.trim();
-        saveSettings();
-      });
+      els.setVisionModel.addEventListener("input", function (e) { settings.visionModel = e.target.value.trim(); saveSettings(); });
       els.setVisionModel.addEventListener("blur", function (e) {
         var cleaned = parseModelInput(e.target.value);
-        if (cleaned && cleaned !== e.target.value) {
-          e.target.value = cleaned;
-          settings.visionModel = cleaned;
-          saveSettings();
-          toast("Vision slug cleaned up");
-        }
-      });
-    }
-    if (els.setTtsModel) {
-      els.setTtsModel.addEventListener("input", function (e) {
-        settings.ttsModel = e.target.value.trim();
-        saveSettings(); updateChips();
-      });
-      els.setTtsModel.addEventListener("blur", function (e) {
-        var cleaned = parseModelInput(e.target.value);
-        if (cleaned && cleaned !== e.target.value) {
-          e.target.value = cleaned;
-          settings.ttsModel = cleaned;
-          saveSettings(); updateChips();
-          toast("TTS slug cleaned up");
-        }
-      });
-    }
-    if (els.setTtsVoice) {
-      els.setTtsVoice.addEventListener("input", function (e) {
-        settings.ttsVoice = e.target.value.trim();
-        saveSettings();
+        if (cleaned && cleaned !== e.target.value) { e.target.value = cleaned; settings.visionModel = cleaned; saveSettings(); toast("Vision slug cleaned up"); }
       });
     }
 
+    // ---- TTS model dropdown ----
+    if (els.setTtsModel) {
+      els.setTtsModel.addEventListener("change", function (e) {
+        var v = e.target.value;
+        if (v === "__custom__") {
+          if (els.setTtsModelCustom) { els.setTtsModelCustom.style.display = "block"; els.setTtsModelCustom.focus(); }
+          // Don't set the model yet — wait for the custom value
+        } else {
+          if (els.setTtsModelCustom) { els.setTtsModelCustom.style.display = "none"; els.setTtsModelCustom.value = ""; }
+          settings.ttsModel = v;
+          // Auto-pick first voice for this model
+          var list = TTS_VOICES[v];
+          if (list && list.length) settings.ttsVoice = list[0].id;
+          else settings.ttsVoice = "";
+          saveSettings();
+          populateVoiceDropdown(settings.ttsModel);
+          updateTtsHelp(settings.ttsModel);
+          updateChips();
+          toast(v ? ("Voice engine: " + v) : "Using browser voice");
+        }
+      });
+    }
+    if (els.setTtsModelCustom) {
+      els.setTtsModelCustom.addEventListener("input", function (e) {
+        settings.ttsModel = e.target.value.trim();
+        saveSettings();
+        populateVoiceDropdown(settings.ttsModel);
+        updateTtsHelp(settings.ttsModel);
+        updateChips();
+      });
+      els.setTtsModelCustom.addEventListener("blur", function (e) {
+        var cleaned = parseModelInput(e.target.value);
+        if (cleaned && cleaned !== e.target.value) { e.target.value = cleaned; settings.ttsModel = cleaned; saveSettings(); }
+      });
+    }
+
+    // ---- TTS voice dropdown ----
+    if (els.setTtsVoice) {
+      els.setTtsVoice.addEventListener("change", function (e) {
+        var v = e.target.value;
+        if (v === "__custom__") {
+          if (els.setTtsVoiceCustom) { els.setTtsVoiceCustom.style.display = "block"; els.setTtsVoiceCustom.focus(); }
+        } else {
+          if (els.setTtsVoiceCustom) { els.setTtsVoiceCustom.style.display = "none"; els.setTtsVoiceCustom.value = ""; }
+          settings.ttsVoice = v; saveSettings();
+        }
+      });
+    }
+    if (els.setTtsVoiceCustom) {
+      els.setTtsVoiceCustom.addEventListener("input", function (e) {
+        settings.ttsVoice = e.target.value.trim(); saveSettings();
+      });
+    }
+
+    // ---- Model chips ----
     document.querySelectorAll(".model-chip").forEach(function (chip) {
       chip.addEventListener("click", function () {
         var model = chip.getAttribute("data-model");
         if (!model) return;
-        settings.model = model;
-        saveSettings();
+        settings.model = model; saveSettings();
         if (els.setModel) els.setModel.value = model;
-        document.querySelectorAll(".model-chip").forEach(function (c) {
-          c.classList.toggle("active", c === chip);
-        });
+        document.querySelectorAll(".model-chip").forEach(function (c) { c.classList.toggle("active", c === chip); });
         updateChips();
         toast("Model set to " + model);
       });
     });
 
+    // ---- Test buttons ----
     if (els.testAiBtn) {
       els.testAiBtn.addEventListener("click", async function () {
         userHasInteracted = true;
         if (!aiConfigured()) { toast("Enter your API key and model", "warn"); return; }
-        els.testAiBtn.textContent = "Testing…";
-        els.testAiBtn.disabled = true;
+        els.testAiBtn.textContent = "Testing…"; els.testAiBtn.disabled = true;
         try {
           var reply = await askAI("Say 'A.C.E. online' — nothing else.", null);
           logLine("Chat OK — model: " + settings.model, "ok");
           logLine("Reply: " + reply.slice(0, 100), "ace");
-          toast("Chat connected");
-          speak("Chat connection verified.");
+          toast("Chat connected"); speak("Chat connection verified.");
         } catch (err) {
           logLine("Chat error: " + (err && err.message || err), "err");
           toast("Chat failed", "warn");
         } finally {
-          els.testAiBtn.textContent = "Test chat connection";
-          els.testAiBtn.disabled = false;
-          updateChips();
+          els.testAiBtn.textContent = "Test chat connection"; els.testAiBtn.disabled = false; updateChips();
         }
       });
     }
-
     if (els.testVisionBtn) {
       els.testVisionBtn.addEventListener("click", async function () {
         userHasInteracted = true;
         if (!aiConfigured()) { toast("Enter your API key first", "warn"); return; }
         if (!screenStream) { toast("Share your screen first", "warn"); return; }
-        els.testVisionBtn.textContent = "Testing…";
-        els.testVisionBtn.disabled = true;
+        els.testVisionBtn.textContent = "Testing…"; els.testVisionBtn.disabled = true;
         try {
           if (Date.now() - screenWarmupAt < 500) await sleep(500);
           var cap = captureScreenFrame();
-          if (cap.error) {
-            logLine("Vision test capture: " + cap.error, "err");
-            toast("Capture failed", "warn");
-          } else {
-            logLine("Vision test → " + effectiveVisionModel() +
-                    ", image " + cap.width + "×" + cap.height + " (~" + bytes(Math.round(cap.bytes * 0.75)) + ")", "sys");
+          if (cap.error) { logLine("Vision test capture: " + cap.error, "err"); toast("Capture failed", "warn"); }
+          else {
+            logLine("Vision test → " + effectiveVisionModel() + ", image " + cap.width + "×" + cap.height, "sys");
             var reply = await askAI("Describe in one sentence what is on this screen.", cap.dataUrl);
             logLine("Vision reply: " + reply.slice(0, 200), "ace");
-            toast("Vision OK");
-            speak("Vision connection verified.");
+            toast("Vision OK"); speak("Vision connection verified.");
           }
         } catch (err) {
-          logLine("Vision error: " + (err && err.message || err), "err");
-          toast("Vision failed — see log", "warn");
+          logLine("Vision error: " + (err && err.message || err), "err"); toast("Vision failed — see log", "warn");
         } finally {
-          els.testVisionBtn.textContent = "Test vision connection";
-          els.testVisionBtn.disabled = false;
-          updateChips();
+          els.testVisionBtn.textContent = "Test vision connection"; els.testVisionBtn.disabled = false; updateChips();
         }
       });
     }
-
     if (els.testTtsBtn) {
       els.testTtsBtn.addEventListener("click", function () {
         userHasInteracted = true;
-        if (!ttsConfigured()) {
-          toast("Set a TTS model first", "warn");
-          return;
-        }
-        speak("This is A.C.E., testing the Deepgram Flux voice engine. All systems are operating within normal parameters.");
+        if (!ttsConfigured()) { toast("Set a TTS provider first", "warn"); return; }
+        logLine("Testing voice: " + settings.ttsModel + " / " + settings.ttsVoice, "sys");
+        speak("This is A.C.E., testing the voice engine. All systems are operating within normal parameters.");
       });
     }
 
@@ -2488,8 +2192,7 @@
       els.clearHistoryBtn.addEventListener("click", function () {
         conversationHistory = [];
         if (els.histCount) els.histCount.textContent = "0";
-        toast("History cleared");
-        logLine("Conversation history cleared.", "sys");
+        toast("History cleared"); logLine("Conversation history cleared.", "sys");
       });
     }
 
@@ -2497,7 +2200,6 @@
       if (els.screenPreview) els.screenPreview.classList.toggle("on", on && !!screenStream);
     });
     bindCheckbox("setVisionDebug", "visionDebug");
-
     bindCheckbox("setRequireWake", "requireWake");
     bindCheckbox("setAlwaysOn", "alwaysOn", function (on) {
       if (on) {
@@ -2509,23 +2211,19 @@
         if (userHasInteracted) startListening();
         else { document.addEventListener("click", go); document.addEventListener("keydown", go); }
         toast("Always-listening enabled");
-        logLine("Always-listening mode enabled. Say 'be quiet' to interrupt mid-speech.", "ok");
+        logLine("Always-listening mode enabled.", "ok");
       } else {
-        stopListening();
-        toast("Always-listening disabled");
-        logLine("Always-listening mode disabled.", "sys");
+        stopListening(); toast("Always-listening disabled"); logLine("Always-listening mode disabled.", "sys");
       }
     });
     if (els.setWakeWord) {
       els.setWakeWord.addEventListener("input", function (e) {
-        settings.wakeWord = e.target.value.trim() || "ace";
-        saveSettings();
+        settings.wakeWord = e.target.value.trim() || "ace"; saveSettings();
       });
     }
     if (els.setLang) {
       els.setLang.addEventListener("change", function (e) {
-        settings.lang = e.target.value;
-        saveSettings();
+        settings.lang = e.target.value; saveSettings();
         if (recognition) {
           recognition.lang = settings.lang;
           if (wantListening) { stopListening(); setTimeout(startListening, 300); }
@@ -2535,8 +2233,7 @@
     }
     if (els.setVoice) {
       els.setVoice.addEventListener("change", function (e) {
-        settings.voiceName = e.target.value;
-        saveSettings();
+        settings.voiceName = e.target.value; saveSettings();
         var v = pickVoiceByName(settings.voiceName);
         if (els.voiceName) {
           els.voiceName.textContent = (v ? v.name : (jarvisVoice ? jarvisVoice.name : "DEFAULT")).toUpperCase().slice(0, 16);
@@ -2550,8 +2247,7 @@
     if (els.testVoice) {
       els.testVoice.addEventListener("click", function () {
         userHasInteracted = true;
-        var was = settings.speak;
-        settings.speak = true;
+        var was = settings.speak; settings.speak = true;
         browserSpeak("A.C.E. browser voice fallback operational.");
         if (!was) setTimeout(function () { settings.speak = false; }, 300);
       });
@@ -2562,17 +2258,14 @@
     bindCheckbox("setReduced", "reducedMotion");
 
     if (els.clearLogBtn) els.clearLogBtn.addEventListener("click", function () {
-      if (els.log) els.log.innerHTML = "";
-      logCount = 0;
+      if (els.log) els.log.innerHTML = ""; logCount = 0;
       if (els.logCount) els.logCount.textContent = "0";
-      logLine("Activity log cleared.", "sys");
-      toast("Log cleared");
+      logLine("Activity log cleared.", "sys"); toast("Log cleared");
     });
     if (els.clearMemBtn) els.clearMemBtn.addEventListener("click", function () {
       settings.memories = {}; settings.notes = [];
       saveSettings(); applySettings();
-      logLine("All memories and notes erased.", "sys");
-      toast("Memories cleared");
+      logLine("All memories and notes erased.", "sys"); toast("Memories cleared");
     });
     if (els.resetBtn) els.resetBtn.addEventListener("click", function () {
       if (!confirm("Reset all settings to defaults? This will also erase memories, notes, and history.")) return;
@@ -2583,8 +2276,7 @@
       if (recognition) recognition.lang = settings.lang;
       stopListening(); stopScreenShare(); stopAudio();
       if (els.histCount) els.histCount.textContent = "0";
-      logLine("All settings reset to defaults.", "sys");
-      toast("Settings reset");
+      logLine("All settings reset to defaults.", "sys"); toast("Settings reset");
     });
 
     window.addEventListener("resize", resizeCanvas);
@@ -2602,9 +2294,7 @@
       speechSynthesis.onvoiceschanged = refreshVoices;
       setTimeout(refreshVoices, 500);
       setTimeout(refreshVoices, 1500);
-    } else if (els.voiceName) {
-      els.voiceName.textContent = "UNSUPPORTED";
-    }
+    } else if (els.voiceName) els.voiceName.textContent = "UNSUPPORTED";
     if (!micSupported) logLine("Speech recognition unsupported — use Chrome or Edge for voice.", "warn");
 
     setInterval(tickClock, 1000); tickClock();
@@ -2635,9 +2325,7 @@
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", init);
-  } else {
-    init();
-  }
+  } else init();
 
 })();
 </script>
