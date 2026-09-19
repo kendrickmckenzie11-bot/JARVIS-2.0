@@ -110,6 +110,7 @@
   .msg.ace::before{content:"ACE";display:block;margin-bottom:6px;
     font-size:9px;letter-spacing:.3em;color:var(--cyan);opacity:.85}
   .msg.error{border-color:rgba(255,90,90,.5);background:rgba(255,60,60,.10);color:#ffb4b4}
+  .msg.debug{border-color:rgba(255,200,90,.45);background:rgba(255,200,90,.08);color:#ffd98a;font-family:monospace;font-size:12px}
   .composer{display:flex;align-items:flex-end;gap:10px;padding:14px 16px;
     border-top:1px solid var(--border);background:rgba(4,10,18,.5)}
   .composer textarea{flex:1;resize:none;max-height:120px;line-height:1.45;
@@ -286,6 +287,7 @@ var ACE_CONFIG = {
   MODEL: "gpt-4o-mini",
   TTS_MODEL: "gpt-4o-mini-tts",
   VOICE: "onyx",
+  TIMEOUT_MS: 20000,
   SYSTEM_PROMPT: "You are ACE (Adaptive Cognitive Entity), a highly advanced AI assistant in the style of JARVIS from Iron Man.\n\n" +
     "Personality:\n" +
     "- Calm, precise, composed, and quietly witty. Subtly British in manner.\n" +
@@ -300,15 +302,10 @@ var ACE_CONFIG = {
     "You are helpful, loyal, and always one step ahead."
 };
 
-/* ---------------- provider detection ---------------- */
 function providerFor(apiKey) {
   var k = (apiKey || "").trim();
   if (k.indexOf("sk-or-v1-") === 0) {
-    return {
-      name: "OpenRouter",
-      chatUrl: "https://openrouter.ai/api/v1/chat/completions",
-      supportsTTS: false
-    };
+    return { name: "OpenRouter", chatUrl: "https://openrouter.ai/api/v1/chat/completions", supportsTTS: false };
   }
   return {
     name: "OpenAI",
@@ -318,12 +315,8 @@ function providerFor(apiKey) {
   };
 }
 
-/* ---------------- settings ---------------- */
 var STORAGE_KEY = "ace.settings.v2";
-function loadStored() {
-  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }
-  catch (e) { return {}; }
-}
+function loadStored() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch (e) { return {}; } }
 var stored = loadStored();
 var settings = {
   apiKey:       stored.apiKey || ACE_CONFIG.API_KEY || "",
@@ -332,11 +325,8 @@ var settings = {
   voice:        stored.voice  || ACE_CONFIG.VOICE,
   voiceEnabled: stored.voiceEnabled !== undefined ? stored.voiceEnabled : true
 };
-function persistSettings() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
-}
+function persistSettings() { localStorage.setItem(STORAGE_KEY, JSON.stringify(settings)); }
 
-/* ---------------- DOM ---------------- */
 var messagesEl = document.getElementById("messages");
 var inputEl    = document.getElementById("input");
 var composerEl = document.getElementById("composer");
@@ -355,14 +345,12 @@ var modelInput = document.getElementById("modelInput");
 var voiceSelect= document.getElementById("voiceSelect");
 var voiceToggle= document.getElementById("voiceToggle");
 
-/* ---------------- state ---------------- */
 var history = [];
 var isBusy = false;
 var isListening = false;
 var currentAudio = null;
 var recognition = null;
 
-/* ---------------- UI helpers ---------------- */
 var STATE_LABELS = { "": "SYSTEM ONLINE", listening: "LISTENING", thinking: "PROCESSING", speaking: "SPEAKING" };
 function setState(mode) {
   reactorEl.classList.remove("listening", "thinking", "speaking");
@@ -383,22 +371,16 @@ function autoGrow() {
   inputEl.style.height = Math.min(inputEl.scrollHeight, 120) + "px";
 }
 
-/* ---------------- browser voice ---------------- */
 var voices = [];
-function refreshVoices() {
-  if (window.speechSynthesis) voices = speechSynthesis.getVoices() || [];
-}
-if (window.speechSynthesis) {
-  refreshVoices();
-  speechSynthesis.onvoiceschanged = refreshVoices;
-}
+function refreshVoices() { if (window.speechSynthesis) voices = speechSynthesis.getVoices() || []; }
+if (window.speechSynthesis) { refreshVoices(); speechSynthesis.onvoiceschanged = refreshVoices; }
 var PREFERRED_VOICES = [
   "Google UK English Male",
   "Microsoft Ryan Online (Natural) - English (United Kingdom)",
   "Microsoft Guy Online (Natural) - English (United States)",
   "Microsoft George Online (Natural) - English (United Kingdom)",
   "Google US English",
-  "Daniel", "Oliver", "Arthur"
+  "Daniel","Oliver","Arthur"
 ];
 function pickVoice() {
   if (!voices.length) return null;
@@ -416,16 +398,13 @@ function browserSpeak(text) {
   if (!window.speechSynthesis) { setState(""); return; }
   speechSynthesis.cancel();
   var u = new SpeechSynthesisUtterance(text);
-  var v = pickVoice();
-  if (v) u.voice = v;
+  var v = pickVoice(); if (v) u.voice = v;
   u.rate = 1.0; u.pitch = 0.95; u.volume = 1;
   u.onend = function(){ setState(""); };
   u.onerror = function(){ setState(""); };
   setState("speaking");
   speechSynthesis.speak(u);
 }
-
-/* ---------------- text cleanup ---------------- */
 function stripForSpeech(text) {
   var s = String(text);
   s = s.replace(/```[\s\S]*?```/g, " code block ");
@@ -436,8 +415,6 @@ function stripForSpeech(text) {
   s = s.replace(/\s+/g, " ");
   return s.trim();
 }
-
-/* ---------------- speak ---------------- */
 function speak(text) {
   if (!settings.voiceEnabled) { setState(""); return Promise.resolve(); }
   var clean = stripForSpeech(text);
@@ -447,24 +424,13 @@ function speak(text) {
   if (window.speechSynthesis) speechSynthesis.cancel();
 
   var provider = providerFor(settings.apiKey);
-  if (!settings.apiKey || !provider.supportsTTS) {
-    browserSpeak(clean);
-    return Promise.resolve();
-  }
+  if (!settings.apiKey || !provider.supportsTTS) { browserSpeak(clean); return Promise.resolve(); }
 
   setState("speaking");
   return fetch(provider.ttsUrl, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": "Bearer " + settings.apiKey
-    },
-    body: JSON.stringify({
-      model: settings.ttsModel,
-      voice: settings.voice,
-      input: clean,
-      response_format: "mp3"
-    })
+    headers: { "Content-Type": "application/json", "Authorization": "Bearer " + settings.apiKey },
+    body: JSON.stringify({ model: settings.ttsModel, voice: settings.voice, input: clean, response_format: "mp3" })
   }).then(function(res){
     if (!res.ok) throw new Error("TTS " + res.status);
     return res.blob();
@@ -472,16 +438,8 @@ function speak(text) {
     var url = URL.createObjectURL(blob);
     var audio = new Audio(url);
     currentAudio = audio;
-    audio.onended = function(){
-      setState("");
-      URL.revokeObjectURL(url);
-      currentAudio = null;
-    };
-    audio.onerror = function(){
-      setState("");
-      URL.revokeObjectURL(url);
-      currentAudio = null;
-    };
+    audio.onended = function(){ setState(""); URL.revokeObjectURL(url); currentAudio = null; };
+    audio.onerror = function(){ setState(""); URL.revokeObjectURL(url); currentAudio = null; };
     return audio.play();
   }).catch(function(err){
     console.warn("OpenAI TTS failed, falling back to browser voice:", err);
@@ -489,7 +447,23 @@ function speak(text) {
   });
 }
 
-/* ---------------- chat ---------------- */
+/* ---- fetch with timeout ---- */
+function fetchWithTimeout(url, options, ms) {
+  var controller = new AbortController();
+  var timer = setTimeout(function(){ controller.abort(); }, ms);
+  options.signal = controller.signal;
+  return fetch(url, options).then(function(res){
+    clearTimeout(timer);
+    return res;
+  }).catch(function(err){
+    clearTimeout(timer);
+    if (err.name === "AbortError") {
+      throw new Error("Request timed out after " + (ms/1000) + "s. The network likely blocked this domain (openrouter.ai / api.openai.com). Try a different network or your phone's hotspot.");
+    }
+    throw new Error("Network error: " + err.message + ". This usually means the domain is blocked or you're offline.");
+  });
+}
+
 function askACE(userText) {
   if (!settings.apiKey) {
     addMessage("ace error", "No API key set. Click the gear icon in the top right and paste your key, then press Save.");
@@ -499,40 +473,31 @@ function askACE(userText) {
 
   var provider = providerFor(settings.apiKey);
 
-  // Build a clean message array — every content must be a plain string
   var messages = [];
   messages.push({ role: "system", content: String(ACE_CONFIG.SYSTEM_PROMPT) });
-
   history.forEach(function(m){
     if (!m || (m.role !== "user" && m.role !== "assistant")) return;
     var c = (m.content == null) ? "" : String(m.content);
     if (c.length) messages.push({ role: m.role, content: c });
   });
-
   messages.push({ role: "user", content: String(userText) });
 
-  var body = {
-    model: settings.model,
-    messages: messages,
-    temperature: 0.7,
-    max_tokens: 400
-  };
+  var body = { model: settings.model, messages: messages, temperature: 0.7, max_tokens: 400 };
 
-  console.log("[ACE] → " + provider.name + " request:", JSON.parse(JSON.stringify(body)));
+  addMessage("debug", "→ POST " + provider.chatUrl + "\n   model=" + settings.model + "\n   messages=" + messages.length);
 
-  var headers = {
-    "Content-Type": "application/json",
-    "Authorization": "Bearer " + settings.apiKey
-  };
-
-  return fetch(provider.chatUrl, {
+  return fetchWithTimeout(provider.chatUrl, {
     method: "POST",
-    headers: headers,
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer " + settings.apiKey
+    },
     body: JSON.stringify(body)
-  }).then(function(res){
+  }, ACE_CONFIG.TIMEOUT_MS).then(function(res){
+    addMessage("debug", "← HTTP " + res.status + " " + res.statusText);
     if (!res.ok) {
       return res.text().then(function(raw){
-        console.error("[ACE] ← " + provider.name + " " + res.status + " body:", raw);
+        addMessage("debug", "← Raw body:\n" + raw);
         var detail = "";
         try {
           var j = JSON.parse(raw);
@@ -567,7 +532,6 @@ function askACE(userText) {
   });
 }
 
-/* ---------------- send ---------------- */
 function handleSend() {
   var text = inputEl.value.trim();
   if (!text || isBusy) return;
@@ -581,7 +545,6 @@ function handleSend() {
   setState("thinking");
 
   askACE(text).catch(function(err){
-    console.error(err);
     addMessage("ace error", "I'm having trouble reaching my cognitive core. " + err.message);
     setState("");
   }).then(function(){
@@ -592,19 +555,12 @@ function handleSend() {
   });
 }
 
-composerEl.addEventListener("submit", function(e){
-  e.preventDefault();
-  handleSend();
-});
+composerEl.addEventListener("submit", function(e){ e.preventDefault(); handleSend(); });
 inputEl.addEventListener("input", autoGrow);
 inputEl.addEventListener("keydown", function(e){
-  if (e.key === "Enter" && !e.shiftKey) {
-    e.preventDefault();
-    handleSend();
-  }
+  if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSend(); }
 });
 
-/* ---------------- new session ---------------- */
 clearBtn.addEventListener("click", function(){
   history = [];
   messagesEl.innerHTML = "";
@@ -614,7 +570,6 @@ clearBtn.addEventListener("click", function(){
   greet(true);
 });
 
-/* ---------------- settings modal ---------------- */
 function openModal() {
   apiKeyInput.value = settings.apiKey;
   modelInput.value = settings.model;
@@ -644,7 +599,6 @@ saveBtn.addEventListener("click", function(){
   addMessage("ace", "Configuration saved. " + label + ". I'm ready when you are, sir.");
 });
 
-/* ---------------- voice input ---------------- */
 var SpeechRecognitionCtor = window.SpeechRecognition || window.webkitSpeechRecognition;
 if (SpeechRecognitionCtor) {
   recognition = new SpeechRecognitionCtor();
@@ -652,64 +606,47 @@ if (SpeechRecognitionCtor) {
   recognition.interimResults = false;
   recognition.lang = "en-US";
 
-  recognition.onstart = function(){
-    isListening = true;
-    micBtn.classList.add("recording");
-    setState("listening");
-  };
+  recognition.onstart = function(){ isListening = true; micBtn.classList.add("recording"); setState("listening"); };
   recognition.onresult = function(event){
     var transcript = event.results[0][0].transcript;
-    inputEl.value = transcript;
-    autoGrow();
-    handleSend();
+    inputEl.value = transcript; autoGrow(); handleSend();
   };
   recognition.onerror = function(event){
     console.warn("Speech recognition error:", event.error);
-    isListening = false;
-    micBtn.classList.remove("recording");
-    setState("");
+    isListening = false; micBtn.classList.remove("recording"); setState("");
   };
   recognition.onend = function(){
-    isListening = false;
-    micBtn.classList.remove("recording");
+    isListening = false; micBtn.classList.remove("recording");
     if (!reactorEl.classList.contains("speaking")) setState("");
   };
 }
 
 micBtn.addEventListener("click", function(){
-  if (!recognition) {
-    addMessage("ace error", "Voice input isn't supported in this browser. Try Chrome or Edge.");
-    return;
-  }
-  if (isListening) {
-    recognition.stop();
-  } else {
+  if (!recognition) { addMessage("ace error", "Voice input isn't supported in this browser. Try Chrome or Edge."); return; }
+  if (isListening) { recognition.stop(); }
+  else {
     if (currentAudio) { try { currentAudio.pause(); } catch(e){} currentAudio = null; }
     if (window.speechSynthesis) speechSynthesis.cancel();
     try { recognition.start(); } catch(e){}
   }
 });
 
-/* ---------------- boot ---------------- */
 function greet(isReset) {
   var msg = isReset
     ? "Fresh session initialized. What do you need, sir?"
     : "ACE online. All systems nominal. How may I assist you?";
   addMessage("ace", msg);
 }
-
 function init() {
   greet(false);
   inputEl.focus();
   autoGrow();
-
   if (!settings.apiKey) {
     setTimeout(function(){
       addMessage("ace", "One moment, sir. I don't have an API key yet. Click the gear icon in the top right to enter one.");
     }, 400);
   }
 }
-
 init();
 </script>
 </body>
