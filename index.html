@@ -7,36 +7,22 @@
 <title>A.C.E. // Autonomous Cognitive Entity</title>
 <style>
   :root{
-    --red:#ff2a2a;
-    --red-bright:#ff4444;
-    --red-soft:rgba(255,42,42,.55);
-    --line:rgba(255,42,42,.22);
-    --line-soft:rgba(255,42,42,.09);
-    --panel:rgba(20,20,20,.72);
-    --panel-solid:rgba(15,15,15,.97);
-    --bg:#0d0d0d;
-    --text:#f2f2f2;
-    --dim:#8a8a8a;
-    --dim2:#4d4d4d;
-    --white:#ffffff;
-    --warn:#ffa02a;
-    --danger:#ff2a2a;
-    --font-serif: 'Georgia', 'Cambria', 'Palatino Linotype', 'Times New Roman', serif;
-    --font-sans:  'Optima', 'Candara', 'Segoe UI', 'Helvetica Neue', 'Gill Sans', sans-serif;
-    --font-mono:  'Consolas', 'Monaco', 'Menlo', 'Courier New', monospace;
+    --red:#ff2a2a;--red-bright:#ff4444;--red-soft:rgba(255,42,42,.55);
+    --line:rgba(255,42,42,.22);--line-soft:rgba(255,42,42,.09);
+    --panel:rgba(20,20,20,.72);--panel-solid:rgba(15,15,15,.97);
+    --bg:#0d0d0d;--text:#f2f2f2;--dim:#8a8a8a;--dim2:#4d4d4d;
+    --white:#ffffff;--warn:#ffa02a;--danger:#ff2a2a;
+    --font-serif:'Georgia','Cambria','Palatino Linotype','Times New Roman',serif;
+    --font-sans:'Optima','Candara','Segoe UI','Helvetica Neue','Gill Sans',sans-serif;
+    --font-mono:'Consolas','Monaco','Menlo','Courier New',monospace;
   }
   *{box-sizing:border-box}
   html,body{height:100%}
-  body{
-    margin:0;background:var(--bg);color:var(--text);
-    font-family:var(--font-sans);
-    font-size:13.5px;letter-spacing:.02em;overflow:hidden;
-    -webkit-font-smoothing:antialiased;
-  }
+  body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font-sans);font-size:13.5px;letter-spacing:.02em;overflow:hidden;-webkit-font-smoothing:antialiased}
   button,input,select,textarea{font-family:inherit;letter-spacing:inherit;color:inherit}
   ::selection{background:rgba(255,42,42,.35);color:#fff}
   .brand h1,.panel-title,.settings-header h2,.setting-group h3,.boot-title,#statusText,.stop-pill,.btn{font-family:var(--font-serif)}
-  .readouts span, .stat .row b, #clock, #uptime, #memCount, #histCount, #logCount{font-family:var(--font-mono);font-variant-numeric:tabular-nums;letter-spacing:0}
+  .readouts span,.stat .row b,#clock,#uptime,#memCount,#histCount,#logCount{font-family:var(--font-mono);font-variant-numeric:tabular-nums;letter-spacing:0}
   .bg-grid,.bg-vignette,.bg-scan{position:fixed;inset:0;pointer-events:none;z-index:0}
   .bg-grid{background:radial-gradient(circle at 50% 42%, rgba(255,42,42,.10), transparent 60%),linear-gradient(rgba(255,42,42,.045) 1px, transparent 1px) 0 0/100% 42px,linear-gradient(90deg, rgba(255,42,42,.045) 1px, transparent 1px) 0 0/42px 100%}
   body.no-grid .bg-grid{display:none}
@@ -172,12 +158,12 @@
   .btn:active{transform:translateY(1px)}
   .btn.danger{color:var(--danger);border-color:rgba(255,42,42,.4);background:rgba(255,42,42,.08)}
   .btn.danger:hover{background:rgba(255,42,42,.25);color:#fff}
+  .btn.primary{background:var(--red);color:#fff;border-color:var(--red);font-weight:700}
   .model-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
   .model-chip{padding:6px 10px;font-size:10px;background:rgba(255,42,42,.08);border:1px solid var(--line);color:var(--red);cursor:pointer;border-radius:2px;letter-spacing:.06em;transition:all .18s;font-family:var(--font-mono);white-space:nowrap}
   .model-chip:hover{background:rgba(255,42,42,.22);border-color:var(--red);color:#fff}
   .model-chip.active{background:var(--red);color:#fff;border-color:var(--red)}
   .model-chip .v{color:var(--dim2);margin-left:4px;font-size:9px}
-  .model-chip:hover .v,.model-chip.active .v{color:rgba(255,255,255,.7)}
   .key-row{display:flex;gap:6px;align-items:stretch}
   .key-row .text-input{flex:1}
   .key-toggle{flex:0 0 auto;background:rgba(255,42,42,.08);border:1px solid var(--line);color:var(--red);padding:0 12px;font-size:10px;letter-spacing:.2em;cursor:pointer;border-radius:2px;transition:all .2s;font-weight:600}
@@ -242,9 +228,7 @@
       <span id="clock" class="hide-sm">--:--:--</span>
       <button class="icon-btn" id="screenBtn" title="Share screen with A.C.E." aria-label="Share screen">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="2" y="3" width="20" height="14" rx="2"/>
-          <line x1="8" y1="21" x2="16" y2="21"/>
-          <line x1="12" y1="17" x2="12" y2="21"/>
+          <rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
         </svg>
       </button>
       <button class="icon-btn" id="settingsBtn" title="Settings" aria-label="Open settings">
@@ -258,7 +242,7 @@
 
   <main id="mainGrid">
     <aside class="panel" id="telemetryPanel">
-      <div class="panel-title">System Diagnostics <span class="tag">v7.4</span></div>
+      <div class="panel-title">System Diagnostics <span class="tag">v7.5</span></div>
       <div class="stat"><div class="row"><span>REACTOR OUTPUT</span><b id="v-pwr">98%</b></div><div class="bar"><i id="b-pwr"></i></div></div>
       <div class="stat"><div class="row"><span>COGNITION LOAD</span><b id="v-cpu">--</b></div><div class="bar"><i id="b-cpu"></i></div></div>
       <div class="stat"><div class="row"><span>MEMORY BANK</span><b id="v-mem">--</b></div><div class="bar"><i id="b-mem"></i></div></div>
@@ -330,10 +314,6 @@
         <span>Your name</span>
         <input type="text" id="setUserName" class="text-input" placeholder="e.g. Tony" autocomplete="off" maxlength="40">
       </label>
-      <div class="setting-help">
-        A.C.E. will address you by name and remember it across sessions. You can also just say
-        <b>“call me Tony”</b> at any time.
-      </div>
     </section>
 
     <section class="setting-group">
@@ -348,29 +328,23 @@
       </label>
       <div class="setting-help">
         Get a key at <a href="https://openrouter.ai/keys" target="_blank" rel="noopener">openrouter.ai/keys</a>.
-        If a key is hardcoded in the script it will be used automatically; entering a key here overrides it.
+        If a key is hardcoded in the script it will be used automatically; anything typed here overrides it.
       </div>
 
       <label class="setting-row col">
         <span>Chat Model</span>
         <input type="text" id="setModel" class="text-input" placeholder="openai/gpt-4o-mini" autocomplete="off" spellcheck="false">
       </label>
-      <div class="setting-help">
-        Paste the slug (<b>openai/gpt-4o-mini</b>) or the full link from
-        <a href="https://openrouter.ai/models" target="_blank" rel="noopener">openrouter.ai/models</a>.
-      </div>
 
       <div class="model-chips" id="modelChips">
         <button type="button" class="model-chip" data-model="openai/gpt-4o-mini">gpt-4o-mini<span class="v">vision</span></button>
         <button type="button" class="model-chip" data-model="openai/gpt-4o">gpt-4o<span class="v">vision</span></button>
         <button type="button" class="model-chip" data-model="anthropic/claude-3.5-sonnet">claude-3.5-sonnet<span class="v">vision</span></button>
         <button type="button" class="model-chip" data-model="google/gemini-flash-1.5">gemini-flash-1.5<span class="v">vision</span></button>
-        <button type="button" class="model-chip" data-model="meta-llama/llama-3.1-70b-instruct">llama-3.1-70b</button>
-        <button type="button" class="model-chip" data-model="mistralai/mistral-large">mistral-large</button>
       </div>
 
       <label class="setting-row col" style="margin-top:14px">
-        <span>Vision Model <i style="color:var(--dim2);font-style:italic;font-weight:400">(optional — blank uses Chat Model)</i></span>
+        <span>Vision Model <i style="color:var(--dim2);font-style:italic;font-weight:400">(optional)</i></span>
         <input type="text" id="setVisionModel" class="text-input" placeholder="openai/gpt-4o-mini" autocomplete="off" spellcheck="false">
       </label>
 
@@ -404,17 +378,14 @@
       <div class="setting-help" id="ttsVoiceHelp" style="margin-top:8px"></div>
 
       <button class="btn" id="testTtsBtn" style="margin-top:14px">Test voice</button>
+      <button class="btn" id="showTtsDebugBtn">Show voice diagnostics</button>
     </section>
 
     <section class="setting-group">
       <h3>Screen Vision</h3>
       <button class="btn" id="shareScreenBtn">Share screen</button>
       <button class="btn danger" id="stopShareBtn" style="display:none">Stop sharing</button>
-      <div class="setting-help" style="margin-top:10px">
-        After sharing, ask <b>“look at my screen”</b>, <b>“what's on my screen”</b>,
-        <b>“read this page”</b>, or <b>“describe what you see”</b>.
-      </div>
-      <label class="setting-row">
+      <label class="setting-row" style="margin-top:10px">
         <span>Show live preview</span>
         <input type="checkbox" id="setScreenPreview" class="switch">
       </label>
@@ -430,45 +401,29 @@
         <span>Always listening</span>
         <input type="checkbox" id="setAlwaysOn" class="switch">
       </label>
-      <div class="setting-help">
-        Keeps the microphone permanently active — auto-restarts after every silence or error.
-        Required for <b>“be quiet”</b> mid-speech interrupts.
-      </div>
-
       <label class="setting-row">
         <span>Require wake word</span>
         <input type="checkbox" id="setRequireWake" class="switch">
       </label>
-
       <label class="setting-row col">
         <span>Wake word</span>
         <input type="text" id="setWakeWord" class="text-input" placeholder="ace" maxlength="20">
       </label>
-
       <label class="setting-row col">
         <span>Recognition language</span>
         <select id="setLang" class="text-input">
           <option value="en-US">English (US)</option>
           <option value="en-GB">English (UK)</option>
           <option value="en-AU">English (Australia)</option>
-          <option value="en-IN">English (India)</option>
           <option value="es-ES">Español</option>
           <option value="fr-FR">Français</option>
           <option value="de-DE">Deutsch</option>
-          <option value="it-IT">Italiano</option>
-          <option value="pt-BR">Português (Brasil)</option>
-          <option value="ja-JP">日本語</option>
-          <option value="ko-KR">한국어</option>
-          <option value="zh-CN">中文 (简体)</option>
         </select>
       </label>
     </section>
 
     <section class="setting-group">
       <h3>Browser Voice Fallback</h3>
-      <div class="setting-help" style="margin-top:-4px;margin-bottom:10px">
-        Used only if the TTS provider above is blank or fails.
-      </div>
       <label class="setting-row col">
         <span>Browser voice</span>
         <select id="setVoice" class="text-input"><option value="">System default</option></select>
@@ -507,7 +462,7 @@
       <button class="btn danger" id="resetBtn">Reset all settings</button>
     </section>
 
-    <div class="settings-footer">A.C.E. v7.4 · Autonomous Cognitive Entity · Saved automatically</div>
+    <div class="settings-footer">A.C.E. v7.5 · Autonomous Cognitive Entity · Saved automatically</div>
   </div>
 </aside>
 
@@ -516,23 +471,13 @@
   "use strict";
 
   /* ============================================================
-     ⚙️  HARDCODED API KEY
-     Paste your OpenRouter key between the quotes below to skip
-     entering it in the settings panel every time.
-     Leave it as "" if you'd rather enter it through the UI.
-     Anything you type into the settings panel will override it.
+     ⚙️  HARDCODED CONFIG
      ============================================================ */
-  var HARDCODED_API_KEY = "";   // e.g. "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"
-
-  /* ============================================================
-     ⚙️  HARDCODED DEFAULTS (optional)
-     Set default chat / vision / TTS model + voice here.
-     ============================================================ */
+  var HARDCODED_API_KEY = "";   // e.g. "sk-or-v1-abc123..."
   var HARDCODED_CHAT_MODEL   = "openai/gpt-4o-mini";
   var HARDCODED_VISION_MODEL = "";
   var HARDCODED_TTS_MODEL    = "deepgram/flux-tts:free";
-  var HARDCODED_TTS_VOICE    = "flux-cliff-en";
-  /* ============================================================ */
+  var HARDCODED_TTS_VOICE    = "";  // leave blank to let the model pick its default
 
   // ==================== UTILITIES ====================
   function $(id) { return document.getElementById(id); }
@@ -546,35 +491,39 @@
   // ==================== CONSTANTS ====================
   var OPENROUTER_ENDPOINT = "https://openrouter.ai/api/v1/chat/completions";
   var OPENROUTER_TTS_ENDPOINT = "https://openrouter.ai/api/v1/audio/speech";
-  var OPENROUTER_REFERER  = "https://github.com/";
-  var OPENROUTER_TITLE    = "A.C.E. Interface";
+  var OPENROUTER_REFERER = "https://github.com/";
+  var OPENROUTER_TITLE = "A.C.E. Interface";
 
   // ==================== TTS VOICE CATALOG ====================
-  // Voice lists keyed by TTS model slug. Each entry has {id, label}.
+  // Voice lists keyed by TTS model slug. `id` is what gets sent to OpenRouter.
+  // If you find that a voice fails, use "Custom voice id…" in the dropdown and
+  // check the diagnostics button to see the exact error from the API.
   var TTS_VOICES = {
     "deepgram/flux-tts:free": [
-      { id: "flux-cliff-en",  label: "Cliff — deep, confident, mature (recommended)" },
-      { id: "flux-colin-en",  label: "Colin — British, warm, trustworthy, authoritative" },
-      { id: "flux-miles-en",  label: "Miles — American, clear, calm, professional" },
-      { id: "flux-sean-en",   label: "Sean — British, mature, friendly, calming" },
-      { id: "flux-kit-en",    label: "Kit — British, young adult, energetic" },
-      { id: "flux-james-en",  label: "James — British, deep, commanding" },
-      { id: "flux-oliver-en", label: "Oliver — British, warm, smooth" },
-      { id: "flux-luke-en",   label: "Luke — American, neutral, professional" },
-      { id: "flux-lily-en",   label: "Lily — female, bright, clear" },
-      { id: "flux-aria-en",   label: "Aria — female, warm, expressive" },
-      { id: "flux-lucy-en",   label: "Lucy — female, British, gentle" },
-      { id: "flux-emma-en",   label: "Emma — female, neutral" }
+      { id: "",             label: "Default (let Deepgram pick)" },
+      { id: "cliff",        label: "Cliff — deep, confident, mature" },
+      { id: "colin",        label: "Colin — British, authoritative" },
+      { id: "miles",        label: "Miles — American, calm, professional" },
+      { id: "sean",         label: "Sean — British, friendly, calming" },
+      { id: "kit",          label: "Kit — British, energetic" },
+      { id: "luke",         label: "Luke — American, neutral" },
+      { id: "james",        label: "James — deep, commanding" },
+      { id: "oliver",       label: "Oliver — warm, smooth" },
+      { id: "lily",         label: "Lily — female, bright" },
+      { id: "aria",         label: "Aria — female, warm" },
+      { id: "lucy",         label: "Lucy — female, British, gentle" }
     ],
     "openai/gpt-4o-mini-tts": [
+      { id: "",        label: "Default" },
       { id: "onyx",    label: "Onyx — deep, authoritative" },
-      { id: "echo",    label: "Echo — male, calm, measured" },
-      { id: "fable",   label: "Fable — British, warm, storyteller" },
-      { id: "alloy",   label: "Alloy — neutral, balanced" },
+      { id: "echo",    label: "Echo — male, calm" },
+      { id: "fable",   label: "Fable — British, storyteller" },
+      { id: "alloy",   label: "Alloy — neutral" },
       { id: "nova",    label: "Nova — female, bright" },
       { id: "shimmer", label: "Shimmer — female, soft" }
     ],
     "x-ai/grok-voice-tts-1.0": [
+      { id: "",    label: "Default" },
       { id: "Eve", label: "Eve — female, calm" },
       { id: "Ara", label: "Ara — female, warm" },
       { id: "Rex", label: "Rex — male, deep" },
@@ -582,13 +531,14 @@
       { id: "Leo", label: "Leo — male, confident" }
     ],
     "mistralai/voxtral-mini-tts-2603": [
-      { id: "en_paul_neutral",  label: "Paul — neutral male" },
-      { id: "en_emma_neutral",  label: "Emma — neutral female" }
+      { id: "",                  label: "Default" },
+      { id: "en_paul_neutral",   label: "Paul — neutral male" },
+      { id: "en_emma_neutral",   label: "Emma — neutral female" }
     ]
   };
 
   // ==================== SETTINGS ====================
-  var STORAGE_KEY = "ace.settings.v7.4";
+  var STORAGE_KEY = "ace.settings.v7.5";
 
   var DEFAULT_SYSTEM_PROMPT =
     "You are A.C.E. — Autonomous Cognitive Entity — a concise, capable AI assistant with a " +
@@ -597,8 +547,7 @@
     "1–3 sentences unless the user asks for detail. When an image of the user's screen is provided, " +
     "describe what is actually relevant and useful — never enumerate every pixel; identify the " +
     "application, the content, and anything the user is likely to care about. Never use markdown, " +
-    "asterisks, bullet symbols, or emoji in replies since they are spoken aloud. Write plainly, as " +
-    "though you were speaking to someone in the room.";
+    "asterisks, bullet symbols, or emoji in replies since they are spoken aloud.";
 
   var DEFAULTS = {
     apiKey: "",
@@ -638,7 +587,6 @@
         s.notes = parsed.notes || [];
       }
     } catch (e) {}
-    if (s.apiEndpoint) delete s.apiEndpoint;
     return s;
   }
   function saveSettings() {
@@ -646,7 +594,6 @@
   }
   var settings = loadSettings();
 
-  // Effective API key — settings value wins, otherwise the hardcoded one
   function effectiveApiKey() {
     var k = (settings.apiKey || "").trim();
     if (k) return k;
@@ -656,7 +603,6 @@
     return !settings.apiKey && !!(HARDCODED_API_KEY && HARDCODED_API_KEY.trim());
   }
 
-  // ==================== MODEL SLUG PARSER ====================
   function parseModelInput(raw) {
     if (!raw) return "";
     var s = String(raw).trim();
@@ -670,29 +616,19 @@
 
   // ==================== STATE ====================
   var logCount = 0;
-  var listening = false;
-  var wantListening = false;
-  var speaking = false;
+  var listening = false, wantListening = false, speaking = false;
   var userHasInteracted = false;
-  var energy = 0.2;
-  var energyCur = 0.2;
-  var jarvisVoice = null;
-  var allVoices = [];
-  var recognition = null;
-  var micSupported = false;
-  var awakeUntil = 0;
-  var restartTimer = null;
-  var pendingAction = null;
-  var activeTimers = [];
+  var energy = 0.2, energyCur = 0.2;
+  var jarvisVoice = null, allVoices = [];
+  var recognition = null, micSupported = false;
+  var awakeUntil = 0, restartTimer = null;
+  var pendingAction = null, activeTimers = [];
   var startTime = Date.now();
   var conversationHistory = [];
   var aiBusy = false;
-  var screenStream = null;
-  var screenVideo = null;
-  var screenPreviewRAF = null;
-  var screenWarmupAt = 0;
-  var currentAudio = null;
-  var ttsAudioUrl = null;
+  var screenStream = null, screenVideo = null, screenPreviewRAF = null, screenWarmupAt = 0;
+  var currentAudio = null, ttsAudioUrl = null;
+  var lastTtsError = "";
 
   var INTERRUPT_WORDS = /^(?:(?:please\s+)?(?:be quiet|quiet|stop(?: talking)?|shut up|silence|shush|hush|mute|hold on|wait|pause|cancel|enough|that's enough|thats enough|nevermind|never mind|stop it|shut it)\b[\s.!?,]*)+$/i;
 
@@ -703,11 +639,9 @@
     if (!els.log) return;
     var row = document.createElement("div");
     row.className = "log-line " + (type || "sys");
-    var t = document.createElement("span");
-    t.className = "t";
+    var t = document.createElement("span"); t.className = "t";
     t.textContent = new Date().toLocaleTimeString("en-GB", { hour12: false });
-    var m = document.createElement("span");
-    m.className = "m";
+    var m = document.createElement("span"); m.className = "m";
     m.textContent = text;
     row.appendChild(t); row.appendChild(m);
     els.log.appendChild(row);
@@ -738,8 +672,7 @@
   function beep(freq, dur, vol) {
     try {
       if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      var o = audioCtx.createOscillator();
-      var g = audioCtx.createGain();
+      var o = audioCtx.createOscillator(), g = audioCtx.createGain();
       o.type = "sine"; o.frequency.value = freq || 660;
       g.gain.setValueAtTime(vol || 0.1, audioCtx.currentTime);
       g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + (dur || 0.12));
@@ -748,7 +681,7 @@
     } catch (e) {}
   }
 
-  // ==================== BROWSER TTS (fallback) ====================
+  // ==================== BROWSER TTS ====================
   function refreshVoices() {
     if (!("speechSynthesis" in window)) return;
     allVoices = speechSynthesis.getVoices();
@@ -776,14 +709,10 @@
       if (jarvisVoice) break;
     }
     if (!jarvisVoice) {
-      for (var j = 0; j < allVoices.length; j++) {
-        if (allVoices[j].lang === "en-GB") { jarvisVoice = allVoices[j]; break; }
-      }
+      for (var j = 0; j < allVoices.length; j++) if (allVoices[j].lang === "en-GB") { jarvisVoice = allVoices[j]; break; }
     }
     if (!jarvisVoice && allVoices.length) jarvisVoice = allVoices[0];
-    if (els.voiceName) {
-      els.voiceName.textContent = jarvisVoice ? jarvisVoice.name.toUpperCase().slice(0, 16) : "DEFAULT";
-    }
+    if (els.voiceName) els.voiceName.textContent = jarvisVoice ? jarvisVoice.name.toUpperCase().slice(0, 16) : "DEFAULT";
   }
   function pickVoiceByName(name) {
     if (!name) return null;
@@ -797,9 +726,7 @@
       var u = new SpeechSynthesisUtterance(text);
       var v = pickVoiceByName(settings.voiceName) || jarvisVoice;
       if (v) u.voice = v;
-      u.rate = Number(settings.rate);
-      u.pitch = Number(settings.pitch);
-      u.volume = Number(settings.volume);
+      u.rate = Number(settings.rate); u.pitch = Number(settings.pitch); u.volume = Number(settings.volume);
       u.onstart = function () {
         speaking = true;
         setStatus("SPEAKING", "SAY 'BE QUIET' TO INTERRUPT");
@@ -820,9 +747,7 @@
   }
 
   // ==================== OPENROUTER TTS ====================
-  function ttsConfigured() {
-    return !!(effectiveApiKey() && settings.ttsModel);
-  }
+  function ttsConfigured() { return !!(effectiveApiKey() && settings.ttsModel); }
 
   async function speak(text) {
     if (!settings.speak) return;
@@ -832,42 +757,96 @@
 
     if (!ttsConfigured()) { browserSpeak(spoken); return; }
 
-    try {
-      if ("speechSynthesis" in window) speechSynthesis.cancel();
-      stopAudio();
-      setStatus("SPEAKING", "SYNTHESISING VOICE");
-      speaking = true;
-      if (els.stopSpeakBtn) els.stopSpeakBtn.classList.add("show");
-      updateChips();
-      energy = Math.max(energy, 0.7);
+    // Stop any currently playing audio first
+    stopAudio();
+    if ("speechSynthesis" in window) { try { speechSynthesis.cancel(); } catch (e) {} }
 
+    setStatus("SPEAKING", "SYNTHESISING VOICE");
+    speaking = true;
+    if (els.stopSpeakBtn) els.stopSpeakBtn.classList.add("show");
+    updateChips();
+    energy = Math.max(energy, 0.7);
+
+    var apiKey = effectiveApiKey();
+    var model = settings.ttsModel;
+    var voice = (settings.ttsVoice || "").trim();
+
+    // Build request body — only include voice when we have one
+    var reqBody = {
+      model: model,
+      input: spoken,
+      response_format: "mp3"
+    };
+    if (voice) reqBody.voice = voice;
+
+    logLine("TTS → " + model + (voice ? (" voice=" + voice) : " (default voice)"), "sys");
+
+    try {
       var res = await fetch(OPENROUTER_TTS_ENDPOINT, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": "Bearer " + effectiveApiKey(),
+          "Authorization": "Bearer " + apiKey,
           "HTTP-Referer": OPENROUTER_REFERER,
           "X-Title": OPENROUTER_TITLE
         },
-        body: JSON.stringify({
-          model: settings.ttsModel,
-          input: spoken,
-          voice: settings.ttsVoice || "flux-cliff-en",
-          response_format: "mp3"
-        })
+        body: JSON.stringify(reqBody)
       });
 
+      // Handle non-OK responses with full error detail
       if (!res.ok) {
-        var errTxt = "";
-        try { errTxt = await res.text(); } catch (e) {}
-        logLine("TTS failed (HTTP " + res.status + ") — falling back to browser voice.", "warn");
+        var errText = "";
+        try { errText = await res.text(); } catch (e) {}
+        var detail = errText.slice(0, 400);
+        try {
+          var p = JSON.parse(errText);
+          if (p && p.error) {
+            if (typeof p.error === "string") detail = p.error;
+            else if (p.error.message) detail = p.error.message;
+          }
+        } catch (e) {}
+
+        lastTtsError = "HTTP " + res.status + " — " + detail;
+        logLine("TTS ERROR: " + lastTtsError, "err");
+
+        // Specific hints based on status
+        if (res.status === 401 || res.status === 403) {
+          logLine("→ API key rejected. Check your OpenRouter key.", "warn");
+        } else if (res.status === 404) {
+          logLine("→ Model or voice not found. Try changing the voice in the dropdown or use 'Custom voice id…'.", "warn");
+        } else if (res.status === 402) {
+          logLine("→ Out of credits or quota on OpenRouter.", "warn");
+        } else if (res.status === 429) {
+          logLine("→ Rate limited — wait a moment and try again.", "warn");
+        } else if (res.status === 400) {
+          logLine("→ Bad request. The voice id might be wrong for this model.", "warn");
+        }
+
         speaking = false;
         if (els.stopSpeakBtn) els.stopSpeakBtn.classList.remove("show");
+        updateChips();
         browserSpeak(spoken);
         return;
       }
 
+      // Check content type — should be audio/* for a successful TTS
+      var contentType = res.headers.get("content-type") || "";
+      logLine("TTS response: " + contentType, "sys");
+
       var blob = await res.blob();
+      logLine("TTS audio received: " + bytes(blob.size), "ok");
+
+      // Sanity check — audio files are never tiny
+      if (blob.size < 512) {
+        lastTtsError = "Audio response too small (" + blob.size + " bytes) — likely an error page";
+        logLine("TTS ERROR: " + lastTtsError, "err");
+        speaking = false;
+        if (els.stopSpeakBtn) els.stopSpeakBtn.classList.remove("show");
+        updateChips();
+        browserSpeak(spoken);
+        return;
+      }
+
       ttsAudioUrl = URL.createObjectURL(blob);
       currentAudio = new Audio(ttsAudioUrl);
       currentAudio.volume = Number(settings.volume);
@@ -888,15 +867,25 @@
       };
       currentAudio.onended = done;
       currentAudio.onerror = function () {
-        logLine("TTS playback failed — using browser voice.", "warn");
+        lastTtsError = "Audio playback failed (browser refused the blob)";
+        logLine("TTS ERROR: " + lastTtsError, "err");
         done();
         browserSpeak(spoken);
       };
       currentAudio.play();
     } catch (err) {
-      logLine("TTS request failed: " + (err && err.message || err), "warn");
+      // This catches CORS / network / DNS failures
+      var msg = err && err.message ? err.message : String(err);
+      lastTtsError = msg;
+      if (/Failed to fetch|NetworkError|Load failed/i.test(msg)) {
+        logLine("TTS ERROR: Network/CORS — " + msg, "err");
+        logLine("→ OpenRouter's TTS endpoint may be blocking browser requests, or you're offline. Check the browser devtools Network tab.", "warn");
+      } else {
+        logLine("TTS ERROR: " + msg, "err");
+      }
       speaking = false;
       if (els.stopSpeakBtn) els.stopSpeakBtn.classList.remove("show");
+      updateChips();
       browserSpeak(spoken);
     }
   }
@@ -970,21 +959,15 @@
     }
   }
 
-  // ==================== CLOCK / UPTIME ====================
-  function tickClock() {
-    if (els.clock) els.clock.textContent = new Date().toLocaleTimeString("en-GB", { hour12: false });
-  }
+  function tickClock() { if (els.clock) els.clock.textContent = new Date().toLocaleTimeString("en-GB", { hour12: false }); }
   function tickUptime() {
     var s = Math.floor((Date.now() - startTime) / 1000);
     if (els.uptime) {
-      els.uptime.textContent =
-        String(Math.floor(s / 3600)).padStart(2, "0") + ":" +
-        String(Math.floor((s % 3600) / 60)).padStart(2, "0") + ":" +
-        String(s % 60).padStart(2, "0");
+      els.uptime.textContent = String(Math.floor(s / 3600)).padStart(2, "0") + ":" +
+        String(Math.floor((s % 3600) / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0");
     }
   }
 
-  // ==================== TELEMETRY ====================
   function updateStats() {
     var pwr = clamp(97 + rand(-1.2, 1.2), 90, 100);
     var cpu = clamp(28 + Math.sin(Date.now() / 4000) * 12 + rand(-9, 9), 4, 97);
@@ -1010,8 +993,7 @@
     var rect = canvas.getBoundingClientRect();
     var dpr = Math.min(window.devicePixelRatio || 1, 2);
     W = Math.max(rect.width, 1); H = Math.max(rect.height, 1);
-    canvas.width = Math.floor(W * dpr);
-    canvas.height = Math.floor(H * dpr);
+    canvas.width = Math.floor(W * dpr); canvas.height = Math.floor(H * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
   function arcSeg(cx, cy, rot, radius, start, len, lw, color, glow) {
@@ -1024,30 +1006,25 @@
   function drawReactor(now) {
     if (!ctx) return;
     ctx.clearRect(0, 0, W, H);
-    var cx = W / 2, cy = H / 2;
-    var R = Math.min(W, H) / 2 - 10;
+    var cx = W / 2, cy = H / 2, R = Math.min(W, H) / 2 - 10;
     if (R <= 0) return;
     var motion = settings.reducedMotion ? 0.15 : 1;
-    var pulse = Math.sin(now / 900) * 0.5 + 0.5;
-    var e = energyCur;
+    var pulse = Math.sin(now / 900) * 0.5 + 0.5, e = energyCur;
 
     ctx.save(); ctx.translate(cx, cy); ctx.rotate(now / 26000 * motion);
     ctx.beginPath(); ctx.arc(0, 0, R * 0.97, 0, Math.PI * 2);
-    ctx.setLineDash([2, 7]); ctx.lineWidth = 1.2;
-    ctx.strokeStyle = "rgba(255,42,42,.35)"; ctx.stroke();
+    ctx.setLineDash([2, 7]); ctx.lineWidth = 1.2; ctx.strokeStyle = "rgba(255,42,42,.35)"; ctx.stroke();
     ctx.restore();
 
     ctx.save(); ctx.translate(cx, cy); ctx.rotate(now / 60000 * motion);
     for (var i = 0; i < 72; i++) {
-      var a = (i / 72) * Math.PI * 2;
-      var isLong = i % 6 === 0;
+      var a = (i / 72) * Math.PI * 2, isLong = i % 6 === 0;
       var r1 = R * 0.80, r2 = R * (isLong ? 0.88 : 0.845);
       ctx.beginPath();
       ctx.moveTo(Math.cos(a) * r1, Math.sin(a) * r1);
       ctx.lineTo(Math.cos(a) * r2, Math.sin(a) * r2);
       ctx.strokeStyle = isLong ? "rgba(255,42,42,.7)" : "rgba(255,42,42,.22)";
-      ctx.lineWidth = isLong ? 1.6 : 1;
-      ctx.stroke();
+      ctx.lineWidth = isLong ? 1.6 : 1; ctx.stroke();
     }
     ctx.restore();
 
@@ -1061,36 +1038,28 @@
 
     var sweep = now / 1500 * motion;
     for (var k = 0; k < 14; k++) {
-      var alpha = (1 - k / 14) * 0.4;
-      arcSeg(cx, cy, sweep - k * 0.045, R * 0.70, 0, 0.05, 6, "rgba(255,255,255," + alpha + ")", 0);
+      arcSeg(cx, cy, sweep - k * 0.045, R * 0.70, 0, 0.05, 6, "rgba(255,255,255," + ((1 - k / 14) * 0.4) + ")", 0);
     }
 
     ctx.save(); ctx.translate(cx, cy);
     ctx.beginPath(); ctx.arc(0, 0, R * 0.52, 0, Math.PI * 2);
-    ctx.lineWidth = 1;
-    ctx.strokeStyle = "rgba(255,42,42," + (0.25 + e * 0.4) + ")";
-    ctx.stroke(); ctx.restore();
+    ctx.lineWidth = 1; ctx.strokeStyle = "rgba(255,42,42," + (0.25 + e * 0.4) + ")"; ctx.stroke();
+    ctx.restore();
 
     var coreR = R * 0.20 * (1 + 0.07 * pulse + 0.30 * e);
     var g = ctx.createRadialGradient(cx, cy, 0, cx, cy, coreR * 3.4);
-    g.addColorStop(0, "rgba(255,255,255,1)");
-    g.addColorStop(0.18, "rgba(255,180,180,.9)");
-    g.addColorStop(0.42, "rgba(255,42,42,.4)");
-    g.addColorStop(0.75, "rgba(180,0,0,.14)");
+    g.addColorStop(0, "rgba(255,255,255,1)"); g.addColorStop(0.18, "rgba(255,180,180,.9)");
+    g.addColorStop(0.42, "rgba(255,42,42,.4)"); g.addColorStop(0.75, "rgba(180,0,0,.14)");
     g.addColorStop(1, "rgba(120,0,0,0)");
-    ctx.fillStyle = g;
-    ctx.beginPath(); ctx.arc(cx, cy, coreR * 3.4, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(cx, cy, coreR * 3.4, 0, Math.PI * 2); ctx.fill();
 
     ctx.beginPath(); ctx.arc(cx, cy, coreR, 0, Math.PI * 2);
-    ctx.lineWidth = 2;
-    ctx.strokeStyle = "rgba(255,255,255,.95)";
-    ctx.shadowBlur = 26; ctx.shadowColor = "rgba(255,42,42,.95)";
-    ctx.stroke(); ctx.shadowBlur = 0;
+    ctx.lineWidth = 2; ctx.strokeStyle = "rgba(255,255,255,.95)";
+    ctx.shadowBlur = 26; ctx.shadowColor = "rgba(255,42,42,.95)"; ctx.stroke(); ctx.shadowBlur = 0;
 
     if (!settings.reducedMotion) {
       for (var p = 0; p < 26; p++) {
-        var seed = p * 137.508;
-        var ang = (seed + now / (2000 + (p % 7) * 400)) % (Math.PI * 2);
+        var seed = p * 137.508, ang = (seed + now / (2000 + (p % 7) * 400)) % (Math.PI * 2);
         var rr = R * (0.30 + ((p % 9) / 9) * 0.58);
         ctx.beginPath();
         ctx.arc(cx + Math.cos(ang) * rr, cy + Math.sin(ang) * rr, 1 + (p % 3) * 0.6, 0, Math.PI * 2);
@@ -1114,19 +1083,15 @@
     micSupported = !!SR;
     if (!micSupported) return;
     recognition = new SR();
-    recognition.continuous = true;
-    recognition.interimResults = true;
-    recognition.lang = settings.lang;
-    recognition.maxAlternatives = 1;
+    recognition.continuous = true; recognition.interimResults = true;
+    recognition.lang = settings.lang; recognition.maxAlternatives = 1;
 
     recognition.onstart = function () {
       listening = true;
       if (els.micBtn) els.micBtn.classList.add("listening");
       setStatus("LISTENING", settings.alwaysOn ? "ALWAYS-ON · SAY 'BE QUIET' TO INTERRUPT" : "AWAITING VOICE INPUT");
-      energy = 0.8;
-      updateChips(); updateMicAppearance();
+      energy = 0.8; updateChips(); updateMicAppearance();
     };
-
     recognition.onresult = function (ev) {
       var interim = "", final = "";
       for (var i = ev.resultIndex; i < ev.results.length; i++) {
@@ -1142,10 +1107,8 @@
       if (speaking) {
         var words = text.split(/\s+/).filter(Boolean).length;
         if (words <= 5 && INTERRUPT_WORDS.test(text.trim())) {
-          beep(440, 0.09, 0.1);
-          stopSpeaking(false);
-          logLine(text, "user");
-          setStatus("ONLINE", "AWAITING INPUT");
+          beep(440, 0.09, 0.1); stopSpeaking(false);
+          logLine(text, "user"); setStatus("ONLINE", "AWAITING INPUT");
           return;
         }
         return;
@@ -1153,30 +1116,18 @@
       if (text.length < 2) return;
       processTranscript(text);
     };
-
     recognition.onerror = function (ev) {
-      var map = {
-        "not-allowed": "Microphone access denied.",
-        "service-not-allowed": "Speech service blocked.",
-        "audio-capture": "No microphone found.",
-        "network": "Speech service unreachable."
-      };
+      var map = { "not-allowed": "Microphone access denied.", "service-not-allowed": "Speech service blocked.", "audio-capture": "No microphone found.", "network": "Speech service unreachable." };
       var msg = map[ev.error] || ("Voice error: " + ev.error);
-      if (ev.error !== "aborted" && ev.error !== "no-speech") {
-        logLine(msg, "warn"); toast(msg, "warn");
-      }
+      if (ev.error !== "aborted" && ev.error !== "no-speech") { logLine(msg, "warn"); toast(msg, "warn"); }
       if (ev.error === "not-allowed" || ev.error === "service-not-allowed" || ev.error === "audio-capture") {
-        wantListening = false; settings.alwaysOn = false;
-        saveSettings(); applySettings();
+        wantListening = false; settings.alwaysOn = false; saveSettings(); applySettings();
       }
     };
-
     recognition.onend = function () {
       listening = false;
       if (els.micBtn) els.micBtn.classList.remove("listening");
-      if (els.statusText && els.statusText.textContent === "LISTENING") {
-        setStatus("ONLINE", "ALL SYSTEMS NOMINAL");
-      }
+      if (els.statusText && els.statusText.textContent === "LISTENING") setStatus("ONLINE", "ALL SYSTEMS NOMINAL");
       updateChips(); updateMicAppearance();
       if (wantListening && settings.alwaysOn) scheduleRestart(260);
     };
@@ -1190,21 +1141,20 @@
     }, delay || 300);
   }
   function startListening() {
-    if (!micSupported) { logLine("Voice input isn't supported here. Use Chrome or Edge.", "warn"); toast("Voice not supported", "warn"); return; }
+    if (!micSupported) { logLine("Voice input isn't supported here.", "warn"); toast("Voice not supported", "warn"); return; }
     if ("speechSynthesis" in window && !settings.alwaysOn) speechSynthesis.cancel();
     wantListening = true;
     if (!listening) { try { recognition.start(); } catch (e) { scheduleRestart(500); } }
     updateChips(); updateMicAppearance();
   }
   function stopListening() {
-    wantListening = false;
-    clearTimeout(restartTimer);
+    wantListening = false; clearTimeout(restartTimer);
     if (listening) { try { recognition.stop(); } catch (e) {} }
     updateChips(); updateMicAppearance();
   }
   function toggleMic() {
     userHasInteracted = true;
-    if (!micSupported) { logLine("Voice input isn't supported here.", "warn"); toast("Voice not supported", "warn"); return; }
+    if (!micSupported) { logLine("Voice input isn't supported.", "warn"); toast("Voice not supported", "warn"); return; }
     if (wantListening) stopListening(); else startListening();
   }
   function processTranscript(text) {
@@ -1212,19 +1162,12 @@
     var awake = Date.now() < awakeUntil;
     if (needWake && !awake) {
       var ww = (settings.wakeWord || "ace").toLowerCase().trim();
-      var lower = text.toLowerCase();
-      var idx = ww ? lower.indexOf(ww) : -1;
+      var lower = text.toLowerCase(), idx = ww ? lower.indexOf(ww) : -1;
       if (idx === -1) return;
       var rest = text.slice(idx + ww.length).replace(/^[\s,.:;!?\-]+/, "").trim();
       logLine(text, "user");
-      if (!rest) {
-        awakeUntil = Date.now() + 9000;
-        beep(660, 0.1, 0.08);
-        respond("Yes?");
-        return;
-      }
-      handleCommand(rest);
-      return;
+      if (!rest) { awakeUntil = Date.now() + 9000; beep(660, 0.1, 0.08); respond("Yes?"); return; }
+      handleCommand(rest); return;
     }
     if (awake) awakeUntil = 0;
     logLine(text, "user");
@@ -1257,9 +1200,7 @@
       els.setApiKey.value = settings.apiKey || "";
       els.setApiKey.placeholder = isUsingHardcodedKey() ? "(using hardcoded key)" : "sk-or-v1-…";
     }
-    if (els.keySourceBadge) {
-      els.keySourceBadge.style.display = isUsingHardcodedKey() ? "inline-block" : "none";
-    }
+    if (els.keySourceBadge) els.keySourceBadge.style.display = isUsingHardcodedKey() ? "inline-block" : "none";
     if (els.setModel) els.setModel.value = settings.model || "";
     if (els.setVisionModel) els.setVisionModel.value = settings.visionModel || "";
     if (els.setUserName) els.setUserName.value = settings.userName || "";
@@ -1285,9 +1226,7 @@
       chip.classList.toggle("active", chip.getAttribute("data-model") === settings.model);
     });
 
-    // Sync TTS dropdowns
     syncTtsDropdowns();
-
     updateChips(); updateMicAppearance();
   }
 
@@ -1296,14 +1235,11 @@
     var modelSel = els.setTtsModel;
     if (!modelSel) return;
 
-    // If the saved model isn't one of the known options, pick "custom"
     var known = false;
     for (var i = 0; i < modelSel.options.length; i++) {
-      if (modelSel.options[i].value === settings.ttsModel && settings.ttsModel !== "__custom__") {
-        known = true; break;
-      }
+      if (modelSel.options[i].value === settings.ttsModel && settings.ttsModel !== "__custom__") { known = true; break; }
     }
-    if (settings.ttsModel === "" ) {
+    if (settings.ttsModel === "") {
       modelSel.value = "";
       if (els.setTtsModelCustom) els.setTtsModelCustom.style.display = "none";
     } else if (known) {
@@ -1316,7 +1252,6 @@
         els.setTtsModelCustom.value = settings.ttsModel;
       }
     }
-
     populateVoiceDropdown(settings.ttsModel);
     updateTtsHelp(settings.ttsModel);
   }
@@ -1324,12 +1259,10 @@
   function populateVoiceDropdown(model) {
     var voiceSel = els.setTtsVoice;
     if (!voiceSel) return;
-
     var list = TTS_VOICES[model];
     voiceSel.innerHTML = "";
 
     if (!list || !list.length) {
-      // No catalog for this model — show a generic free-text option
       var opt = document.createElement("option");
       opt.value = "__custom__";
       opt.textContent = "Custom voice id…";
@@ -1353,10 +1286,10 @@
     custom.textContent = "Custom voice id…";
     voiceSel.appendChild(custom);
 
-    // Select the saved voice if present, otherwise the first
+    // Match saved voice — fall back to default (index 0) if not found
     var matched = false;
     for (var j = 0; j < list.length; j++) {
-      if (list[j].id === settings.ttsVoice) { voiceSel.value = settings.ttsVoice; matched = true; break; }
+      if (list[j].id === (settings.ttsVoice || "")) { voiceSel.value = list[j].id; matched = true; break; }
     }
     if (!matched) {
       if (settings.ttsVoice) {
@@ -1379,126 +1312,87 @@
   function updateTtsHelp(model) {
     var help = els.ttsVoiceHelp;
     if (!help) return;
-    if (!model) {
-      help.innerHTML = "No TTS provider selected — A.C.E. will use the browser's built-in voice (robotic).";
-    } else if (model === "deepgram/flux-tts:free") {
-      help.innerHTML = "Deepgram Flux is free and the most human-sounding option. <b>Cliff</b> or <b>Colin</b> match A.C.E.'s tone best.";
-    } else if (model === "openai/gpt-4o-mini-tts") {
-      help.innerHTML = "OpenAI TTS — <b>onyx</b> and <b>fable</b> are the closest to A.C.E.'s register.";
-    } else if (model === "x-ai/grok-voice-tts-1.0") {
-      help.innerHTML = "xAI Grok Voice — 20+ languages, natural pacing.";
-    } else if (model === "mistralai/voxtral-mini-tts-2603") {
-      help.innerHTML = "Mistral Voxtral — supports voice cloning if you have a reference audio clip.";
-    } else {
-      help.innerHTML = "Custom provider — enter any voice id the model accepts.";
-    }
+    if (!model) help.innerHTML = "No TTS provider selected — A.C.E. will use the browser's built-in voice.";
+    else if (model === "deepgram/flux-tts:free") help.innerHTML = "Deepgram Flux is free and the most human. <b>Cliff</b> or <b>Colin</b> match A.C.E.'s tone.";
+    else if (model === "openai/gpt-4o-mini-tts") help.innerHTML = "OpenAI TTS — <b>onyx</b> and <b>fable</b> are closest to A.C.E.'s register.";
+    else if (model === "x-ai/grok-voice-tts-1.0") help.innerHTML = "xAI Grok Voice — 20+ languages, natural pacing.";
+    else if (model === "mistralai/voxtral-mini-tts-2603") help.innerHTML = "Mistral Voxtral — supports voice cloning.";
+    else help.innerHTML = "Custom provider — enter any voice id the model accepts.";
   }
 
   // ==================== SETTINGS PANEL ====================
-  function openSettings() {
-    document.body.classList.add("settings-open");
-    if (els.settingsBtn) els.settingsBtn.classList.add("active");
-  }
-  function closeSettings() {
-    document.body.classList.remove("settings-open");
-    if (els.settingsBtn) els.settingsBtn.classList.remove("active");
-  }
-  function toggleSettings() {
-    if (document.body.classList.contains("settings-open")) closeSettings();
-    else openSettings();
-  }
+  function openSettings() { document.body.classList.add("settings-open"); if (els.settingsBtn) els.settingsBtn.classList.add("active"); }
+  function closeSettings() { document.body.classList.remove("settings-open"); if (els.settingsBtn) els.settingsBtn.classList.remove("active"); }
+  function toggleSettings() { if (document.body.classList.contains("settings-open")) closeSettings(); else openSettings(); }
 
   // ==================== SCREEN SHARING ====================
   async function startScreenShare() {
     if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
-      logLine("Screen capture isn't supported in this browser.", "warn");
-      toast("Screen capture unsupported", "warn"); return;
+      logLine("Screen capture isn't supported in this browser.", "warn"); toast("Unsupported", "warn"); return;
     }
     try {
-      screenStream = await navigator.mediaDevices.getDisplayMedia({
-        video: { cursor: "always", frameRate: 5 },
-        audio: false
-      });
+      screenStream = await navigator.mediaDevices.getDisplayMedia({ video: { cursor: "always", frameRate: 5 }, audio: false });
       screenVideo = document.createElement("video");
       screenVideo.srcObject = screenStream;
-      screenVideo.muted = true;
-      screenVideo.playsInline = true;
+      screenVideo.muted = true; screenVideo.playsInline = true;
       await screenVideo.play();
-
       screenWarmupAt = Date.now();
       var track = screenStream.getVideoTracks()[0];
       track.addEventListener("ended", stopScreenShare);
-
       if (els.screenPreview) els.screenPreview.classList.toggle("on", !!settings.screenPreview);
       if (els.stopShareBtn) els.stopShareBtn.style.display = "block";
       if (els.shareScreenBtn) els.shareScreenBtn.textContent = "Sharing…";
       if (els.screenBtn) els.screenBtn.classList.add("active");
-
       startPreviewLoop();
-      logLine("Screen vision enabled.", "ok");
-      toast("Screen sharing active");
+      logLine("Screen vision enabled.", "ok"); toast("Screen sharing active");
       respond("Screen vision enabled. Ask me what's on your screen.");
       updateChips();
     } catch (err) {
-      if (err && err.name === "NotAllowedError") logLine("Screen sharing cancelled by user.", "sys");
+      if (err && err.name === "NotAllowedError") logLine("Screen sharing cancelled.", "sys");
       else logLine("Screen sharing failed: " + (err && err.message || err), "warn");
     }
   }
   function stopScreenShare() {
-    if (screenStream) {
-      try { screenStream.getTracks().forEach(function (t) { t.stop(); }); } catch (e) {}
-      screenStream = null;
-    }
+    if (screenStream) { try { screenStream.getTracks().forEach(function (t) { t.stop(); }); } catch (e) {} screenStream = null; }
     screenVideo = null;
     if (els.screenPreview) els.screenPreview.classList.remove("on");
     if (els.stopShareBtn) els.stopShareBtn.style.display = "none";
     if (els.shareScreenBtn) els.shareScreenBtn.textContent = "Share screen";
     if (els.screenBtn) els.screenBtn.classList.remove("active");
     if (screenPreviewRAF) { cancelAnimationFrame(screenPreviewRAF); screenPreviewRAF = null; }
-    logLine("Screen vision disabled.", "sys");
-    toast("Screen sharing stopped");
+    logLine("Screen vision disabled.", "sys"); toast("Screen sharing stopped");
     updateChips();
   }
   function startPreviewLoop() {
     if (screenPreviewRAF) cancelAnimationFrame(screenPreviewRAF);
     function tick() {
       var pc = els.screenPreviewCanvas;
-      if (!pc || !screenVideo || screenVideo.videoWidth === 0) {
-        screenPreviewRAF = requestAnimationFrame(tick); return;
-      }
+      if (!pc || !screenVideo || screenVideo.videoWidth === 0) { screenPreviewRAF = requestAnimationFrame(tick); return; }
       if (document.visibilityState === "visible" && settings.screenPreview) {
-        var cw = pc.width, ch = pc.height;
-        var vw = screenVideo.videoWidth, vh = screenVideo.videoHeight;
-        var scale = Math.max(cw / vw, ch / vh);
-        var dw = vw * scale, dh = vh * scale;
+        var cw = pc.width, ch = pc.height, vw = screenVideo.videoWidth, vh = screenVideo.videoHeight;
+        var scale = Math.max(cw / vw, ch / vh), dw = vw * scale, dh = vh * scale;
         var pctx = pc.getContext("2d");
         try { pctx.drawImage(screenVideo, (cw - dw) / 2, (ch - dh) / 2, dw, dh); } catch (e) {}
       }
-      screenPreviewRAF = setTimeout(function () {
-        screenPreviewRAF = requestAnimationFrame(tick);
-      }, 900);
+      screenPreviewRAF = setTimeout(function () { screenPreviewRAF = requestAnimationFrame(tick); }, 900);
     }
     screenPreviewRAF = requestAnimationFrame(tick);
   }
-
   function captureScreenFrame() {
     if (!screenVideo) return { error: "No screen stream." };
-    if (screenVideo.readyState < 2) return { error: "Screen stream not ready (readyState " + screenVideo.readyState + ")." };
-    if (!screenVideo.videoWidth || !screenVideo.videoHeight) return { error: "Screen stream has no dimensions yet." };
-    if (Date.now() - screenWarmupAt < 400) return { error: "Screen stream is still warming up." };
+    if (screenVideo.readyState < 2) return { error: "Screen stream not ready." };
+    if (!screenVideo.videoWidth || !screenVideo.videoHeight) return { error: "No dimensions yet." };
+    if (Date.now() - screenWarmupAt < 400) return { error: "Still warming up." };
     try {
       var c = document.createElement("canvas");
       var vw = screenVideo.videoWidth, vh = screenVideo.videoHeight;
       var scale = Math.min(1, 1280 / vw);
       c.width = Math.max(1, Math.round(vw * scale));
       c.height = Math.max(1, Math.round(vh * scale));
-      var cc = c.getContext("2d");
-      cc.drawImage(screenVideo, 0, 0, c.width, c.height);
+      c.getContext("2d").drawImage(screenVideo, 0, 0, c.width, c.height);
       var dataUrl = c.toDataURL("image/jpeg", 0.72);
       return { dataUrl: dataUrl, width: c.width, height: c.height, bytes: dataUrl.length };
-    } catch (err) {
-      return { error: "Capture failed: " + (err && err.message || err) };
-    }
+    } catch (err) { return { error: "Capture failed: " + (err && err.message || err) }; }
   }
 
   // ==================== AI ENGINE ====================
@@ -1507,9 +1401,7 @@
 
   function buildSystemPrompt() {
     var p = settings.systemPrompt || DEFAULT_SYSTEM_PROMPT;
-    if (settings.userName) {
-      p += "\n\nThe user's name is " + settings.userName + ". Address them by name occasionally when it feels natural.";
-    }
+    if (settings.userName) p += "\n\nThe user's name is " + settings.userName + ". Address them by name occasionally.";
     return p;
   }
 
@@ -1523,7 +1415,7 @@
     var userContent;
     if (imageDataUrl) {
       userContent = [
-        { type: "text", text: userText || "What's on my screen? Describe anything useful." },
+        { type: "text", text: userText || "What's on my screen?" },
         { type: "image_url", image_url: { url: imageDataUrl, detail: "auto" } }
       ];
     } else userContent = userText;
@@ -1537,17 +1429,10 @@
         "HTTP-Referer": OPENROUTER_REFERER,
         "X-Title": OPENROUTER_TITLE
       },
-      body: JSON.stringify({
-        model: model,
-        messages: messages,
-        temperature: 0.6,
-        max_tokens: 700
-      })
+      body: JSON.stringify({ model: model, messages: messages, temperature: 0.6, max_tokens: 700 })
     });
-
     var rawBody = "";
     try { rawBody = await res.text(); } catch (e) {}
-
     if (!res.ok) {
       var brief = rawBody;
       try {
@@ -1559,17 +1444,11 @@
       } catch (e) {}
       throw new Error("HTTP " + res.status + " — " + (brief || res.statusText).slice(0, 240));
     }
-
     var data;
-    try { data = JSON.parse(rawBody); }
-    catch (e) { throw new Error("Invalid JSON: " + rawBody.slice(0, 160)); }
-    if (!data.choices || !data.choices[0] || !data.choices[0].message) {
-      throw new Error("Unexpected response shape");
-    }
+    try { data = JSON.parse(rawBody); } catch (e) { throw new Error("Invalid JSON: " + rawBody.slice(0, 160)); }
+    if (!data.choices || !data.choices[0] || !data.choices[0].message) throw new Error("Unexpected response shape");
     var content = data.choices[0].message.content;
-    if (Array.isArray(content)) {
-      content = content.map(function (b) { return typeof b === "string" ? b : (b && b.text) || ""; }).join(" ");
-    }
+    if (Array.isArray(content)) content = content.map(function (b) { return typeof b === "string" ? b : (b && b.text) || ""; }).join(" ");
     return String(content || "").trim();
   }
 
@@ -1588,24 +1467,20 @@
 
   async function handleWithAI(userText, imageDataUrl) {
     if (!aiConfigured()) {
-      respond("I'm not connected yet. Open settings and add your OpenRouter API key and model.");
+      respond("I'm not connected yet. Open settings and add your OpenRouter API key.");
       toast("Add OpenRouter key in settings", "warn"); return;
     }
-    if (aiBusy) { respond("One moment — I'm still thinking about the last request."); return; }
-
+    if (aiBusy) { respond("One moment — I'm still thinking."); return; }
     aiBusy = true; updateChips(); energy = 0.9;
     setStatus("THINKING", imageDataUrl ? "ANALYSING SCREEN" : "PROCESSING QUERY");
-
     var thinkingRow = logLine(imageDataUrl ? "Analysing your screen…" : "Thinking…", "sys");
     if (thinkingRow) thinkingRow.classList.add("thinking");
-
     try {
       var reply = await askAI(userText, imageDataUrl);
       if (thinkingRow && thinkingRow.parentNode) thinkingRow.parentNode.removeChild(thinkingRow);
       if (!reply) reply = "I don't have anything to add.";
-      if (imageDataUrl) {
-        pushHistory("user", [{ type: "text", text: userText || "What's on my screen?" }, { type: "text", text: "[screen image]" }]);
-      } else pushHistory("user", userText);
+      if (imageDataUrl) pushHistory("user", [{ type: "text", text: userText || "What's on my screen?" }, { type: "text", text: "[screen image]" }]);
+      else pushHistory("user", userText);
       pushHistory("assistant", reply);
       respond(reply);
     } catch (err) {
@@ -1614,7 +1489,7 @@
       logLine("AI error: " + detail, "err");
       var userMsg = "I had trouble reaching the AI service. ";
       if (/404|model/i.test(detail) && imageDataUrl) userMsg = "The vision model rejected the request. Try a different Vision Model.";
-      else if (/404|model/i.test(detail)) userMsg = "The model name doesn't exist on OpenRouter. Check the slug in settings.";
+      else if (/404|model/i.test(detail)) userMsg = "That model doesn't exist on OpenRouter. Check the slug in settings.";
       else if (/401|403|auth/i.test(detail)) userMsg = "The API key was rejected. Double-check it in settings.";
       else if (/402|insufficient|credit|quota/i.test(detail)) userMsg = "OpenRouter says you're out of credits.";
       else if (/429|rate/i.test(detail)) userMsg = "Rate limited — give it a moment.";
@@ -1635,37 +1510,27 @@
       setTimeout(function () { beep(880, 0.18, 0.15); }, 220);
       setTimeout(function () { beep(1100, 0.25, 0.15); }, 440);
       speak(msg);
-      var i = activeTimers.indexOf(id);
-      if (i > -1) activeTimers.splice(i, 1);
+      var i = activeTimers.indexOf(id); if (i > -1) activeTimers.splice(i, 1);
     }, seconds * 1000);
     activeTimers.push(id); return id;
   }
   function safeEval(expr) {
     var e = String(expr).toLowerCase().trim();
     e = e.replace(/(\d+(?:\.\d+)?)\s*(?:%|percent)\s*of\s*/g, "($1/100)*");
-    e = e.replace(/\bplus\b/g, "+").replace(/\bminus\b/g, "-")
-         .replace(/\bmultiplied by\b|\btimes\b/g, "*")
-         .replace(/\bdivided by\b|\bover\b/g, "/")
-         .replace(/\bto the power of\b/g, "**")
-         .replace(/[x×]/g, "*").replace(/÷/g, "/")
-         .replace(/−/g, "-").replace(/\^/g, "**").replace(/,/g, "");
+    e = e.replace(/\bplus\b/g, "+").replace(/\bminus\b/g, "-").replace(/\bmultiplied by\b|\btimes\b/g, "*")
+         .replace(/\bdivided by\b|\bover\b/g, "/").replace(/\bto the power of\b/g, "**")
+         .replace(/[x×]/g, "*").replace(/÷/g, "/").replace(/−/g, "-").replace(/\^/g, "**").replace(/,/g, "");
     if (!/^[\d+\-*/().\s]+$/.test(e)) return null;
-    try {
-      var r = Function('"use strict";return (' + e + ')')();
-      if (typeof r !== "number" || !isFinite(r)) return null;
-      return r;
-    } catch (err) { return null; }
+    try { var r = Function('"use strict";return (' + e + ')')(); if (typeof r !== "number" || !isFinite(r)) return null; return r; }
+    catch (err) { return null; }
   }
-  function looksLikeMath(s) {
-    if (!/\d/.test(s)) return false;
-    return /[+\-*/x×÷^%]|\b(plus|minus|times|divided|multiplied|percent|of)\b/i.test(s);
-  }
+  function looksLikeMath(s) { if (!/\d/.test(s)) return false; return /[+\-*/x×÷^%]|\b(plus|minus|times|divided|multiplied|percent|of)\b/i.test(s); }
   var UNIT_GROUPS = {
-    length: { km:1000, kilometer:1000, kilometers:1000, m:1, meter:1, meters:1, metre:1, metres:1, cm:0.01, centimeter:0.01, centimeters:0.01, mm:0.001, mi:1609.344, mile:1609.344, miles:1609.344, ft:0.3048, foot:0.3048, feet:0.3048, in:0.0254, inch:0.0254, inches:0.0254, yd:0.9144, yard:0.9144, yards:0.9144 },
-    weight: { kg:1000, kilogram:1000, kilograms:1000, g:1, gram:1, grams:1, mg:0.001, lb:453.592, lbs:453.592, pound:453.592, pounds:453.592, oz:28.3495, ounce:28.3495, ounces:28.3495, st:6350.29, stone:6350.29 },
-    volume: { l:1, liter:1, liters:1, litre:1, litres:1, ml:0.001, gal:3.78541, gallon:3.78541, gallons:3.78541, cup:0.236588, cups:0.236588, pint:0.473176, pints:0.473176 }
+    length: { km:1000,kilometer:1000,kilometers:1000,m:1,meter:1,meters:1,metre:1,metres:1,cm:0.01,centimeter:0.01,centimeters:0.01,mm:0.001,mi:1609.344,mile:1609.344,miles:1609.344,ft:0.3048,foot:0.3048,feet:0.3048,in:0.0254,inch:0.0254,inches:0.0254,yd:0.9144,yard:0.9144,yards:0.9144 },
+    weight: { kg:1000,kilogram:1000,kilograms:1000,g:1,gram:1,grams:1,mg:0.001,lb:453.592,lbs:453.592,pound:453.592,pounds:453.592,oz:28.3495,ounce:28.3495,ounces:28.3495,st:6350.29,stone:6350.29 },
+    volume: { l:1,liter:1,liters:1,litre:1,litres:1,ml:0.001,gal:3.78541,gallon:3.78541,gallons:3.78541,cup:0.236588,cups:0.236588,pint:0.473176,pints:0.473176 }
   };
-  var TEMP_ALIASES = { c:"c", celsius:"c", "°c":"c", centigrade:"c", f:"f", fahrenheit:"f", "°f":"f", k:"k", kelvin:"k" };
+  var TEMP_ALIASES = { c:"c",celsius:"c","°c":"c",centigrade:"c",f:"f",fahrenheit:"f","°f":"f",k:"k",kelvin:"k" };
   function convertUnits(val, from, to) {
     from = from.toLowerCase(); to = to.toLowerCase();
     if (TEMP_ALIASES[from] && TEMP_ALIASES[to]) {
@@ -1720,10 +1585,10 @@
     }
     if ((m = t.match(/^(?:remember|memorise|memorize|store)(?: that)?\s+(?:my\s+)?(.+?)\s+(?:is|are|equals?)\s+(.+)$/))) {
       var key = m[1].trim().replace(/^my\s+/, ""), val = m[2].trim();
-      if (key.length > 60 || val.length > 200) { respond("That's a bit long for me to store."); return true; }
+      if (key.length > 60 || val.length > 200) { respond("That's too long."); return true; }
       settings.memories[key] = val; saveSettings(); applySettings();
       beep(880, 0.08, 0.08);
-      respond("Stored. I'll remember that your " + key + " is " + val + "."); return true;
+      respond("Stored. Your " + key + " is " + val + "."); return true;
     }
     if ((m = t.match(/^(?:what(?:'s| is)|do you remember)\s+my\s+(.+?)$/))) {
       var k2 = m[1].trim();
@@ -1749,10 +1614,10 @@
     if ((m = t.match(/^(?:take a note|note that|note down|add note|make a note|write down)\s*:?\s*(.+)$/))) {
       settings.notes.push({ text: m[1].trim(), at: Date.now() }); saveSettings(); applySettings();
       beep(880, 0.08, 0.08);
-      respond("Note saved. You now have " + settings.notes.length + " note" + (settings.notes.length === 1 ? "" : "s") + "."); return true;
+      respond("Note saved. You have " + settings.notes.length + "."); return true;
     }
     if (/^(?:read|show|list|what are)(?: me)?(?: my)? notes?/.test(t)) {
-      if (!settings.notes.length) { respond("You don't have any notes."); return true; }
+      if (!settings.notes.length) { respond("No notes."); return true; }
       var nlist = settings.notes.map(function (n, i) { return (i + 1) + ". " + n.text; }).join(". ");
       logLine("Notes — " + nlist, "sys");
       respond("You have " + settings.notes.length + " note" + (settings.notes.length === 1 ? "" : "s") + ". " + nlist); return true;
@@ -1770,7 +1635,7 @@
     if ((m = t.match(/^(?:set (?:a )?timer(?: for)?|timer for|remind me in|in)\s+(\d+(?:\.\d+)?)\s*(seconds?|secs?|s|minutes?|mins?|m|hours?|hrs?|h)\b(.*)$/))) {
       var tval = parseFloat(m[1]), tunit = m[2], secs = tval;
       if (/^m/.test(tunit)) secs = tval * 60; else if (/^h/.test(tunit)) secs = tval * 3600;
-      if (secs <= 0 || secs > 86400) { respond("Please choose between 1 second and 24 hours."); return true; }
+      if (secs <= 0 || secs > 86400) { respond("Choose between 1 second and 24 hours."); return true; }
       var labelMatch = m[3].match(/(?:to|for|about|that)\s+(.+)$/);
       var label = labelMatch ? labelMatch[1].trim() : "";
       setTimer(secs, label);
@@ -1781,7 +1646,7 @@
       var tn = activeTimers.length;
       for (var ti = 0; ti < activeTimers.length; ti++) clearTimeout(activeTimers[ti]);
       activeTimers = [];
-      respond(tn ? ("Cancelled " + tn + " timer" + (tn === 1 ? "" : "s") + ".") : "There are no active timers."); return true;
+      respond(tn ? ("Cancelled " + tn + " timer" + (tn === 1 ? "" : "s") + ".") : "No active timers."); return true;
     }
     if (/\b(weather|temperature outside|forecast|how hot|how cold)\b/.test(t)) {
       setStatus("PROCESSING", "QUERYING METEOROLOGICAL DATA");
@@ -1790,19 +1655,18 @@
         var desc = WX[cur.weather_code] || "indeterminate conditions";
         respond("Currently " + Math.round(cur.temperature_2m) + " degrees Celsius with " + desc + ". It feels like " + Math.round(cur.apparent_temperature) + " degrees, with winds at " + Math.round(cur.wind_speed_10m) + " kilometres per hour.");
       }).catch(function (err) {
-        if (err.message === "denied") respond("I require location permission to retrieve local weather.");
-        else if (err.message === "no-geo") respond("Your browser does not support geolocation.");
-        else respond("I'm unable to reach the meteorological service.");
+        if (err.message === "denied") respond("I require location permission.");
+        else if (err.message === "no-geo") respond("Geolocation unsupported.");
+        else respond("I can't reach the meteorological service.");
       });
       return true;
     }
-
     var wantScreen =
       /\b(?:look at|look|see|read|check|what'?s on|what is on|analyse|analyze|describe|scan|view|examine|inspect|look over|take a look at)\b[\s\S]{0,60}\b(?:my |the |this |a )?(screen|monitor|display|page|window|browser|website|site|tab|desktop)\b/i.test(raw)
       || /\b(?:can you see|do you see|are you seeing|what do you see|what am i looking at|what is this|what'?s this|read this|read that|look here|look there)\b/i.test(t)
       || /^(?:screen|vision)\s*(?:check|test|look|read|analyse|analyze)$/i.test(t);
     if (wantScreen) {
-      if (!screenStream) { respond("Screen vision isn't active. Click the screen icon in the header, or say 'share my screen'."); return true; }
+      if (!screenStream) { respond("Screen vision isn't active. Click the screen icon in the header."); return true; }
       var cap = captureScreenFrame();
       if (cap.error) { logLine("Screen capture: " + cap.error, "warn"); respond("I couldn't capture your screen — " + cap.error); return true; }
       logLine("Captured screen: " + cap.width + "×" + cap.height + ", ~" + bytes(Math.round(cap.bytes * 0.75)) + " JPEG", "sys");
@@ -1845,8 +1709,7 @@
     if (/^(?:clear|wipe)(?: the)?(?: activity)?(?: log)?$/.test(t)) {
       if (els.log) els.log.innerHTML = ""; logCount = 0;
       if (els.logCount) els.logCount.textContent = "0";
-      logLine("Activity log cleared.", "sys");
-      respond("Log cleared."); return true;
+      logLine("Activity log cleared.", "sys"); respond("Log cleared."); return true;
     }
     if (/(full ?screen|maximise|maximize)/.test(t)) {
       if (!document.fullscreenElement) { if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen(); respond("Entering full screen."); }
@@ -1855,10 +1718,9 @@
     }
     if (/^(?:open|show)\s+(?:the\s+)?settings|^(?:settings|preferences)$/.test(t)) { openSettings(); respond("Opening settings."); return true; }
     if (/(shut down|power off|standby|sleep mode|good night)/.test(t)) {
-      setStatus("STANDBY", "ENTERING LOW POWER MODE");
-      energy = 0.05;
+      setStatus("STANDBY", "ENTERING LOW POWER MODE"); energy = 0.05;
       setTimeout(function () { if (!listening) setStatus("ONLINE", "ALL SYSTEMS NOMINAL"); }, 5000);
-      respond("Entering standby. Wake me when you need me."); return true;
+      respond("Entering standby."); return true;
     }
     if (/^(?:clear|reset|forget)\s+(?:our\s+|the\s+)?conversation|^(?:new|fresh)\s+conversation/.test(t)) {
       conversationHistory = [];
@@ -1904,8 +1766,8 @@
           logLine("A.C.E. online. Standing by.", "ace");
           if (settings.userName) logLine("Good to see you, " + settings.userName + ".", "ace");
           if (!aiConfigured()) logLine("OpenRouter not configured — add key + model in settings.", "warn");
-          else logLine("OpenRouter ready — chat: " + settings.model + (settings.visionModel ? ", vision: " + settings.visionModel : ""), "ok");
-          if (ttsConfigured()) logLine("TTS engine: " + settings.ttsModel + " (" + settings.ttsVoice + ")", "ok");
+          else logLine("OpenRouter ready — chat: " + settings.model, "ok");
+          if (ttsConfigured()) logLine("TTS engine: " + settings.ttsModel + (settings.ttsVoice ? (" / " + settings.ttsVoice) : ""), "ok");
           else logLine("No TTS model set — using browser voice.", "sys");
           if (isUsingHardcodedKey()) logLine("API key loaded from hardcoded config.", "ok");
           if (settings.alwaysOn) {
@@ -1914,8 +1776,7 @@
           }
         });
       }
-      var line = BOOT_LINES[i];
-      var label = line[0], status = line[1];
+      var line = BOOT_LINES[i], label = line[0], status = line[1];
       if (label === "CONNECTING TO OPENROUTER") status = aiConfigured() ? "OK" : "PENDING";
       if (label === "LOADING TTS VOICE ENGINE") status = ttsConfigured() ? "OK" : "BROWSER";
       var dots = ".".repeat(Math.max(4, 42 - label.length));
@@ -1953,6 +1814,7 @@
       setTtsVoice: $("setTtsVoice"), setTtsVoiceCustom: $("setTtsVoiceCustom"),
       ttsVoiceHelp: $("ttsVoiceHelp"),
       testAiBtn: $("testAiBtn"), testVisionBtn: $("testVisionBtn"), testTtsBtn: $("testTtsBtn"),
+      showTtsDebugBtn: $("showTtsDebugBtn"),
       clearHistoryBtn: $("clearHistoryBtn"),
       setScreenPreview: $("setScreenPreview"), setVisionDebug: $("setVisionDebug"),
       setAlwaysOn: $("setAlwaysOn"), setRequireWake: $("setRequireWake"),
@@ -2005,8 +1867,7 @@
     if (els.cmd) {
       els.cmd.addEventListener("keydown", function (e) {
         if (e.key === "Enter") {
-          var val = els.cmd.value.trim();
-          els.cmd.value = "";
+          var val = els.cmd.value.trim(); els.cmd.value = "";
           if (val) { userHasInteracted = true; logLine(val, "user"); handleCommand(val); }
         }
       });
@@ -2015,24 +1876,20 @@
     document.addEventListener("click", function () { userHasInteracted = true; }, { once: true });
     document.addEventListener("keydown", function () { userHasInteracted = true; }, { once: true });
 
-    // ---- User name ----
     if (els.setUserName) {
-      els.setUserName.addEventListener("input", function (e) {
-        settings.userName = e.target.value.trim(); saveSettings();
-      });
+      els.setUserName.addEventListener("input", function (e) { settings.userName = e.target.value.trim(); saveSettings(); });
       els.setUserName.addEventListener("blur", function (e) {
         var v = e.target.value.trim();
         if (v && v !== cap(v)) { e.target.value = cap(v); settings.userName = cap(v); saveSettings(); }
       });
     }
 
-    // ---- API key ----
     if (els.setApiKey) {
       els.setApiKey.addEventListener("input", function (e) {
         settings.apiKey = e.target.value.trim();
         saveSettings(); updateChips();
         if (els.keySourceBadge) els.keySourceBadge.style.display = isUsingHardcodedKey() ? "inline-block" : "none";
-        if (els.setApiKey) els.setApiKey.placeholder = isUsingHardcodedKey() ? "(using hardcoded key)" : "sk-or-v1-…";
+        els.setApiKey.placeholder = isUsingHardcodedKey() ? "(using hardcoded key)" : "sk-or-v1-…";
       });
     }
     if (els.toggleKeyBtn) {
@@ -2043,7 +1900,6 @@
       });
     }
 
-    // ---- Chat model ----
     if (els.setModel) {
       els.setModel.addEventListener("input", function (e) {
         settings.model = e.target.value.trim(); saveSettings(); updateChips();
@@ -2070,25 +1926,22 @@
       });
     }
 
-    // ---- TTS model dropdown ----
+    // TTS provider dropdown
     if (els.setTtsModel) {
       els.setTtsModel.addEventListener("change", function (e) {
         var v = e.target.value;
         if (v === "__custom__") {
           if (els.setTtsModelCustom) { els.setTtsModelCustom.style.display = "block"; els.setTtsModelCustom.focus(); }
-          // Don't set the model yet — wait for the custom value
         } else {
           if (els.setTtsModelCustom) { els.setTtsModelCustom.style.display = "none"; els.setTtsModelCustom.value = ""; }
           settings.ttsModel = v;
-          // Auto-pick first voice for this model
           var list = TTS_VOICES[v];
-          if (list && list.length) settings.ttsVoice = list[0].id;
-          else settings.ttsVoice = "";
+          settings.ttsVoice = (list && list.length) ? list[0].id : "";
           saveSettings();
           populateVoiceDropdown(settings.ttsModel);
           updateTtsHelp(settings.ttsModel);
           updateChips();
-          toast(v ? ("Voice engine: " + v) : "Using browser voice");
+          toast(v ? ("Voice: " + v) : "Browser voice");
         }
       });
     }
@@ -2106,7 +1959,7 @@
       });
     }
 
-    // ---- TTS voice dropdown ----
+    // TTS voice dropdown
     if (els.setTtsVoice) {
       els.setTtsVoice.addEventListener("change", function (e) {
         var v = e.target.value;
@@ -2119,25 +1972,19 @@
       });
     }
     if (els.setTtsVoiceCustom) {
-      els.setTtsVoiceCustom.addEventListener("input", function (e) {
-        settings.ttsVoice = e.target.value.trim(); saveSettings();
-      });
+      els.setTtsVoiceCustom.addEventListener("input", function (e) { settings.ttsVoice = e.target.value.trim(); saveSettings(); });
     }
 
-    // ---- Model chips ----
     document.querySelectorAll(".model-chip").forEach(function (chip) {
       chip.addEventListener("click", function () {
-        var model = chip.getAttribute("data-model");
-        if (!model) return;
+        var model = chip.getAttribute("data-model"); if (!model) return;
         settings.model = model; saveSettings();
         if (els.setModel) els.setModel.value = model;
         document.querySelectorAll(".model-chip").forEach(function (c) { c.classList.toggle("active", c === chip); });
-        updateChips();
-        toast("Model set to " + model);
+        updateChips(); toast("Model set to " + model);
       });
     });
 
-    // ---- Test buttons ----
     if (els.testAiBtn) {
       els.testAiBtn.addEventListener("click", async function () {
         userHasInteracted = true;
@@ -2149,8 +1996,7 @@
           logLine("Reply: " + reply.slice(0, 100), "ace");
           toast("Chat connected"); speak("Chat connection verified.");
         } catch (err) {
-          logLine("Chat error: " + (err && err.message || err), "err");
-          toast("Chat failed", "warn");
+          logLine("Chat error: " + (err && err.message || err), "err"); toast("Chat failed", "warn");
         } finally {
           els.testAiBtn.textContent = "Test chat connection"; els.testAiBtn.disabled = false; updateChips();
         }
@@ -2183,8 +2029,22 @@
       els.testTtsBtn.addEventListener("click", function () {
         userHasInteracted = true;
         if (!ttsConfigured()) { toast("Set a TTS provider first", "warn"); return; }
-        logLine("Testing voice: " + settings.ttsModel + " / " + settings.ttsVoice, "sys");
+        logLine("Testing voice: " + settings.ttsModel + (settings.ttsVoice ? (" / " + settings.ttsVoice) : " (default)"), "sys");
         speak("This is A.C.E., testing the voice engine. All systems are operating within normal parameters.");
+      });
+    }
+    if (els.showTtsDebugBtn) {
+      els.showTtsDebugBtn.addEventListener("click", function () {
+        var key = effectiveApiKey();
+        logLine("—— VOICE DIAGNOSTICS ——", "sys");
+        logLine("Endpoint: " + OPENROUTER_TTS_ENDPOINT, "sys");
+        logLine("Model: " + (settings.ttsModel || "(none)"), "sys");
+        logLine("Voice: " + (settings.ttsVoice || "(default)"), "sys");
+        logLine("API key: " + (key ? (key.slice(0, 12) + "…" + key.slice(-6) + " (" + key.length + " chars)") : "(missing)"), "sys");
+        logLine("Source: " + (isUsingHardcodedKey() ? "hardcoded in script" : "settings panel"), "sys");
+        logLine("Last TTS error: " + (lastTtsError || "(none)"), "sys");
+        logLine("Speak enabled: " + settings.speak + " | User interacted: " + userHasInteracted, "sys");
+        toast("Diagnostics written to log");
       });
     }
 
@@ -2216,11 +2076,7 @@
         stopListening(); toast("Always-listening disabled"); logLine("Always-listening mode disabled.", "sys");
       }
     });
-    if (els.setWakeWord) {
-      els.setWakeWord.addEventListener("input", function (e) {
-        settings.wakeWord = e.target.value.trim() || "ace"; saveSettings();
-      });
-    }
+    if (els.setWakeWord) els.setWakeWord.addEventListener("input", function (e) { settings.wakeWord = e.target.value.trim() || "ace"; saveSettings(); });
     if (els.setLang) {
       els.setLang.addEventListener("change", function (e) {
         settings.lang = e.target.value; saveSettings();
@@ -2235,9 +2091,7 @@
       els.setVoice.addEventListener("change", function (e) {
         settings.voiceName = e.target.value; saveSettings();
         var v = pickVoiceByName(settings.voiceName);
-        if (els.voiceName) {
-          els.voiceName.textContent = (v ? v.name : (jarvisVoice ? jarvisVoice.name : "DEFAULT")).toUpperCase().slice(0, 16);
-        }
+        if (els.voiceName) els.voiceName.textContent = (v ? v.name : (jarvisVoice ? jarvisVoice.name : "DEFAULT")).toUpperCase().slice(0, 16);
       });
     }
     bindRange("setRate", "rate", "valRate");
@@ -2295,14 +2149,12 @@
       setTimeout(refreshVoices, 500);
       setTimeout(refreshVoices, 1500);
     } else if (els.voiceName) els.voiceName.textContent = "UNSUPPORTED";
-    if (!micSupported) logLine("Speech recognition unsupported — use Chrome or Edge for voice.", "warn");
+    if (!micSupported) logLine("Speech recognition unsupported — use Chrome or Edge.", "warn");
 
     setInterval(tickClock, 1000); tickClock();
     setInterval(tickUptime, 1000); tickUptime();
     setInterval(updateStats, 1400); updateStats();
-    setInterval(function () {
-      if (!listening && !aiBusy) energy = clamp(energy + rand(-0.05, 0.06), 0.1, 0.55);
-    }, 1800);
+    setInterval(function () { if (!listening && !aiBusy) energy = clamp(energy + rand(-0.05, 0.06), 0.1, 0.55); }, 1800);
 
     resizeCanvas();
     lastFrame = performance.now();
@@ -2317,15 +2169,11 @@
       }
     }, 6500);
 
-    runBoot().catch(function (err) {
-      console.error("Boot error:", err);
-      if (els.boot) els.boot.classList.add("done");
-    });
+    runBoot().catch(function (err) { console.error("Boot error:", err); if (els.boot) els.boot.classList.add("done"); });
   }
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", init);
-  } else init();
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+  else init();
 
 })();
 </script>
