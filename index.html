@@ -1,4 +1,3 @@
-html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -58,11 +57,11 @@ html
     text-shadow:0 0 18px rgba(0,229,255,.7)}
   .brand small{display:block;font-size:9px;letter-spacing:.32em;color:rgba(0,229,255,.5);margin-top:4px}
   .header-right{display:flex;align-items:center;gap:16px}
-  .key-btn{background:rgba(0,229,255,.08);border:1px solid var(--dim);
-    color:var(--c);font:inherit;font-size:10px;letter-spacing:.2em;
-    padding:6px 10px;border-radius:6px;cursor:pointer;transition:.2s}
-  .key-btn:hover{background:rgba(0,229,255,.2)}
-  .key-btn.ok{border-color:var(--c);box-shadow:0 0 12px rgba(0,229,255,.4)}
+  .icon-btn{background:rgba(0,229,255,.08);border:1px solid var(--dim);
+    color:var(--c);font:inherit;font-size:14px;width:34px;height:34px;
+    border-radius:8px;cursor:pointer;transition:.2s;display:grid;place-items:center}
+  .icon-btn:hover{background:rgba(0,229,255,.2);box-shadow:0 0 12px rgba(0,229,255,.3)}
+  .icon-btn.ok{border-color:var(--c);box-shadow:0 0 12px rgba(0,229,255,.4)}
   .clock{text-align:right;font-size:clamp(12px,1.6vw,15px);letter-spacing:.15em}
   .clock span{display:block;font-size:10px;letter-spacing:.3em;color:rgba(0,229,255,.5);margin-top:4px}
 
@@ -139,11 +138,65 @@ html
     border:1px solid var(--c);animation:ripple 1.3s ease-out infinite}
   @keyframes ripple{from{transform:scale(.9);opacity:.9}to{transform:scale(1.35);opacity:0}}
 
-  .wake-toggle{display:flex;align-items:center;gap:6px;font-size:9px;letter-spacing:.2em;
-    color:rgba(0,229,255,.55);cursor:pointer;user-select:none;flex-shrink:0}
-  .wake-toggle input{accent-color:var(--c)}
+  /* ============ SETTINGS PANEL ============ */
+  .settings{position:fixed;top:0;right:0;height:100%;width:min(400px,92vw);z-index:80;
+    background:linear-gradient(180deg, rgba(2,20,30,.98), rgba(1,10,18,.98));
+    border-left:1px solid var(--dim);backdrop-filter:blur(14px);
+    box-shadow:-20px 0 60px rgba(0,0,0,.7);
+    transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);
+    display:flex;flex-direction:column;overflow-y:auto}
+  .settings.open{transform:translateX(0)}
+  .settings-header{padding:20px;border-bottom:1px solid var(--faint);
+    display:flex;justify-content:space-between;align-items:center}
+  .settings-header h2{font-size:12px;letter-spacing:.4em;color:var(--c)}
+  .settings-close{background:none;border:1px solid var(--faint);color:var(--c);
+    font:inherit;font-size:14px;width:30px;height:30px;border-radius:6px;cursor:pointer}
+  .settings-close:hover{background:rgba(0,229,255,.15)}
+  .settings-body{padding:20px;display:flex;flex-direction:column;gap:22px}
 
-  /* Modal for API key */
+  .setting-group{display:flex;flex-direction:column;gap:8px}
+  .setting-group > label:first-child{font-size:9px;letter-spacing:.35em;
+    color:rgba(0,229,255,.5);padding-bottom:6px;border-bottom:1px solid var(--faint)}
+  .setting-title{font-size:11px;letter-spacing:.15em;color:var(--c);margin-bottom:2px}
+  .setting-hint{font-size:10px;line-height:1.6;color:rgba(0,229,255,.5);
+    font-family:system-ui,-apple-system,"Segoe UI",sans-serif;letter-spacing:.02em}
+
+  .toggle-row{display:flex;justify-content:space-between;align-items:center;
+    padding:12px;border:1px solid var(--faint);border-radius:10px;
+    background:rgba(0,30,42,.35);transition:.2s}
+  .toggle-row:hover{border-color:var(--dim);background:rgba(0,229,255,.06)}
+  .toggle-row.disabled{opacity:.4;pointer-events:none}
+  .toggle-info{flex:1;padding-right:12px}
+  .toggle-info strong{display:block;font-size:11.5px;letter-spacing:.12em;
+    color:#d8fbff;font-weight:500;margin-bottom:3px}
+  .toggle-info span{font-size:10px;color:rgba(0,229,255,.5);
+    font-family:system-ui,sans-serif;line-height:1.5}
+
+  .switch{position:relative;width:46px;height:24px;flex-shrink:0}
+  .switch input{opacity:0;width:0;height:0}
+  .slider{position:absolute;inset:0;background:rgba(0,229,255,.1);
+    border:1px solid var(--dim);border-radius:24px;cursor:pointer;transition:.25s}
+  .slider::before{content:"";position:absolute;width:16px;height:16px;
+    left:3px;top:3px;background:rgba(0,229,255,.5);border-radius:50%;transition:.25s}
+  .switch input:checked + .slider{background:rgba(0,229,255,.25);border-color:var(--c);
+    box-shadow:0 0 12px rgba(0,229,255,.5)}
+  .switch input:checked + .slider::before{transform:translateX(22px);
+    background:var(--c);box-shadow:0 0 10px var(--c)}
+
+  .settings-footer{margin-top:auto;padding:20px;border-top:1px solid var(--faint);
+    display:flex;flex-direction:column;gap:10px}
+  .settings-footer button{font:inherit;font-size:10px;letter-spacing:.25em;padding:11px;
+    border-radius:8px;cursor:pointer;border:1px solid var(--dim);
+    background:rgba(0,229,255,.08);color:var(--c);transition:.2s}
+  .settings-footer button:hover{background:rgba(0,229,255,.18)}
+  .settings-footer button.danger{border-color:rgba(255,80,80,.4);color:#ff8080}
+  .settings-footer button.danger:hover{background:rgba(255,80,80,.15)}
+
+  .overlay{position:fixed;inset:0;z-index:70;background:rgba(0,0,0,.6);
+    opacity:0;pointer-events:none;transition:opacity .3s}
+  .overlay.show{opacity:1;pointer-events:auto}
+
+  /* API key modal */
   .modal{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:100;
     display:none;place-items:center;backdrop-filter:blur(4px)}
   .modal.show{display:grid}
@@ -167,6 +220,14 @@ html
   .modal-box a{color:var(--c);text-decoration:none;border-bottom:1px dotted var(--c)}
   .modal-box code{background:rgba(0,229,255,.1);padding:1px 5px;border-radius:3px;font-size:10px}
 
+  /* toast */
+  .toast{position:fixed;bottom:24px;left:50%;transform:translate(-50%,80px);
+    background:rgba(0,30,42,.95);border:1px solid var(--c);color:var(--c);
+    padding:12px 22px;border-radius:30px;font-size:11px;letter-spacing:.2em;
+    box-shadow:0 0 30px rgba(0,229,255,.4);z-index:150;
+    transition:transform .35s cubic-bezier(.4,0,.2,1),opacity .35s;opacity:0}
+  .toast.show{transform:translate(-50%,0);opacity:1}
+
   @media (max-width:900px){
     .main{grid-template-columns:1fr;grid-template-rows:1fr auto}
     .log{max-height:30vh}
@@ -184,6 +245,118 @@ html
   <div class="boot-sub">INITIALIZING AI CORE…</div>
 </div>
 
+<!-- Settings Overlay -->
+<div class="overlay" id="overlay"></div>
+
+<!-- Settings Panel -->
+<aside class="settings" id="settings">
+  <div class="settings-header">
+    <h2>⚙ SETTINGS</h2>
+    <button class="settings-close" id="settingsClose">✕</button>
+  </div>
+
+  <div class="settings-body">
+
+    <!-- VOICE -->
+    <div class="setting-group">
+      <label>VOICE CONTROL</label>
+
+      <div class="toggle-row" id="rowWake">
+        <div class="toggle-info">
+          <strong>WAKE WORD</strong>
+          <span>Say "Jarvis" to activate hands-free</span>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="setWake">
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="toggle-row" id="rowAlways">
+        <div class="toggle-info">
+          <strong>ALWAYS LISTENING</strong>
+          <span>Keep mic open continuously. Auto-restarts after each reply.</span>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="setAlways">
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="toggle-row" id="rowVoice">
+        <div class="toggle-info">
+          <strong>VOICE OUTPUT</strong>
+          <span>Speak replies aloud through speakers</span>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="setVoice" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <!-- AI -->
+    <div class="setting-group">
+      <label>AI CORE</label>
+
+      <div class="toggle-row" id="rowAi">
+        <div class="toggle-info">
+          <strong>AI RESPONSES</strong>
+          <span>Use AI for open-ended questions. Off = local commands only.</span>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="setAi" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="toggle-row" id="rowMemory">
+        <div class="toggle-info">
+          <strong>REMEMBER CONVERSATION</strong>
+          <span>Persist last 20 turns across page reloads</span>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="setMemory" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <!-- APPEARANCE -->
+    <div class="setting-group">
+      <label>APPEARANCE</label>
+
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <strong>SCANLINE EFFECT</strong>
+          <span>CRT-style overlay</span>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="setScan" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <strong>VISUALIZER</strong>
+          <span>Live audio-reactive bars</span>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="setViz" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="settings-footer">
+    <button id="btnApiKey">🔑 MANAGE AI KEY</button>
+    <button id="btnResetAll" class="danger">↺ RESET ALL SETTINGS</button>
+  </div>
+</aside>
+
 <!-- API Key Modal -->
 <div class="modal" id="keyModal">
   <div class="modal-box">
@@ -192,7 +365,7 @@ html
       JARVIS uses a free AI API for real conversation. Paste your
       <a href="https://openrouter.ai/keys" target="_blank" rel="noopener">OpenRouter</a>
       API key below (starts with <code>sk-or-</code>).
-      It is stored only in this browser's <code>localStorage</code> and never sent anywhere except OpenRouter.
+      Stored only in this browser's <code>localStorage</code>.
     </p>
     <input type="password" id="keyInput" placeholder="sk-or-v1-..." autocomplete="off" spellcheck="false">
     <div class="modal-actions">
@@ -201,6 +374,8 @@ html
     </div>
   </div>
 </div>
+
+<div class="toast" id="toast"></div>
 
 <div class="app">
   <header>
@@ -212,7 +387,7 @@ html
       </div>
     </div>
     <div class="header-right">
-      <button class="key-btn" id="keyBtn">⚙ AI KEY</button>
+      <button class="icon-btn" id="settingsBtn" title="Settings">⚙</button>
       <div class="clock">
         <div id="time">--:--:--</div>
         <span id="date">---</span>
@@ -242,9 +417,6 @@ html
   </div>
 
   <div class="bar">
-    <label class="wake-toggle" title="Say 'Jarvis' to activate">
-      <input type="checkbox" id="wakeToggle"> WAKE
-    </label>
     <input id="cmd" type="text" placeholder="Ask JARVIS anything…" autocomplete="off">
     <button class="mic" id="mic" title="Voice input">🎙</button>
   </div>
@@ -256,32 +428,57 @@ html
 
   /* ============ CONFIG ============ */
   const API_URL = 'https://openrouter.ai/api/v1/chat/completions';
-  const MODEL   = 'meta-llama/llama-3.3-70b-instruct:free'; // free tier
+  const MODEL   = 'meta-llama/llama-3.3-70b-instruct:free';
   const SYSTEM_PROMPT =
     'You are JARVIS, Tony Stark\'s AI assistant. Address the user as "sir". ' +
     'Be concise, witty, and British. Keep replies under 3 sentences unless asked for detail. ' +
     'Never use markdown, emojis, or asterisks — this is spoken aloud.';
 
-  const MEMORY_KEY  = 'jarvis_memory_v1';
-  const API_KEY_KEY = 'jarvis_api_key';
+  const SETTINGS_KEY  = 'jarvis_settings_v1';
+  const MEMORY_KEY    = 'jarvis_memory_v1';
+  const API_KEY_KEY   = 'jarvis_api_key';
+
+  /* ============ SETTINGS STATE ============ */
+  const DEFAULT_SETTINGS = {
+    wakeWord:      false,
+    alwaysListen:  false,
+    voiceOutput:   true,
+    aiEnabled:     true,
+    memory:        true,
+    scanlines:     true,
+    visualizer:    true
+  };
+
+  let S = { ...DEFAULT_SETTINGS };
+
+  function loadSettings() {
+    try {
+      const raw = JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}');
+      S = { ...DEFAULT_SETTINGS, ...raw };
+    } catch { S = { ...DEFAULT_SETTINGS }; }
+  }
+  function saveSettings() {
+    try { localStorage.setItem(SETTINGS_KEY, JSON.stringify(S)); } catch {}
+  }
 
   /* ============ ELEMENTS ============ */
-  const logEl    = document.getElementById('log');
-  const inputEl  = document.getElementById('cmd');
-  const micBtn   = document.getElementById('mic');
-  const statusEl = document.getElementById('status');
-  const timeEl   = document.getElementById('time');
-  const dateEl   = document.getElementById('date');
-  const canvas   = document.getElementById('viz');
-  const ctx      = canvas.getContext('2d');
-  const keyModal = document.getElementById('keyModal');
-  const keyInput = document.getElementById('keyInput');
-  const keyBtn   = document.getElementById('keyBtn');
-  const wakeTog  = document.getElementById('wakeToggle');
+  const logEl      = document.getElementById('log');
+  const inputEl    = document.getElementById('cmd');
+  const micBtn     = document.getElementById('mic');
+  const statusEl   = document.getElementById('status');
+  const timeEl     = document.getElementById('time');
+  const dateEl     = document.getElementById('date');
+  const canvas     = document.getElementById('viz');
+  const ctx        = canvas.getContext('2d');
+  const keyModal   = document.getElementById('keyModal');
+  const keyInput   = document.getElementById('keyInput');
+  const settingsEl = document.getElementById('settings');
+  const overlayEl  = document.getElementById('overlay');
+  const toastEl    = document.getElementById('toast');
 
   let state = 'idle';
-  let history = [];        // conversation history for AI
-  let lastUserMsg = '';
+  let history = [];
+  let alwaysListenTimer = null;
 
   /* ============ UTILITIES ============ */
   const esc = s => String(s).replace(/[&<>"']/g, c =>
@@ -306,7 +503,14 @@ html
     if (s === 'listening')      setStatus('LISTENING…');
     else if (s === 'speaking')  setStatus('SPEAKING');
     else if (s === 'thinking')  setStatus('PROCESSING');
-    else                        setStatus('SYSTEM ONLINE');
+    else                        setStatus(S.alwaysListen ? 'ALWAYS-ON' : 'SYSTEM ONLINE');
+  }
+
+  function toast(msg) {
+    toastEl.textContent = msg;
+    toastEl.classList.add('show');
+    clearTimeout(toast._t);
+    toast._t = setTimeout(() => toastEl.classList.remove('show'), 2200);
   }
 
   /* ============ CLOCK ============ */
@@ -318,7 +522,7 @@ html
   }
   tick(); setInterval(tick, 1000);
 
-  /* ============ PERSISTENT MEMORY ============ */
+  /* ============ MEMORY ============ */
   function loadMemory() {
     try {
       const m = JSON.parse(localStorage.getItem(MEMORY_KEY) || '[]');
@@ -326,11 +530,8 @@ html
     } catch { history = []; }
   }
   function saveMemory() {
-    try {
-      // Keep last 20 turns to stay within context & storage limits
-      const trimmed = history.slice(-20);
-      localStorage.setItem(MEMORY_KEY, JSON.stringify(trimmed));
-    } catch {}
+    if (!S.memory) return;
+    try { localStorage.setItem(MEMORY_KEY, JSON.stringify(history.slice(-20))); } catch {}
   }
   loadMemory();
 
@@ -351,47 +552,33 @@ html
   if (synth) { pickVoice(); synth.onvoiceschanged = pickVoice; }
 
   function speak(text) {
-    if (!synth) { setState('idle'); return; }
+    if (!S.voiceOutput || !synth) { setState('idle'); afterSpeak(); return; }
     synth.cancel();
     const u = new SpeechSynthesisUtterance(text);
     if (voice) u.voice = voice;
     u.rate = 1.0; u.pitch = 0.85; u.volume = 1;
     u.onstart = () => setState('speaking');
-    u.onend   = () => setState('idle');
-    u.onerror = () => setState('idle');
+    u.onend   = () => { setState('idle'); afterSpeak(); };
+    u.onerror = () => { setState('idle'); afterSpeak(); };
     setState('speaking');
     synth.speak(u);
   }
 
+  function afterSpeak() {
+    if (S.alwaysListen && !S.wakeWord) {
+      // Always-listening mode: resume listening after reply
+      clearTimeout(alwaysListenTimer);
+      alwaysListenTimer = setTimeout(() => {
+        if (state === 'idle') startListening();
+      }, 400);
+    } else if (S.alwaysListen && S.wakeWord) {
+      // Both on: restart wake listener
+      startWake();
+    }
+  }
+
   /* ============ AI CALL ============ */
-  function getApiKey() { return localStorage.getItem(API_KEY_KEY) || ''; }
-
-  function openKeyModal() {
-    keyInput.value = getApiKey();
-    keyModal.classList.add('show');
-    setTimeout(() => keyInput.focus(), 100);
-  }
-  function closeKeyModal() { keyModal.classList.remove('show'); }
-
-  keyBtn.addEventListener('click', openKeyModal);
-  document.getElementById('keyCancel').addEventListener('click', closeKeyModal);
-  document.getElementById('keySave').addEventListener('click', () => {
-    const k = keyInput.value.trim();
-    if (k) localStorage.setItem(API_KEY_KEY, k);
-    else localStorage.removeItem(API_KEY_KEY);
-    closeKeyModal();
-    updateKeyBtn();
-    addMsg('jarvis', k ? 'AI core key saved. I am fully operational now, sir.'
-                       : 'API key removed. I will fall back to basic commands.');
-  });
-  keyModal.addEventListener('click', e => { if (e.target === keyModal) closeKeyModal(); });
-
-  function updateKeyBtn() {
-    const has = !!getApiKey();
-    keyBtn.classList.toggle('ok', has);
-    keyBtn.textContent = has ? '● AI KEY' : '⚙ AI KEY';
-  }
-  updateKeyBtn();
+  const getApiKey = () => localStorage.getItem(API_KEY_KEY) || '';
 
   async function askAI(userText) {
     const key = getApiKey();
@@ -399,7 +586,7 @@ html
 
     const messages = [
       { role: 'system', content: SYSTEM_PROMPT },
-      ...history.slice(-12),
+      ...(S.memory ? history.slice(-12) : []),
       { role: 'user', content: userText }
     ];
 
@@ -413,18 +600,13 @@ html
           'X-Title': 'JARVIS Web Interface'
         },
         body: JSON.stringify({
-          model: MODEL,
-          messages,
-          max_tokens: 200,
-          temperature: 0.8
+          model: MODEL, messages, max_tokens: 200, temperature: 0.8
         })
       });
 
       if (!res.ok) {
-        const err = await res.text();
-        console.warn('AI error', res.status, err);
-        if (res.status === 401) return '[AI key invalid. Please update it via the AI KEY button.]';
-        if (res.status === 429) return '[AI is rate-limited right now, sir. Try again in a moment.]';
+        if (res.status === 401) return '[AI key invalid. Update it in Settings.]';
+        if (res.status === 429) return '[AI is rate-limited, sir. Try again shortly.]';
         return null;
       }
 
@@ -432,11 +614,11 @@ html
       const reply = data?.choices?.[0]?.message?.content?.trim();
       if (!reply) return null;
 
-      // Save to memory
-      history.push({ role: 'user', content: userText });
-      history.push({ role: 'assistant', content: reply });
-      saveMemory();
-
+      if (S.memory) {
+        history.push({ role: 'user', content: userText });
+        history.push({ role: 'assistant', content: reply });
+        saveMemory();
+      }
       return reply;
     } catch (e) {
       console.warn('AI fetch failed', e);
@@ -444,7 +626,7 @@ html
     }
   }
 
-  /* ============ LOCAL COMMAND BRAIN (fallback + fast paths) ============ */
+  /* ============ LOCAL COMMANDS ============ */
   const JOKES = [
     'Why did the developer go broke? Because he used up all his cache.',
     'I would tell you a UDP joke, but you might not get it.',
@@ -504,12 +686,10 @@ html
       if (r !== null) return `That would be ${r}.`;
     }
     if (/(clear|wipe) (the )?(log|screen|console)/.test(q)) {
-      logEl.innerHTML = '<div class="panel-title"><span>SYSTEM LOG</span>' +
-        '<button id="clearLog">CLEAR</button></div>';
-      document.getElementById('clearLog').onclick = clearLog;
+      clearLog();
       return 'Log cleared, sir.';
     }
-    if (/(forget|clear memory|reset memory)/.test(q)) {
+    if (/(forget|clear memory|reset memory|wipe memory)/.test(q)) {
       history = [];
       saveMemory();
       return 'Memory wiped, sir. A fresh start.';
@@ -522,23 +702,24 @@ html
     return null;
   }
 
-  /* ============ MAIN COMMAND HANDLER ============ */
+  /* ============ MAIN HANDLER ============ */
   async function handleCommand(raw) {
     const q = raw.toLowerCase().trim().replace(/[?!.]+$/, '');
     if (!q) return;
 
-    lastUserMsg = raw;
     addMsg('user', raw);
 
-    // Try local fast-path first
     const local = handleLocal(q);
     if (local) { speak(local); return; }
 
-    // Otherwise go to AI
+    if (!S.aiEnabled) {
+      speak('AI responses are turned off, sir. You can enable them in Settings.');
+      return;
+    }
+
     const key = getApiKey();
     if (!key) {
-      speak('I need an AI key to answer that, sir. ' +
-            'Click the AI KEY button in the top right to configure one.');
+      speak('I need an AI key to answer that, sir. Open Settings and tap Manage AI Key.');
       return;
     }
 
@@ -549,9 +730,7 @@ html
     thinking.remove();
 
     if (reply) speak(reply);
-    else {
-      speak("I'm having trouble reaching my AI core right now, sir. Please try again.");
-    }
+    else speak("I'm having trouble reaching my AI core right now, sir. Please try again.");
   }
 
   /* ============ VOICE INPUT ============ */
@@ -581,34 +760,51 @@ html
 
     recog.onerror = e => {
       setState('idle');
-      if (e.error === 'not-allowed' || e.error === 'service-not-allowed')
-        addMsg('jarvis', 'Microphone access was denied. Type your command instead.');
+      if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
+        addMsg('jarvis', 'Microphone access was denied.');
+        S.alwaysListen = false;
+        document.getElementById('setAlways').checked = false;
+        saveSettings();
+      }
     };
 
-    recog.onend = () => { if (state === 'listening') setState('idle'); };
+    recog.onend = () => {
+      if (state === 'listening') {
+        setState('idle');
+        // Auto-restart if always listening
+        if (S.alwaysListen && !S.wakeWord) {
+          clearTimeout(alwaysListenTimer);
+          alwaysListenTimer = setTimeout(() => {
+            if (state === 'idle' && S.alwaysListen) startListening();
+          }, 500);
+        }
+      }
+    };
   }
 
   function startListening() {
-    if (!recog) {
-      addMsg('jarvis', 'Voice input is not supported in this browser.');
-      return;
-    }
+    if (!recog) { addMsg('jarvis', 'Voice input is not supported in this browser.'); return; }
     if (synth) synth.cancel();
     try { recog.start(); } catch (_) {}
   }
 
+  function stopListening() {
+    if (recog) { try { recog.stop(); } catch (_) {} }
+    setState('idle');
+  }
+
   micBtn.addEventListener('click', () => {
-    if (state === 'listening') { recog && recog.stop(); setState('idle'); }
+    if (state === 'listening') stopListening();
     else startListening();
   });
 
-  /* ============ WAKE WORD (continuous listening) ============ */
+  /* ============ WAKE WORD ============ */
   let wakeRecog = null;
   let wakeActive = false;
 
   function startWake() {
-    if (!SR) { alert('Wake word requires Chrome or Edge.'); wakeTog.checked = false; return; }
-    if (wakeRecog) return;
+    if (!SR) { toast('Wake word requires Chrome or Edge'); return; }
+    if (wakeRecog && wakeActive) return;
 
     wakeRecog = new SR();
     wakeRecog.continuous = true;
@@ -619,36 +815,48 @@ html
       for (let i = e.resultIndex; i < e.results.length; i++) {
         const t = e.results[i][0].transcript.toLowerCase();
         if (/\bjarvis\b/.test(t)) {
-          wakeRecog.stop();
+          try { wakeRecog.stop(); } catch (_) {}
+          wakeActive = false;
           setState('idle');
           addMsg('jarvis', 'Yes sir?');
           speak('Yes sir?');
-          // After wake, listen for the actual command
           setTimeout(() => {
-            if (recog && state !== 'speaking') startListening();
-          }, 1800);
+            if (!S.alwaysListen && state !== 'speaking') {
+              // One-shot: after answering, wait for wake again
+              setTimeout(() => { if (S.wakeWord) startWake(); }, 3000);
+            }
+          }, 500);
           return;
         }
       }
     };
 
     wakeRecog.onend = () => {
-      if (wakeActive) {
-        // Restart to keep listening
-        try { wakeRecog.start(); } catch (_) {}
+      if (wakeActive || S.wakeWord) {
+        // Restart wake listener (unless we're in the middle of a command)
+        if (state === 'idle' && S.wakeWord && !S.alwaysListen) {
+          try { wakeRecog.start(); wakeActive = true; } catch (_) {}
+        } else if (S.wakeWord && S.alwaysListen && state === 'idle') {
+          try { wakeRecog.start(); wakeActive = true; } catch (_) {}
+        }
       }
     };
 
     wakeRecog.onerror = e => {
       if (e.error === 'not-allowed') {
         addMsg('jarvis', 'Wake word needs microphone permission.');
+        S.wakeWord = false;
+        document.getElementById('setWake').checked = false;
+        saveSettings();
         wakeActive = false;
-        wakeTog.checked = false;
       }
     };
 
-    try { wakeRecog.start(); wakeActive = true; }
-    catch (_) { wakeTog.checked = false; }
+    try {
+      wakeRecog.start();
+      wakeActive = true;
+      setStatus('WAKE-READY');
+    } catch (_) {}
   }
 
   function stopWake() {
@@ -657,14 +865,163 @@ html
     wakeRecog = null;
   }
 
-  wakeTog.addEventListener('change', () => {
-    if (wakeTog.checked) {
-      addMsg('jarvis', 'Wake word enabled. Say "Jarvis" to activate me, sir.');
+  /* ============ SETTINGS UI WIRING ============ */
+  const setWake     = document.getElementById('setWake');
+  const setAlways   = document.getElementById('setAlways');
+  const setVoice    = document.getElementById('setVoice');
+  const setAi       = document.getElementById('setAi');
+  const setMemory   = document.getElementById('setMemory');
+  const setScan     = document.getElementById('setScan');
+  const setViz      = document.getElementById('setViz');
+  const rowWake     = document.getElementById('rowWake');
+  const rowAlways   = document.getElementById('rowAlways');
+
+  function applySettingsToUI() {
+    setWake.checked   = S.wakeWord;
+    setAlways.checked = S.alwaysListen;
+    setVoice.checked  = S.voiceOutput;
+    setAi.checked     = S.aiEnabled;
+    setMemory.checked = S.memory;
+    setScan.checked   = S.scanlines;
+    setViz.checked    = S.visualizer;
+
+    document.body.classList.toggle('no-scanlines', !S.scanlines);
+    canvas.style.display = S.visualizer ? 'block' : 'none';
+
+    // Wake + Always are mutually exclusive
+    rowAlways.classList.toggle('disabled', S.wakeWord);
+    rowWake.classList.toggle('disabled', S.alwaysListen);
+  }
+
+  function applyVisualSettings() {
+    document.body.style.setProperty('--scan-opacity', S.scanlines ? '.5' : '0');
+    // scanlines handled via a body class
+    document.documentElement.style.setProperty('--scan-display', S.scanlines ? 'block' : 'none');
+    canvas.style.display = S.visualizer ? 'block' : 'none';
+  }
+
+  // Scanline toggle via CSS class
+  const styleTag = document.createElement('style');
+  styleTag.textContent = `body.no-scanlines::after{display:none !important}`;
+  document.head.appendChild(styleTag);
+
+  setWake.addEventListener('change', () => {
+    S.wakeWord = setWake.checked;
+    if (S.wakeWord) {
+      S.alwaysListen = false;
+      setAlways.checked = false;
+      stopListening();
       startWake();
+      toast('Wake word enabled — say "Jarvis"');
     } else {
       stopWake();
-      addMsg('jarvis', 'Wake word disabled.');
+      toast('Wake word disabled');
     }
+    applySettingsToUI();
+    saveSettings();
+  });
+
+  setAlways.addEventListener('change', () => {
+    S.alwaysListen = setAlways.checked;
+    if (S.alwaysListen) {
+      S.wakeWord = false;
+      setWake.checked = false;
+      stopWake();
+      startListening();
+      toast('Always listening — speak freely');
+    } else {
+      stopListening();
+      clearTimeout(alwaysListenTimer);
+      toast('Always listening off');
+    }
+    applySettingsToUI();
+    saveSettings();
+  });
+
+  setVoice.addEventListener('change', () => {
+    S.voiceOutput = setVoice.checked;
+    if (!S.voiceOutput && synth) synth.cancel();
+    saveSettings();
+    toast(S.voiceOutput ? 'Voice output on' : 'Voice output off');
+  });
+
+  setAi.addEventListener('change', () => {
+    S.aiEnabled = setAi.checked;
+    saveSettings();
+    toast(S.aiEnabled ? 'AI responses on' : 'AI responses off');
+  });
+
+  setMemory.addEventListener('change', () => {
+    S.memory = setMemory.checked;
+    if (!S.memory) {
+      history = [];
+      try { localStorage.removeItem(MEMORY_KEY); } catch {}
+    }
+    saveSettings();
+    toast(S.memory ? 'Memory on' : 'Memory off — cleared');
+  });
+
+  setScan.addEventListener('change', () => {
+    S.scanlines = setScan.checked;
+    document.body.classList.toggle('no-scanlines', !S.scanlines);
+    saveSettings();
+  });
+
+  setViz.addEventListener('change', () => {
+    S.visualizer = setViz.checked;
+    canvas.style.display = S.visualizer ? 'block' : 'none';
+    saveSettings();
+  });
+
+  /* ---- Open/close settings ---- */
+  function openSettings() {
+    settingsEl.classList.add('open');
+    overlayEl.classList.add('show');
+    applySettingsToUI();
+  }
+  function closeSettings() {
+    settingsEl.classList.remove('open');
+    overlayEl.classList.remove('show');
+  }
+
+  document.getElementById('settingsBtn').addEventListener('click', openSettings);
+  document.getElementById('settingsClose').addEventListener('click', closeSettings);
+  overlayEl.addEventListener('click', closeSettings);
+
+  /* ---- API key modal ---- */
+  function openKeyModal() {
+    keyInput.value = getApiKey();
+    keyModal.classList.add('show');
+    setTimeout(() => keyInput.focus(), 100);
+  }
+  function closeKeyModal() { keyModal.classList.remove('show'); }
+
+  document.getElementById('btnApiKey').addEventListener('click', openKeyModal);
+  document.getElementById('keyCancel').addEventListener('click', closeKeyModal);
+  document.getElementById('keySave').addEventListener('click', () => {
+    const k = keyInput.value.trim();
+    if (k) localStorage.setItem(API_KEY_KEY, k);
+    else localStorage.removeItem(API_KEY_KEY);
+    closeKeyModal();
+    toast(k ? 'AI key saved' : 'AI key removed');
+  });
+  keyModal.addEventListener('click', e => { if (e.target === keyModal) closeKeyModal(); });
+
+  /* ---- Reset all ---- */
+  document.getElementById('btnResetAll').addEventListener('click', () => {
+    if (!confirm('Reset all settings to defaults? Conversation memory will also be cleared.')) return;
+    S = { ...DEFAULT_SETTINGS };
+    history = [];
+    try {
+      localStorage.removeItem(SETTINGS_KEY);
+      localStorage.removeItem(MEMORY_KEY);
+    } catch {}
+    stopWake();
+    stopListening();
+    applySettingsToUI();
+    document.body.classList.remove('no-scanlines');
+    canvas.style.display = 'block';
+    toast('All settings reset');
   });
 
   /* ============ INPUT EVENTS ============ */
@@ -699,6 +1056,7 @@ html
   resizeCanvas();
 
   function draw() {
+    if (!S.visualizer) { requestAnimationFrame(draw); return; }
     const w = canvas.clientWidth, h = canvas.clientHeight;
     ctx.clearRect(0, 0, w, h);
     const now = performance.now();
@@ -716,8 +1074,8 @@ html
       const x  = i * gap + gap * 0.22;
       const bw = gap * 0.56;
       const y  = (h - bh) / 2;
-
       const isThink = state === 'thinking';
+
       const grad = ctx.createLinearGradient(0, y, 0, y + bh);
       grad.addColorStop(0,   isThink ? 'rgba(255,0,230,0.15)' : 'rgba(0,229,255,0.15)');
       grad.addColorStop(0.5, isThink ? 'rgba(255,0,230,0.95)' : 'rgba(0,229,255,0.95)');
@@ -734,18 +1092,27 @@ html
   requestAnimationFrame(draw);
 
   /* ============ BOOT ============ */
+  loadSettings();
+  applySettingsToUI();
+  applyVisualSettings();
+
   window.addEventListener('load', () => {
     setTimeout(() => {
       document.getElementById('boot').classList.add('done');
       setTimeout(() => {
         const hasKey = !!getApiKey();
-        const greeting = hasKey
-          ? 'Systems online. AI core linked. Good to see you again, sir.'
-          : 'Systems online. Please configure an AI key to unlock full capabilities, sir.';
+        let greeting = 'Systems online.';
+        if (hasKey) greeting += ' AI core linked.';
+        else greeting += ' Configure your AI key in Settings to unlock full capabilities.';
+        greeting += ' Good to see you again, sir.';
         addMsg('jarvis', greeting);
         setState('idle');
         speak(greeting);
-        if (!hasKey) setTimeout(openKeyModal, 2500);
+
+        // Auto-start listening modes if enabled
+        if (S.wakeWord) setTimeout(startWake, 1500);
+        if (S.alwaysListen) setTimeout(startListening, 1500);
+        if (!hasKey) setTimeout(openKeyModal, 3000);
       }, 600);
     }, 2100);
   });
