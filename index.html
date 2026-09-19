@@ -25,7 +25,6 @@
     --warn:#ffa02a;
     --danger:#ff2a2a;
 
-    /* Formal type stack */
     --font-serif: 'Georgia', 'Cambria', 'Palatino Linotype', 'Times New Roman', serif;
     --font-sans:  'Optima', 'Candara', 'Segoe UI', 'Helvetica Neue', 'Gill Sans', sans-serif;
     --font-mono:  'Consolas', 'Monaco', 'Menlo', 'Courier New', monospace;
@@ -42,7 +41,6 @@
   button,input,select,textarea{font-family:inherit;letter-spacing:inherit;color:inherit}
   ::selection{background:rgba(255,42,42,.35);color:#fff}
 
-  /* Headings get the formal serif */
   .brand h1,
   .panel-title,
   .settings-header h2,
@@ -53,7 +51,6 @@
   .btn{
     font-family:var(--font-serif);
   }
-  /* Telemetry numbers stay monospaced so they align */
   .readouts span, .stat .row b, #clock, #uptime, #memCount, #histCount, #logCount{
     font-family:var(--font-mono);
     font-variant-numeric:tabular-nums;
@@ -547,7 +544,7 @@
 
   <main id="mainGrid">
     <aside class="panel" id="telemetryPanel">
-      <div class="panel-title">System Diagnostics <span class="tag">v7.2</span></div>
+      <div class="panel-title">System Diagnostics <span class="tag">v7.3</span></div>
       <div class="stat">
         <div class="row"><span>REACTOR OUTPUT</span><b id="v-pwr">98%</b></div>
         <div class="bar"><i id="b-pwr"></i></div>
@@ -689,8 +686,31 @@
         set a separate vision model here — it will be used only when you share your screen.
       </div>
 
+      <label class="setting-row col" style="margin-top:14px">
+        <span>TTS Model <i style="color:var(--dim2);font-style:italic;font-weight:400">(optional — leave blank for browser voice)</i></span>
+        <input type="text" id="setTtsModel" class="text-input"
+               placeholder="deepgram/flux-tts:free" autocomplete="off" spellcheck="false">
+      </label>
+      <div class="setting-help">
+        Paste a TTS model slug from <a href="https://openrouter.ai/models?output_modalities=speech" target="_blank" rel="noopener">openrouter.ai/models</a>
+        (filter by <b>Speech</b> output). <b>deepgram/flux-tts:free</b> is free and sounds far more human than the browser default.
+      </div>
+
+      <label class="setting-row col">
+        <span>TTS Voice</span>
+        <input type="text" id="setTtsVoice" class="text-input"
+               placeholder="flux-cliff-en" autocomplete="off" spellcheck="false">
+      </label>
+      <div class="setting-help">
+        Deepgram Flux voices use the format <b>flux-{name}-en</b>. Good picks for A.C.E.: 
+        <b>flux-cliff-en</b> (deep, confident, mature), <b>flux-colin-en</b> (British, authoritative),
+        <b>flux-miles-en</b> (calm, professional). See the full catalog in the
+        <a href="https://developers.deepgram.com/docs/flux-tts/voices" target="_blank" rel="noopener">Deepgram docs</a>.
+      </div>
+
       <button class="btn" id="testAiBtn" style="margin-top:14px">Test chat connection</button>
       <button class="btn" id="testVisionBtn">Test vision connection</button>
+      <button class="btn" id="testTtsBtn">Test TTS voice</button>
       <button class="btn" id="clearHistoryBtn">Clear conversation history</button>
     </section>
 
@@ -758,7 +778,7 @@
     <section class="setting-group">
       <h3>Voice Output</h3>
       <label class="setting-row col">
-        <span>Voice</span>
+        <span>Browser Voice <i style="color:var(--dim2);font-style:italic;font-weight:400">(fallback if TTS model is blank or fails)</i></span>
         <select id="setVoice" class="text-input"><option value="">System default</option></select>
       </label>
       <label class="setting-row col">
@@ -777,7 +797,7 @@
         <span>Speak responses</span>
         <input type="checkbox" id="setSpeak" class="switch">
       </label>
-      <button class="btn" id="testVoice">Test voice</button>
+      <button class="btn" id="testVoice">Test browser voice</button>
     </section>
 
     <section class="setting-group">
@@ -807,7 +827,7 @@
       <button class="btn danger" id="resetBtn">Reset all settings</button>
     </section>
 
-    <div class="settings-footer">A.C.E. v7.2 · Autonomous Cognitive Entity · Saved automatically</div>
+    <div class="settings-footer">A.C.E. v7.3 · Autonomous Cognitive Entity · Saved automatically</div>
   </div>
 </aside>
 
@@ -826,11 +846,12 @@
 
   // ==================== CONSTANTS ====================
   var OPENROUTER_ENDPOINT = "https://openrouter.ai/api/v1/chat/completions";
+  var OPENROUTER_TTS_ENDPOINT = "https://openrouter.ai/api/v1/audio/speech";
   var OPENROUTER_REFERER  = "https://github.com/";
   var OPENROUTER_TITLE    = "A.C.E. Interface";
 
   // ==================== SETTINGS ====================
-  var STORAGE_KEY = "ace.settings.v7.2";
+  var STORAGE_KEY = "ace.settings.v7.3";
 
   var DEFAULT_SYSTEM_PROMPT =
     "You are A.C.E. — Autonomous Cognitive Entity — a concise, capable AI assistant with a " +
@@ -847,6 +868,8 @@
     apiKey: "",
     model: "openai/gpt-4o-mini",
     visionModel: "",
+    ttsModel: "deepgram/flux-tts:free",
+    ttsVoice: "flux-cliff-en",
     systemPrompt: DEFAULT_SYSTEM_PROMPT,
     visionDebug: false,
     // User
@@ -926,6 +949,8 @@
   var screenVideo = null;
   var screenPreviewRAF = null;
   var screenWarmupAt = 0;
+  var currentAudio = null;   // <audio> element for OpenRouter TTS
+  var ttsAudioUrl = null;    // object URL to revoke
 
   var INTERRUPT_WORDS = /^(?:(?:please\s+)?(?:be quiet|quiet|stop(?: talking)?|shut up|silence|shush|hush|mute|hold on|wait|pause|cancel|enough|that's enough|thats enough|nevermind|never mind|stop it|shut it)\b[\s.!?,]*)+$/i;
 
@@ -982,7 +1007,7 @@
     } catch (e) {}
   }
 
-  // ==================== SPEECH SYNTHESIS ====================
+  // ==================== BROWSER SPEECH SYNTHESIS (fallback) ====================
   function refreshVoices() {
     if (!("speechSynthesis" in window)) return;
     allVoices = speechSynthesis.getVoices();
@@ -1025,14 +1050,11 @@
     for (var i = 0; i < allVoices.length; i++) if (allVoices[i].name === name) return allVoices[i];
     return null;
   }
-  function speak(text) {
-    if (!settings.speak) return;
+  function browserSpeak(text) {
     if (!("speechSynthesis" in window)) return;
-    if (!userHasInteracted) return;
-    var spoken = text.replace(/```[\s\S]*?```/g, " (code block omitted) ").slice(0, 1200);
     try {
       speechSynthesis.cancel();
-      var u = new SpeechSynthesisUtterance(spoken);
+      var u = new SpeechSynthesisUtterance(text);
       var v = pickVoiceByName(settings.voiceName) || jarvisVoice;
       if (v) u.voice = v;
       u.rate = Number(settings.rate);
@@ -1056,10 +1078,120 @@
       speechSynthesis.speak(u);
     } catch (e) {}
   }
+
+  // ==================== OPENROUTER TTS ====================
+  function ttsConfigured() {
+    return !!(settings.apiKey && settings.ttsModel);
+  }
+
+  async function speak(text) {
+    if (!settings.speak) return;
+    if (!userHasInteracted) return;
+
+    var spoken = text.replace(/```[\s\S]*?```/g, " (code block omitted) ").slice(0, 2000);
+
+    // Fall back to browser if no TTS model is configured
+    if (!ttsConfigured()) {
+      browserSpeak(spoken);
+      return;
+    }
+
+    try {
+      // Stop any browser speech that might be running
+      if ("speechSynthesis" in window) speechSynthesis.cancel();
+      stopAudio();
+
+      setStatus("SPEAKING", "SYNTHESISING VOICE");
+      speaking = true;
+      if (els.stopSpeakBtn) els.stopSpeakBtn.classList.add("show");
+      updateChips();
+      energy = Math.max(energy, 0.7);
+
+      var body = {
+        model: settings.ttsModel,
+        input: spoken,
+        voice: settings.ttsVoice || "flux-cliff-en",
+        response_format: "mp3"
+      };
+
+      var res = await fetch(OPENROUTER_TTS_ENDPOINT, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + settings.apiKey,
+          "HTTP-Referer": OPENROUTER_REFERER,
+          "X-Title": OPENROUTER_TITLE
+        },
+        body: JSON.stringify(body)
+      });
+
+      if (!res.ok) {
+        var errTxt = "";
+        try { errTxt = await res.text(); } catch (e) {}
+        // Fall back to browser voice on any failure
+        logLine("TTS fell back to browser voice (HTTP " + res.status + ")", "warn");
+        speaking = false;
+        if (els.stopSpeakBtn) els.stopSpeakBtn.classList.remove("show");
+        browserSpeak(spoken);
+        return;
+      }
+
+      var blob = await res.blob();
+      ttsAudioUrl = URL.createObjectURL(blob);
+      currentAudio = new Audio(ttsAudioUrl);
+      currentAudio.volume = Number(settings.volume);
+
+      currentAudio.onplay = function () {
+        speaking = true;
+        setStatus("SPEAKING", "SAY 'BE QUIET' TO INTERRUPT");
+        if (els.stopSpeakBtn) els.stopSpeakBtn.classList.add("show");
+        updateChips();
+      };
+      var done = function () {
+        speaking = false;
+        if (els.stopSpeakBtn) els.stopSpeakBtn.classList.remove("show");
+        if (!listening) setStatus("ONLINE", "ALL SYSTEMS NOMINAL");
+        updateChips();
+        stopAudio();
+        if (wantListening && !listening && settings.alwaysOn) scheduleRestart(180);
+      };
+      currentAudio.onended = done;
+      currentAudio.onerror = function () {
+        logLine("TTS audio playback failed — using browser voice.", "warn");
+        done();
+        browserSpeak(spoken);
+      };
+
+      currentAudio.play();
+    } catch (err) {
+      logLine("TTS request failed: " + (err && err.message || err), "warn");
+      speaking = false;
+      if (els.stopSpeakBtn) els.stopSpeakBtn.classList.remove("show");
+      browserSpeak(spoken);
+    }
+  }
+
+  function stopAudio() {
+    if (currentAudio) {
+      try { currentAudio.pause(); currentAudio.currentTime = 0; } catch (e) {}
+      currentAudio = null;
+    }
+    if (ttsAudioUrl) {
+      try { URL.revokeObjectURL(ttsAudioUrl); } catch (e) {}
+      ttsAudioUrl = null;
+    }
+  }
+
   function stopSpeaking(silent) {
-    if (!("speechSynthesis" in window)) return false;
-    var was = speaking || speechSynthesis.speaking;
-    try { speechSynthesis.cancel(); } catch (e) {}
+    var was = speaking;
+    if (currentAudio) {
+      was = was || !currentAudio.paused;
+      stopAudio();
+    }
+    if ("speechSynthesis" in window) {
+      was = was || speechSynthesis.speaking;
+      try { speechSynthesis.cancel(); } catch (e) {}
+    }
     speaking = false;
     if (els.stopSpeakBtn) els.stopSpeakBtn.classList.remove("show");
     if (!silent && was) {
@@ -1269,8 +1401,7 @@
       if (els.micBtn) els.micBtn.classList.add("listening");
       setStatus("LISTENING", settings.alwaysOn ? "ALWAYS-ON · SAY 'BE QUIET' TO INTERRUPT" : "AWAITING VOICE INPUT");
       energy = 0.8;
-      updateChips();
-      updateMicAppearance();
+      updateChips(); updateMicAppearance();
     };
 
     recognition.onresult = function (ev) {
@@ -1285,7 +1416,7 @@
       if (!text) return;
       if (els.cmd) els.cmd.value = "";
 
-      if (speaking || (window.speechSynthesis && speechSynthesis.speaking)) {
+      if (speaking) {
         var words = text.split(/\s+/).filter(Boolean).length;
         if (words <= 5 && INTERRUPT_WORDS.test(text.trim())) {
           beep(440, 0.09, 0.1);
@@ -1402,6 +1533,8 @@
     if (els.setApiKey) els.setApiKey.value = settings.apiKey || "";
     if (els.setModel) els.setModel.value = settings.model || "";
     if (els.setVisionModel) els.setVisionModel.value = settings.visionModel || "";
+    if (els.setTtsModel) els.setTtsModel.value = settings.ttsModel || "";
+    if (els.setTtsVoice) els.setTtsVoice.value = settings.ttsVoice || "";
     if (els.setUserName) els.setUserName.value = settings.userName || "";
     if (els.setAlwaysOn) els.setAlwaysOn.checked = !!settings.alwaysOn;
     if (els.setRequireWake) els.setRequireWake.checked = !!settings.requireWake;
@@ -1459,7 +1592,6 @@
       screenVideo.playsInline = true;
       await screenVideo.play();
 
-      // Give the video a moment to actually produce frames
       screenWarmupAt = Date.now();
       var track = screenStream.getVideoTracks()[0];
       track.addEventListener("ended", stopScreenShare);
@@ -1528,7 +1660,6 @@
     try {
       var c = document.createElement("canvas");
       var vw = screenVideo.videoWidth, vh = screenVideo.videoHeight;
-      // Resize down for token efficiency but keep text readable
       var maxW = 1280;
       var scale = Math.min(1, maxW / vw);
       c.width = Math.max(1, Math.round(vw * scale));
@@ -1560,7 +1691,6 @@
     var model = imageDataUrl ? effectiveVisionModel() : settings.model;
     var messages = [{ role: "system", content: buildSystemPrompt() }];
 
-    // History — strip images, replace with text placeholders
     var hist = conversationHistory.slice(-12);
     for (var i = 0; i < hist.length; i++) messages.push(hist[i]);
 
@@ -1625,7 +1755,6 @@
     }
     var content = data.choices[0].message.content;
     if (Array.isArray(content)) {
-      // Some providers return structured content blocks
       content = content.map(function (b) { return typeof b === "string" ? b : (b && b.text) || ""; }).join(" ");
     }
     return String(content || "").trim();
@@ -1923,7 +2052,6 @@
       return true;
     }
 
-    // ---- Screen vision triggers (broader matching) ----
     var wantScreen =
       /\b(?:look at|look|see|read|check|what'?s on|what is on|analyse|analyze|describe|scan|view|examine|inspect|look over|take a look at)\b[\s\S]{0,60}\b(?:my |the |this |a )?(screen|monitor|display|page|window|browser|website|site|tab|desktop)\b/i.test(raw)
       || /\b(?:can you see|do you see|are you seeing|what do you see|what am i looking at|what is this|what'?s this|read this|read that|look here|look there)\b/i.test(t)
@@ -2053,6 +2181,7 @@
     ["LOADING COGNITIVE RUNTIME", "OK"],
     ["MOUNTING VISION SUBSYSTEM", "OK"],
     ["CONNECTING TO OPENROUTER", "…"],
+    ["LOADING TTS VOICE ENGINE", "…"],
     ["CALIBRATING VOICE INTERFACE", "OK"],
     ["LOADING COMMAND PROTOCOLS", "312"],
     ["REACTOR OUTPUT", "98.4%"],
@@ -2072,6 +2201,8 @@
           if (!aiConfigured()) logLine("OpenRouter not configured — add key + model in settings.", "warn");
           else logLine("OpenRouter ready — chat: " + settings.model +
                        (settings.visionModel ? ", vision: " + settings.visionModel : ""), "ok");
+          if (ttsConfigured()) logLine("TTS engine: " + settings.ttsModel + " (" + settings.ttsVoice + ")", "ok");
+          else logLine("No TTS model set — using browser voice.", "sys");
           if (settings.alwaysOn) {
             logLine("Always-listening mode active.", "ok");
             setTimeout(function () { if (userHasInteracted) startListening(); }, 500);
@@ -2081,6 +2212,7 @@
       var line = BOOT_LINES[i];
       var label = line[0], status = line[1];
       if (label === "CONNECTING TO OPENROUTER") status = aiConfigured() ? "OK" : "PENDING";
+      if (label === "LOADING TTS VOICE ENGINE") status = ttsConfigured() ? "OK" : "BROWSER";
       var dots = ".".repeat(Math.max(4, 42 - label.length));
       var row = document.createElement("div");
       row.innerHTML = label + ' <span style="color:#6a1a1a">' + dots + '</span> <span class="ok">' + status + "</span>";
@@ -2116,7 +2248,8 @@
       setUserName: $("setUserName"),
       setApiKey: $("setApiKey"), toggleKeyBtn: $("toggleKeyBtn"),
       setModel: $("setModel"), setVisionModel: $("setVisionModel"),
-      testAiBtn: $("testAiBtn"), testVisionBtn: $("testVisionBtn"),
+      setTtsModel: $("setTtsModel"), setTtsVoice: $("setTtsVoice"),
+      testAiBtn: $("testAiBtn"), testVisionBtn: $("testVisionBtn"), testTtsBtn: $("testTtsBtn"),
       clearHistoryBtn: $("clearHistoryBtn"),
       setScreenPreview: $("setScreenPreview"), setVisionDebug: $("setVisionDebug"),
       setAlwaysOn: $("setAlwaysOn"), setRequireWake: $("setRequireWake"),
@@ -2182,14 +2315,12 @@
     document.addEventListener("click", function () { userHasInteracted = true; }, { once: true });
     document.addEventListener("keydown", function () { userHasInteracted = true; }, { once: true });
 
-    // ---- User name ----
     if (els.setUserName) {
       els.setUserName.addEventListener("input", function (e) {
         settings.userName = e.target.value.trim();
         saveSettings();
       });
       els.setUserName.addEventListener("blur", function (e) {
-        // Capitalise on blur for tidiness
         var v = e.target.value.trim();
         if (v && v !== cap(v)) {
           e.target.value = cap(v);
@@ -2199,7 +2330,6 @@
       });
     }
 
-    // ---- API key ----
     if (els.setApiKey) {
       els.setApiKey.addEventListener("input", function (e) {
         settings.apiKey = e.target.value.trim();
@@ -2215,7 +2345,6 @@
       });
     }
 
-    // ---- Chat model ----
     if (els.setModel) {
       els.setModel.addEventListener("input", function (e) {
         settings.model = e.target.value.trim();
@@ -2237,7 +2366,6 @@
         }
       });
     }
-    // ---- Vision model ----
     if (els.setVisionModel) {
       els.setVisionModel.addEventListener("input", function (e) {
         settings.visionModel = e.target.value.trim();
@@ -2251,6 +2379,27 @@
           saveSettings();
           toast("Vision slug cleaned up");
         }
+      });
+    }
+    if (els.setTtsModel) {
+      els.setTtsModel.addEventListener("input", function (e) {
+        settings.ttsModel = e.target.value.trim();
+        saveSettings(); updateChips();
+      });
+      els.setTtsModel.addEventListener("blur", function (e) {
+        var cleaned = parseModelInput(e.target.value);
+        if (cleaned && cleaned !== e.target.value) {
+          e.target.value = cleaned;
+          settings.ttsModel = cleaned;
+          saveSettings(); updateChips();
+          toast("TTS slug cleaned up");
+        }
+      });
+    }
+    if (els.setTtsVoice) {
+      els.setTtsVoice.addEventListener("input", function (e) {
+        settings.ttsVoice = e.target.value.trim();
+        saveSettings();
       });
     }
 
@@ -2300,7 +2449,6 @@
         els.testVisionBtn.textContent = "Testing…";
         els.testVisionBtn.disabled = true;
         try {
-          // Wait a moment for warmup
           if (Date.now() - screenWarmupAt < 500) await sleep(500);
           var cap = captureScreenFrame();
           if (cap.error) {
@@ -2322,6 +2470,17 @@
           els.testVisionBtn.disabled = false;
           updateChips();
         }
+      });
+    }
+
+    if (els.testTtsBtn) {
+      els.testTtsBtn.addEventListener("click", function () {
+        userHasInteracted = true;
+        if (!ttsConfigured()) {
+          toast("Set a TTS model first", "warn");
+          return;
+        }
+        speak("This is A.C.E., testing the Deepgram Flux voice engine. All systems are operating within normal parameters.");
       });
     }
 
@@ -2393,7 +2552,7 @@
         userHasInteracted = true;
         var was = settings.speak;
         settings.speak = true;
-        speak("A.C.E. voice interface operational.");
+        browserSpeak("A.C.E. browser voice fallback operational.");
         if (!was) setTimeout(function () { settings.speak = false; }, 300);
       });
     }
@@ -2422,7 +2581,7 @@
       conversationHistory = [];
       saveSettings(); applySettings();
       if (recognition) recognition.lang = settings.lang;
-      stopListening(); stopScreenShare();
+      stopListening(); stopScreenShare(); stopAudio();
       if (els.histCount) els.histCount.textContent = "0";
       logLine("All settings reset to defaults.", "sys");
       toast("Settings reset");
