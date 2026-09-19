@@ -141,7 +141,6 @@
     border:1px solid var(--c);animation:ripple 1.3s ease-out infinite}
   @keyframes ripple{from{transform:scale(.9);opacity:.9}to{transform:scale(1.35);opacity:0}}
 
-  /* SETTINGS */
   .settings{position:fixed;top:0;right:0;height:100%;width:min(440px,94vw);z-index:80;
     background:linear-gradient(180deg, rgba(2,20,30,.98), rgba(1,10,18,.98));
     border-left:1px solid var(--dim);backdrop-filter:blur(14px);
@@ -166,7 +165,6 @@
     padding:12px;border:1px solid var(--faint);border-radius:10px;
     background:rgba(0,30,42,.35);transition:.2s}
   .toggle-row:hover{border-color:var(--dim);background:rgba(0,229,255,.06)}
-  .toggle-row.disabled{opacity:.4;pointer-events:none}
   .toggle-info{flex:1;padding-right:12px}
   .toggle-info strong{display:block;font-size:11.5px;letter-spacing:.12em;
     color:#d8fbff;font-weight:500;margin-bottom:3px}
@@ -183,13 +181,6 @@
     box-shadow:0 0 12px rgba(0,229,255,.5)}
   .switch input:checked + .slider::before{transform:translateX(22px);
     background:var(--c);box-shadow:0 0 10px var(--c)}
-
-  .select-row{padding:12px;border:1px solid var(--faint);border-radius:10px;
-    background:rgba(0,30,42,.35)}
-  .select-row select{width:100%;background:rgba(0,20,30,.9);border:1px solid var(--dim);
-    color:#d8fbff;font:inherit;font-size:11px;padding:8px 10px;border-radius:6px;
-    outline:0;cursor:pointer;margin-top:6px}
-  .select-row select:focus{border-color:var(--c)}
 
   .settings-footer{margin-top:auto;padding:20px;border-top:1px solid var(--faint);
     display:flex;flex-direction:column;gap:10px;position:sticky;bottom:0;
@@ -282,7 +273,7 @@
         <label class="switch"><input type="checkbox" id="setWake"><span class="slider"></span></label>
       </div>
 
-      <div class="toggle-row" id="rowAlways">
+      <div class="toggle-row">
         <div class="toggle-info">
           <strong>ALWAYS LISTENING</strong>
           <span>Continuous mic. Auto-restarts after each reply.</span>
@@ -340,22 +331,6 @@
           <span>Embedding-based recall of past chats</span>
         </div>
         <label class="switch"><input type="checkbox" id="setMemory" checked><span class="slider"></span></label>
-      </div>
-
-      <div class="select-row">
-        <div class="toggle-info">
-          <strong>MODEL</strong>
-          <span>Stronger models = smarter, slower</span>
-        </div>
-        <select id="setModel">
-          <option value="deepseek/deepseek-chat-v3.1:free">DeepSeek V3 (free, smart)</option>
-          <option value="meta-llama/llama-3.3-70b-instruct:free" selected>Llama 3.3 70B (free, fast)</option>
-          <option value="google/gemini-2.0-flash-exp:free">Gemini 2.0 Flash (free, vision)</option>
-          <option value="qwen/qwen-2.5-72b-instruct:free">Qwen 2.5 72B (free)</option>
-          <option value="anthropic/claude-3.5-sonnet">Claude 3.5 Sonnet (paid)</option>
-          <option value="openai/gpt-4o-mini">GPT-4o mini (paid)</option>
-          <option value="openai/gpt-4o">GPT-4o (paid)</option>
-        </select>
       </div>
     </div>
 
@@ -487,7 +462,12 @@
   /* ============ CONFIG ============ */
   const API_URL = 'https://openrouter.ai/api/v1/chat/completions';
   const EMBED_URL = 'https://openrouter.ai/api/v1/embeddings';
+  
+  // LOCKED MODEL — Qwen3.6 Plus (free, supports tools + vision)
+  // This is the only model used. No dropdown, no switching.
+  const MODEL = 'qwen/qwen3.6-plus:free';
   const EMBED_MODEL = 'openai/text-embedding-3-small';
+  
   const ELEVEN_URL = 'https://api.elevenlabs.io/v1/text-to-speech';
   const ELEVEN_VOICE = 'onwK4e9ZLuTAKqWW03F9'; // Daniel (British male)
 
@@ -498,8 +478,8 @@ You have tools available. Use them when needed instead of guessing.
 If asked to control something you cannot, say so plainly.
 You may see the user's screen if vision is enabled. Reference what you see naturally.`;
 
-  const SETTINGS_KEY  = 'jarvis_settings_v2';
-  const MEMORY_KEY    = 'jarvis_memory_v2';
+  const SETTINGS_KEY  = 'jarvis_settings_v3';
+  const MEMORY_KEY    = 'jarvis_memory_v3';
   const API_KEY_KEY   = 'jarvis_api_key';
   const ELEVEN_KEY    = 'jarvis_eleven_key';
   const FOLDER_KEY    = 'jarvis_folder_name';
@@ -510,8 +490,7 @@ You may see the user's screen if vision is enabled. Reference what you see natur
     wakeWord:false, alwaysListen:false, voiceOutput:true, neuralVoice:false,
     aiEnabled:true, tools:true, agent:true, memory:true,
     clipboard:false, files:false, screen:false,
-    scanlines:true, visualizer:true,
-    model:'meta-llama/llama-3.3-70b-instruct:free'
+    scanlines:true, visualizer:true
   };
   let S = { ...DEFAULT_SETTINGS };
 
@@ -536,7 +515,6 @@ You may see the user's screen if vision is enabled. Reference what you see natur
   let alwaysListenTimer = null;
   let screenStream = null;
   let folderHandle = null;
-  let fileCache = new Map();
 
   /* ============ UTIL ============ */
   const esc = s => String(s).replace(/[&<>"']/g, c =>
@@ -579,7 +557,7 @@ You may see the user's screen if vision is enabled. Reference what you see natur
   }
   tick(); setInterval(tick, 1000);
 
-  /* ============ MEMORY (embedding-based) ============ */
+  /* ============ MEMORY ============ */
   function loadMemory() {
     try {
       const m = JSON.parse(localStorage.getItem(MEMORY_KEY) || '[]');
@@ -883,7 +861,6 @@ You may see the user's screen if vision is enabled. Reference what you see natur
     } catch { return 'Could not compute.'; }
   }
 
-  /* ---- File System Access ---- */
   async function pickFolder() {
     if (!window.showDirectoryPicker) {
       toast('File Access API not supported here. Use Chrome or Edge.');
@@ -894,8 +871,7 @@ You may see the user's screen if vision is enabled. Reference what you see natur
       localStorage.setItem(FOLDER_KEY, folderHandle.name);
       toast(`Working folder: ${folderHandle.name}`);
       S.files = true; $('setFiles').checked = true; saveSettings();
-      fileCache.clear();
-    } catch (e) { /* user cancelled */ }
+    } catch (e) {}
   }
 
   async function ensureFolder() {
@@ -916,8 +892,6 @@ You may see the user's screen if vision is enabled. Reference what you see natur
     for await (const [name, handle] of folderHandle.entries()) {
       if (handle.kind === 'file') names.push(name);
     }
-    fileCache.clear();
-    names.forEach(n => fileCache.set(n, true));
     return names.length ? 'Files: ' + names.join(', ') : 'Folder is empty.';
   }
 
@@ -942,7 +916,6 @@ You may see the user's screen if vision is enabled. Reference what you see natur
     } catch (e) { return `Write failed: ${e.message}`; }
   }
 
-  /* ---- Screen Vision ---- */
   async function toggleScreen(on) {
     if (on) {
       try {
@@ -996,7 +969,6 @@ You may see the user's screen if vision is enabled. Reference what you see natur
     if (!screenStream) return 'Screen vision is not enabled.';
     const dataUrl = await captureFrame();
     if (!dataUrl) return 'Could not capture screen.';
-    // Ask vision-capable model to describe
     const key = getApiKey();
     if (!key) return 'Need API key for vision.';
     try {
@@ -1004,7 +976,7 @@ You may see the user's screen if vision is enabled. Reference what you see natur
         method:'POST',
         headers:{ 'Content-Type':'application/json', 'Authorization':'Bearer ' + key },
         body: JSON.stringify({
-          model: 'google/gemini-2.0-flash-exp:free',
+          model: MODEL,
           messages:[{
             role:'user',
             content:[
@@ -1021,7 +993,6 @@ You may see the user's screen if vision is enabled. Reference what you see natur
     } catch (e) { return 'Vision failed: ' + e.message; }
   }
 
-  /* ---- Tool dispatcher ---- */
   async function runTool(name, args) {
     switch (name) {
       case 'get_time':
@@ -1054,7 +1025,7 @@ You may see the user's screen if vision is enabled. Reference what you see natur
     const key = getApiKey();
     if (!key) return null;
     const body = {
-      model: S.model,
+      model: MODEL,
       messages,
       max_tokens: 700,
       temperature: 0.75
@@ -1075,6 +1046,7 @@ You may see the user's screen if vision is enabled. Reference what you see natur
       if (!res.ok) {
         if (res.status === 401) return { error:'[Invalid API key]' };
         if (res.status === 429) return { error:'[Rate limited — try again shortly, sir.]' };
+        if (res.status === 404) return { error:'[AI model unavailable. Try again later, sir.]' };
         return { error:`[AI error ${res.status}]` };
       }
       const data = await res.json();
@@ -1089,7 +1061,6 @@ You may see the user's screen if vision is enabled. Reference what you see natur
     const key = getApiKey();
     if (!key) return "I need an API key to think, sir. Open Settings and add one.";
 
-    // Build memory context (semantic if enabled)
     const relevant = S.memory ? await recallRelevant(userText) : [];
     const memLines = relevant.map(m => `${m.role === 'user' ? 'User' : 'You'} said: ${m.content}`).join('\n');
 
@@ -1100,7 +1071,6 @@ You may see the user's screen if vision is enabled. Reference what you see natur
 
     const availableTools = S.tools ? TOOLS : null;
     let steps = 0;
-    const toolCallsLog = [];
 
     while (steps < AGENT_MAX_STEPS) {
       steps++;
@@ -1108,7 +1078,6 @@ You may see the user's screen if vision is enabled. Reference what you see natur
       if (!reply) return "I couldn't reach my AI core, sir.";
       if (reply.error) return reply.error;
 
-      // Check for tool calls
       if (reply.tool_calls && reply.tool_calls.length) {
         messages.push(reply);
 
@@ -1119,7 +1088,6 @@ You may see the user's screen if vision is enabled. Reference what you see natur
           addMsg('tool', `⚙ ${fn}(${JSON.stringify(args)})`);
           const result = await runTool(fn, args);
           addMsg('tool', `→ ${String(result).slice(0, 200)}${String(result).length > 200 ? '…' : ''}`);
-          toolCallsLog.push({ name: fn, args, result });
 
           messages.push({
             role:'tool',
@@ -1127,15 +1095,12 @@ You may see the user's screen if vision is enabled. Reference what you see natur
             content: String(result)
           });
         }
-        // Loop again so model can use tool results
         if (!S.agent) break;
         continue;
       }
 
-      // Final text
       const text = (reply.content || '').trim();
       if (text) {
-        // Store in memory with embedding
         if (S.memory) {
           const [uEmb, aEmb] = await Promise.all([embed(userText), embed(text)]);
           if (uEmb) history.push({ role:'user', content:userText, embedding:uEmb, t:Date.now() });
@@ -1145,7 +1110,6 @@ You may see the user's screen if vision is enabled. Reference what you see natur
         return text;
       }
 
-      // Empty content, try one more
       if (steps >= AGENT_MAX_STEPS) break;
     }
 
@@ -1337,12 +1301,6 @@ You may see the user's screen if vision is enabled. Reference what you see natur
   bindToggle('setScan','scanlines', v => document.body.classList.toggle('no-scanlines', !v));
   bindToggle('setViz','visualizer', v => { canvas.style.display = v ? 'block' : 'none'; });
 
-  $('setModel').addEventListener('change', e => {
-    S.model = e.target.value;
-    saveSettings();
-    toast('Model: ' + S.model.split('/').pop());
-  });
-
   function applySettingsToUI() {
     $('setWake').checked = S.wakeWord;
     $('setAlways').checked = S.alwaysListen;
@@ -1357,7 +1315,6 @@ You may see the user's screen if vision is enabled. Reference what you see natur
     $('setScreen').checked = S.screen;
     $('setScan').checked = S.scanlines;
     $('setViz').checked = S.visualizer;
-    $('setModel').value = S.model;
     document.body.classList.toggle('no-scanlines', !S.scanlines);
     canvas.style.display = S.visualizer ? 'block' : 'none';
   }
@@ -1368,7 +1325,6 @@ You may see the user's screen if vision is enabled. Reference what you see natur
   $('settingsClose').addEventListener('click', closeSettings);
   overlayEl.addEventListener('click', closeSettings);
 
-  /* ---- API key modals ---- */
   let keyMode = 'openrouter';
   function openKeyModal(mode) {
     keyMode = mode;
@@ -1421,7 +1377,6 @@ You may see the user's screen if vision is enabled. Reference what you see natur
     toast('All reset');
   });
 
-  /* ---- Screen button ---- */
   $('btnScreen').addEventListener('click', () => toggleScreen(!S.screen));
 
   /* ============ INPUT ============ */
@@ -1469,8 +1424,9 @@ You may see the user's screen if vision is enabled. Reference what you see natur
       const bh = Math.max(2, bars[i] * h * 0.92);
       const x = i * gap + gap * 0.22, bw = gap * 0.56, y = (h - bh) / 2;
       const isThink = state === 'thinking';
-      const grad = ctx.createLinearGradient(0, y, 0, y + bh);
-      grad.addColorStop(0, isThink ? 'rgba(255,0,230,0.15)' : 'rgba(0,229,255,0.15)');
+      const grad = ctx initialized.createLinearGradient(.0, y, 0, y +';
+ bh);
+      grad.addColorStop(0       , isThink ? ' ifrgba(255,0 (!,230,0.15)' : 'rgba(0,229,255,0.15)');
       grad.addColorStop(0.5, isThink ? 'rgba(255,0,230,0.95)' : 'rgba(0,229,255,0.95)');
       grad.addColorStop(1, isThink ? 'rgba(255,0,230,0.15)' : 'rgba(0,229,255,0.15)');
       ctx.fillStyle = grad;
@@ -1492,8 +1448,7 @@ You may see the user's screen if vision is enabled. Reference what you see natur
       $('boot').classList.add('done');
       setTimeout(() => {
         const hasKey = !!getApiKey();
-        let greeting = 'Systems online. Neural core initialized.';
-        if (!hasKey) greeting += ' Add an OpenRouter key in Settings to unlock my full mind.';
+        let greeting = 'Systems online. Neural corehasKey) greeting += ' Add an OpenRouter key in Settings to unlock my full mind.';
         else greeting += ' All tools standing by.';
         addMsg('jarvis', greeting);
         setState('idle');
@@ -1505,7 +1460,6 @@ You may see the user's screen if vision is enabled. Reference what you see natur
     }, 2200);
   });
 
-  /* expose for testing */
   window.__jarvis = { runTool, runAgent, TOOLS, captureFrame };
 })();
 </script>
