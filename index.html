@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>J.A.R.V.I.S. — AI Edition</title>
+<title>J.A.R.V.I.S. — Neural Core</title>
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
   :root{
@@ -27,6 +27,7 @@
     mask-image:radial-gradient(circle at 50% 45%, #000 20%, transparent 78%);
     -webkit-mask-image:radial-gradient(circle at 50% 45%, #000 20%, transparent 78%);
   }
+  body.no-scanlines::after{display:none !important}
   body::after{
     content:"";position:fixed;inset:0;pointer-events:none;z-index:5;
     background:repeating-linear-gradient(to bottom, rgba(0,0,0,0) 0 2px, rgba(0,0,0,.18) 2px 4px);
@@ -40,7 +41,7 @@
   .boot-title{font-size:clamp(20px,4vw,38px);letter-spacing:.5em;text-shadow:0 0 24px var(--c)}
   .boot-bar{width:min(360px,70vw);height:2px;background:var(--faint);overflow:hidden;position:relative}
   .boot-bar i{position:absolute;inset:0;width:0;background:var(--c);
-    box-shadow:0 0 14px var(--c);animation:load 1.9s ease forwards}
+    box-shadow:0 0 14px var(--c);animation:load 2.2s ease forwards}
   @keyframes load{to{width:100%}}
   .boot-sub{font-size:11px;letter-spacing:.3em;color:rgba(0,229,255,.55)}
 
@@ -56,19 +57,19 @@
   .brand h1{font-size:clamp(15px,2vw,20px);letter-spacing:.45em;font-weight:500;
     text-shadow:0 0 18px rgba(0,229,255,.7)}
   .brand small{display:block;font-size:9px;letter-spacing:.32em;color:rgba(0,229,255,.5);margin-top:4px}
-  .header-right{display:flex;align-items:center;gap:16px}
+  .header-right{display:flex;align-items:center;gap:10px}
   .icon-btn{background:rgba(0,229,255,.08);border:1px solid var(--dim);
     color:var(--c);font:inherit;font-size:14px;width:34px;height:34px;
     border-radius:8px;cursor:pointer;transition:.2s;display:grid;place-items:center}
   .icon-btn:hover{background:rgba(0,229,255,.2);box-shadow:0 0 12px rgba(0,229,255,.3)}
-  .icon-btn.ok{border-color:var(--c);box-shadow:0 0 12px rgba(0,229,255,.4)}
+  .icon-btn.active{background:var(--c);color:#001a22;box-shadow:0 0 14px var(--c)}
   .clock{text-align:right;font-size:clamp(12px,1.6vw,15px);letter-spacing:.15em}
   .clock span{display:block;font-size:10px;letter-spacing:.3em;color:rgba(0,229,255,.5);margin-top:4px}
 
-  .main{display:grid;grid-template-columns:1fr 340px;gap:16px;min-height:0}
+  .main{display:grid;grid-template-columns:1fr 360px;gap:16px;min-height:0}
   .core-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;min-height:0}
 
-  .reactor{position:relative;width:min(46vh,340px);aspect-ratio:1;display:grid;place-items:center;flex-shrink:1}
+  .reactor{position:relative;width:min(44vh,320px);aspect-ratio:1;display:grid;place-items:center;flex-shrink:1}
   .ring{position:absolute;border-radius:50%;border:1px solid var(--dim)}
   .r1{inset:0;border-top-color:transparent;border-bottom-color:transparent;
       box-shadow:inset 0 0 30px rgba(0,229,255,.16);animation:spin 9s linear infinite}
@@ -121,6 +122,8 @@
   .msg.user p{color:#eafcff}
   .msg.jarvis p{color:#8fe9ff}
   .msg.thinking p{color:#ff9df0;font-style:italic;opacity:.8}
+  .msg.tool p{color:#a6ff8c;font-family:var(--font);font-size:11px}
+  .msg.tool .tag{color:rgba(166,255,140,.6)}
 
   .bar{display:flex;align-items:center;gap:10px;
     border:1px solid var(--dim);border-radius:44px;padding:7px 7px 7px 20px;
@@ -138,8 +141,8 @@
     border:1px solid var(--c);animation:ripple 1.3s ease-out infinite}
   @keyframes ripple{from{transform:scale(.9);opacity:.9}to{transform:scale(1.35);opacity:0}}
 
-  /* ============ SETTINGS PANEL ============ */
-  .settings{position:fixed;top:0;right:0;height:100%;width:min(400px,92vw);z-index:80;
+  /* SETTINGS */
+  .settings{position:fixed;top:0;right:0;height:100%;width:min(440px,94vw);z-index:80;
     background:linear-gradient(180deg, rgba(2,20,30,.98), rgba(1,10,18,.98));
     border-left:1px solid var(--dim);backdrop-filter:blur(14px);
     box-shadow:-20px 0 60px rgba(0,0,0,.7);
@@ -147,7 +150,8 @@
     display:flex;flex-direction:column;overflow-y:auto}
   .settings.open{transform:translateX(0)}
   .settings-header{padding:20px;border-bottom:1px solid var(--faint);
-    display:flex;justify-content:space-between;align-items:center}
+    display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;
+    background:rgba(2,20,30,.98);z-index:2}
   .settings-header h2{font-size:12px;letter-spacing:.4em;color:var(--c)}
   .settings-close{background:none;border:1px solid var(--faint);color:var(--c);
     font:inherit;font-size:14px;width:30px;height:30px;border-radius:6px;cursor:pointer}
@@ -157,9 +161,6 @@
   .setting-group{display:flex;flex-direction:column;gap:8px}
   .setting-group > label:first-child{font-size:9px;letter-spacing:.35em;
     color:rgba(0,229,255,.5);padding-bottom:6px;border-bottom:1px solid var(--faint)}
-  .setting-title{font-size:11px;letter-spacing:.15em;color:var(--c);margin-bottom:2px}
-  .setting-hint{font-size:10px;line-height:1.6;color:rgba(0,229,255,.5);
-    font-family:system-ui,-apple-system,"Segoe UI",sans-serif;letter-spacing:.02em}
 
   .toggle-row{display:flex;justify-content:space-between;align-items:center;
     padding:12px;border:1px solid var(--faint);border-radius:10px;
@@ -183,8 +184,16 @@
   .switch input:checked + .slider::before{transform:translateX(22px);
     background:var(--c);box-shadow:0 0 10px var(--c)}
 
+  .select-row{padding:12px;border:1px solid var(--faint);border-radius:10px;
+    background:rgba(0,30,42,.35)}
+  .select-row select{width:100%;background:rgba(0,20,30,.9);border:1px solid var(--dim);
+    color:#d8fbff;font:inherit;font-size:11px;padding:8px 10px;border-radius:6px;
+    outline:0;cursor:pointer;margin-top:6px}
+  .select-row select:focus{border-color:var(--c)}
+
   .settings-footer{margin-top:auto;padding:20px;border-top:1px solid var(--faint);
-    display:flex;flex-direction:column;gap:10px}
+    display:flex;flex-direction:column;gap:10px;position:sticky;bottom:0;
+    background:rgba(2,20,30,.98)}
   .settings-footer button{font:inherit;font-size:10px;letter-spacing:.25em;padding:11px;
     border-radius:8px;cursor:pointer;border:1px solid var(--dim);
     background:rgba(0,229,255,.08);color:var(--c);transition:.2s}
@@ -196,12 +205,11 @@
     opacity:0;pointer-events:none;transition:opacity .3s}
   .overlay.show{opacity:1;pointer-events:auto}
 
-  /* API key modal */
   .modal{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:100;
     display:none;place-items:center;backdrop-filter:blur(4px)}
   .modal.show{display:grid}
   .modal-box{background:#04141d;border:1px solid var(--dim);border-radius:12px;
-    padding:24px;width:min(460px,90vw);
+    padding:24px;width:min(480px,90vw);
     box-shadow:0 0 60px rgba(0,229,255,.2)}
   .modal-box h3{font-size:12px;letter-spacing:.35em;margin-bottom:14px;color:var(--c)}
   .modal-box p{font-size:11px;line-height:1.7;color:rgba(0,229,255,.65);margin-bottom:14px;
@@ -216,17 +224,24 @@
     transition:.2s}
   .modal-actions button:hover{background:rgba(0,229,255,.15)}
   .modal-actions button.primary{background:var(--c);color:#001a22;border-color:var(--c)}
-  .modal-actions button.primary:hover{box-shadow:0 0 16px var(--c)}
   .modal-box a{color:var(--c);text-decoration:none;border-bottom:1px dotted var(--c)}
   .modal-box code{background:rgba(0,229,255,.1);padding:1px 5px;border-radius:3px;font-size:10px}
 
-  /* toast */
   .toast{position:fixed;bottom:24px;left:50%;transform:translate(-50%,80px);
     background:rgba(0,30,42,.95);border:1px solid var(--c);color:var(--c);
     padding:12px 22px;border-radius:30px;font-size:11px;letter-spacing:.2em;
     box-shadow:0 0 30px rgba(0,229,255,.4);z-index:150;
-    transition:transform .35s cubic-bezier(.4,0,.2,1),opacity .35s;opacity:0}
+    transition:transform .35s cubic-bezier(.4,0,.2,1),opacity .35s;opacity:0;
+    max-width:90vw;text-align:center}
   .toast.show{transform:translate(-50%,0);opacity:1}
+
+  .vision-preview{position:fixed;bottom:100px;right:20px;width:220px;z-index:90;
+    border:1px solid var(--dim);border-radius:10px;overflow:hidden;display:none;
+    box-shadow:0 0 30px rgba(0,229,255,.3);background:#000}
+  .vision-preview.show{display:block}
+  .vision-preview img{width:100%;display:block}
+  .vision-preview small{display:block;padding:6px;font-size:8px;letter-spacing:.3em;
+    background:rgba(0,20,30,.9);color:var(--c);text-align:center}
 
   @media (max-width:900px){
     .main{grid-template-columns:1fr;grid-template-rows:1fr auto}
@@ -234,6 +249,7 @@
     #viz{height:52px}
     .app{height:96vh}
     .brand small{display:none}
+    .vision-preview{width:160px}
   }
 </style>
 </head>
@@ -242,140 +258,181 @@
 <div id="boot">
   <div class="boot-title">J A R V I S</div>
   <div class="boot-bar"><i></i></div>
-  <div class="boot-sub">INITIALIZING AI CORE…</div>
+  <div class="boot-sub">LOADING NEURAL CORE…</div>
 </div>
 
-<!-- Settings Overlay -->
 <div class="overlay" id="overlay"></div>
 
-<!-- Settings Panel -->
 <aside class="settings" id="settings">
   <div class="settings-header">
-    <h2>⚙ SETTINGS</h2>
+    <h2>⚙ NEURAL SETTINGS</h2>
     <button class="settings-close" id="settingsClose">✕</button>
   </div>
 
   <div class="settings-body">
 
-    <!-- VOICE -->
     <div class="setting-group">
       <label>VOICE CONTROL</label>
 
-      <div class="toggle-row" id="rowWake">
+      <div class="toggle-row">
         <div class="toggle-info">
           <strong>WAKE WORD</strong>
           <span>Say "Jarvis" to activate hands-free</span>
         </div>
-        <label class="switch">
-          <input type="checkbox" id="setWake">
-          <span class="slider"></span>
-        </label>
+        <label class="switch"><input type="checkbox" id="setWake"><span class="slider"></span></label>
       </div>
 
       <div class="toggle-row" id="rowAlways">
         <div class="toggle-info">
           <strong>ALWAYS LISTENING</strong>
-          <span>Keep mic open continuously. Auto-restarts after each reply.</span>
+          <span>Continuous mic. Auto-restarts after each reply.</span>
         </div>
-        <label class="switch">
-          <input type="checkbox" id="setAlways">
-          <span class="slider"></span>
-        </label>
+        <label class="switch"><input type="checkbox" id="setAlways"><span class="slider"></span></label>
       </div>
 
-      <div class="toggle-row" id="rowVoice">
+      <div class="toggle-row">
         <div class="toggle-info">
           <strong>VOICE OUTPUT</strong>
-          <span>Speak replies aloud through speakers</span>
+          <span>Speak replies aloud</span>
         </div>
-        <label class="switch">
-          <input type="checkbox" id="setVoice" checked>
-          <span class="slider"></span>
-        </label>
+        <label class="switch"><input type="checkbox" id="setVoice" checked><span class="slider"></span></label>
+      </div>
+
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <strong>NEURAL VOICE (ElevenLabs)</strong>
+          <span>Ultra-realistic voice. Requires API key.</span>
+        </div>
+        <label class="switch"><input type="checkbox" id="setNeural"><span class="slider"></span></label>
       </div>
     </div>
 
-    <!-- AI -->
     <div class="setting-group">
       <label>AI CORE</label>
 
-      <div class="toggle-row" id="rowAi">
+      <div class="toggle-row">
         <div class="toggle-info">
           <strong>AI RESPONSES</strong>
-          <span>Use AI for open-ended questions. Off = local commands only.</span>
+          <span>Off = local commands only</span>
         </div>
-        <label class="switch">
-          <input type="checkbox" id="setAi" checked>
-          <span class="slider"></span>
-        </label>
+        <label class="switch"><input type="checkbox" id="setAi" checked><span class="slider"></span></label>
       </div>
 
-      <div class="toggle-row" id="rowMemory">
+      <div class="toggle-row">
         <div class="toggle-info">
-          <strong>REMEMBER CONVERSATION</strong>
-          <span>Persist last 20 turns across page reloads</span>
+          <strong>TOOL USE</strong>
+          <span>Let AI call web search, weather, files, etc.</span>
         </div>
-        <label class="switch">
-          <input type="checkbox" id="setMemory" checked>
-          <span class="slider"></span>
-        </label>
+        <label class="switch"><input type="checkbox" id="setTools" checked><span class="slider"></span></label>
+      </div>
+
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <strong>AGENT MODE</strong>
+          <span>Multi-step reasoning with tool chains</span>
+        </div>
+        <label class="switch"><input type="checkbox" id="setAgent" checked><span class="slider"></span></label>
+      </div>
+
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <strong>SEMANTIC MEMORY</strong>
+          <span>Embedding-based recall of past chats</span>
+        </div>
+        <label class="switch"><input type="checkbox" id="setMemory" checked><span class="slider"></span></label>
+      </div>
+
+      <div class="select-row">
+        <div class="toggle-info">
+          <strong>MODEL</strong>
+          <span>Stronger models = smarter, slower</span>
+        </div>
+        <select id="setModel">
+          <option value="deepseek/deepseek-chat-v3.1:free">DeepSeek V3 (free, smart)</option>
+          <option value="meta-llama/llama-3.3-70b-instruct:free" selected>Llama 3.3 70B (free, fast)</option>
+          <option value="google/gemini-2.0-flash-exp:free">Gemini 2.0 Flash (free, vision)</option>
+          <option value="qwen/qwen-2.5-72b-instruct:free">Qwen 2.5 72B (free)</option>
+          <option value="anthropic/claude-3.5-sonnet">Claude 3.5 Sonnet (paid)</option>
+          <option value="openai/gpt-4o-mini">GPT-4o mini (paid)</option>
+          <option value="openai/gpt-4o">GPT-4o (paid)</option>
+        </select>
       </div>
     </div>
 
-    <!-- APPEARANCE -->
+    <div class="setting-group">
+      <label>PERMISSIONS</label>
+
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <strong>CLIPBOARD</strong>
+          <span>Read &amp; write your clipboard</span>
+        </div>
+        <label class="switch"><input type="checkbox" id="setClip"><span class="slider"></span></label>
+      </div>
+
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <strong>FILE ACCESS</strong>
+          <span>Read/write inside a folder you pick</span>
+        </div>
+        <label class="switch"><input type="checkbox" id="setFiles"><span class="slider"></span></label>
+      </div>
+
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <strong>SCREEN VISION</strong>
+          <span>Share screen, JARVIS can see it</span>
+        </div>
+        <label class="switch"><input type="checkbox" id="setScreen"><span class="slider"></span></label>
+      </div>
+    </div>
+
     <div class="setting-group">
       <label>APPEARANCE</label>
 
       <div class="toggle-row">
-        <div class="toggle-info">
-          <strong>SCANLINE EFFECT</strong>
-          <span>CRT-style overlay</span>
-        </div>
-        <label class="switch">
-          <input type="checkbox" id="setScan" checked>
-          <span class="slider"></span>
-        </label>
+        <div class="toggle-info"><strong>SCANLINE EFFECT</strong><span>CRT overlay</span></div>
+        <label class="switch"><input type="checkbox" id="setScan" checked><span class="slider"></span></label>
       </div>
 
       <div class="toggle-row">
-        <div class="toggle-info">
-          <strong>VISUALIZER</strong>
-          <span>Live audio-reactive bars</span>
-        </div>
-        <label class="switch">
-          <input type="checkbox" id="setViz" checked>
-          <span class="slider"></span>
-        </label>
+        <div class="toggle-info"><strong>VISUALIZER</strong><span>Audio-reactive bars</span></div>
+        <label class="switch"><input type="checkbox" id="setViz" checked><span class="slider"></span></label>
       </div>
     </div>
 
   </div>
 
   <div class="settings-footer">
-    <button id="btnApiKey">🔑 MANAGE AI KEY</button>
-    <button id="btnResetAll" class="danger">↺ RESET ALL SETTINGS</button>
+    <button id="btnApiKey">🔑 OPENROUTER KEY</button>
+    <button id="btnElevenKey">🎙 ELEVENLABS KEY</button>
+    <button id="btnPickFolder">📁 PICK WORKING FOLDER</button>
+    <button id="btnResetAll" class="danger">↺ RESET ALL</button>
   </div>
 </aside>
 
-<!-- API Key Modal -->
 <div class="modal" id="keyModal">
   <div class="modal-box">
-    <h3>AI CORE CONFIGURATION</h3>
-    <p>
-      JARVIS uses a free AI API for real conversation. Paste your
-      <a href="https://openrouter.ai/keys" target="_blank" rel="noopener">OpenRouter</a>
-      API key below (starts with <code>sk-or-</code>).
-      Stored only in this browser's <code>localStorage</code>.
+    <h3 id="keyModalTitle">AI CORE CONFIGURATION</h3>
+    <p id="keyModalDesc">
+      JARVIS uses <a href="https://openrouter.ai/keys" target="_blank" rel="noopener">OpenRouter</a>
+      for AI, tools, and vision. Paste your key (starts with <code>sk-or-</code>).
+      Stored only in this browser.
     </p>
     <input type="password" id="keyInput" placeholder="sk-or-v1-..." autocomplete="off" spellcheck="false">
     <div class="modal-actions">
       <button id="keyCancel">CANCEL</button>
-      <button class="primary" id="keySave">SAVE KEY</button>
+      <button class="primary" id="keySave">SAVE</button>
     </div>
   </div>
 </div>
 
 <div class="toast" id="toast"></div>
+
+<div class="vision-preview" id="visionPreview">
+  <img id="visionImg" alt="screen">
+  <small>◉ SCREEN VISION ACTIVE</small>
+</div>
 
 <div class="app">
   <header>
@@ -383,10 +440,11 @@
       <div class="dot"></div>
       <div>
         <h1>J.A.R.V.I.S.</h1>
-        <small>JUST A RATHER VERY INTELLIGENT SYSTEM</small>
+        <small>NEURAL CORE · TOOL USE · VISION</small>
       </div>
     </div>
     <div class="header-right">
+      <button class="icon-btn" id="btnScreen" title="Toggle screen vision">👁</button>
       <button class="icon-btn" id="settingsBtn" title="Settings">⚙</button>
       <div class="clock">
         <div id="time">--:--:--</div>
@@ -428,27 +486,33 @@
 
   /* ============ CONFIG ============ */
   const API_URL = 'https://openrouter.ai/api/v1/chat/completions';
-  const MODEL   = 'meta-llama/llama-3.3-70b-instruct:free';
+  const EMBED_URL = 'https://openrouter.ai/api/v1/embeddings';
+  const EMBED_MODEL = 'openai/text-embedding-3-small';
+  const ELEVEN_URL = 'https://api.elevenlabs.io/v1/text-to-speech';
+  const ELEVEN_VOICE = 'onwK4e9ZLuTAKqWW03F9'; // Daniel (British male)
+
   const SYSTEM_PROMPT =
-    'You are JARVIS, Tony Stark\'s AI assistant. Address the user as "sir". ' +
-    'Be concise, witty, and British. Keep replies under 3 sentences unless asked for detail. ' +
-    'Never use markdown, emojis, or asterisks — this is spoken aloud.';
+`You are JARVIS, Tony Stark's AI. Address the user as "sir". Be concise, witty, British.
+Keep spoken replies under 3 sentences unless asked for detail. No markdown, emojis, or asterisks — this is spoken aloud.
+You have tools available. Use them when needed instead of guessing.
+If asked to control something you cannot, say so plainly.
+You may see the user's screen if vision is enabled. Reference what you see naturally.`;
 
-  const SETTINGS_KEY  = 'jarvis_settings_v1';
-  const MEMORY_KEY    = 'jarvis_memory_v1';
+  const SETTINGS_KEY  = 'jarvis_settings_v2';
+  const MEMORY_KEY    = 'jarvis_memory_v2';
   const API_KEY_KEY   = 'jarvis_api_key';
+  const ELEVEN_KEY    = 'jarvis_eleven_key';
+  const FOLDER_KEY    = 'jarvis_folder_name';
+  const AGENT_MAX_STEPS = 5;
 
-  /* ============ SETTINGS STATE ============ */
+  /* ============ SETTINGS ============ */
   const DEFAULT_SETTINGS = {
-    wakeWord:      false,
-    alwaysListen:  false,
-    voiceOutput:   true,
-    aiEnabled:     true,
-    memory:        true,
-    scanlines:     true,
-    visualizer:    true
+    wakeWord:false, alwaysListen:false, voiceOutput:true, neuralVoice:false,
+    aiEnabled:true, tools:true, agent:true, memory:true,
+    clipboard:false, files:false, screen:false,
+    scanlines:true, visualizer:true,
+    model:'meta-llama/llama-3.3-70b-instruct:free'
   };
-
   let S = { ...DEFAULT_SETTINGS };
 
   function loadSettings() {
@@ -457,44 +521,37 @@
       S = { ...DEFAULT_SETTINGS, ...raw };
     } catch { S = { ...DEFAULT_SETTINGS }; }
   }
-  function saveSettings() {
-    try { localStorage.setItem(SETTINGS_KEY, JSON.stringify(S)); } catch {}
-  }
+  const saveSettings = () => { try { localStorage.setItem(SETTINGS_KEY, JSON.stringify(S)); } catch {} };
 
   /* ============ ELEMENTS ============ */
-  const logEl      = document.getElementById('log');
-  const inputEl    = document.getElementById('cmd');
-  const micBtn     = document.getElementById('mic');
-  const statusEl   = document.getElementById('status');
-  const timeEl     = document.getElementById('time');
-  const dateEl     = document.getElementById('date');
-  const canvas     = document.getElementById('viz');
-  const ctx        = canvas.getContext('2d');
-  const keyModal   = document.getElementById('keyModal');
-  const keyInput   = document.getElementById('keyInput');
-  const settingsEl = document.getElementById('settings');
-  const overlayEl  = document.getElementById('overlay');
-  const toastEl    = document.getElementById('toast');
+  const $ = id => document.getElementById(id);
+  const logEl = $('log'), inputEl = $('cmd'), micBtn = $('mic'), statusEl = $('status');
+  const timeEl = $('time'), dateEl = $('date'), canvas = $('viz'), ctx = canvas.getContext('2d');
+  const keyModal = $('keyModal'), keyInput = $('keyInput');
+  const settingsEl = $('settings'), overlayEl = $('overlay'), toastEl = $('toast');
+  const visionPreview = $('visionPreview'), visionImg = $('visionImg');
 
   let state = 'idle';
   let history = [];
   let alwaysListenTimer = null;
+  let screenStream = null;
+  let folderHandle = null;
+  let fileCache = new Map();
 
-  /* ============ UTILITIES ============ */
+  /* ============ UTIL ============ */
   const esc = s => String(s).replace(/[&<>"']/g, c =>
     ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
   function addMsg(who, text, cls = '') {
     const d = document.createElement('div');
     d.className = 'msg ' + who + (cls ? ' ' + cls : '');
-    d.innerHTML = `<span class="tag">${who === 'user' ? 'YOU' : 'JARVIS'}</span><p>${esc(text)}</p>`;
+    d.innerHTML = `<span class="tag">${who === 'user' ? 'YOU' : who === 'tool' ? 'TOOL' : 'JARVIS'}</span><p>${esc(text)}</p>`;
     logEl.appendChild(d);
     logEl.scrollTop = logEl.scrollHeight;
     return d;
   }
 
   const setStatus = t => statusEl.textContent = t;
-
   function setState(s) {
     state = s;
     document.body.classList.toggle('listening', s === 'listening');
@@ -506,11 +563,11 @@
     else                        setStatus(S.alwaysListen ? 'ALWAYS-ON' : 'SYSTEM ONLINE');
   }
 
-  function toast(msg) {
+  function toast(msg, ms = 2400) {
     toastEl.textContent = msg;
     toastEl.classList.add('show');
     clearTimeout(toast._t);
-    toast._t = setTimeout(() => toastEl.classList.remove('show'), 2200);
+    toast._t = setTimeout(() => toastEl.classList.remove('show'), ms);
   }
 
   /* ============ CLOCK ============ */
@@ -522,43 +579,112 @@
   }
   tick(); setInterval(tick, 1000);
 
-  /* ============ MEMORY ============ */
+  /* ============ MEMORY (embedding-based) ============ */
   function loadMemory() {
     try {
       const m = JSON.parse(localStorage.getItem(MEMORY_KEY) || '[]');
-      history = Array.isArray(m) ? m.slice(-20) : [];
+      history = Array.isArray(m) ? m : [];
     } catch { history = []; }
   }
   function saveMemory() {
     if (!S.memory) return;
-    try { localStorage.setItem(MEMORY_KEY, JSON.stringify(history.slice(-20))); } catch {}
+    try { localStorage.setItem(MEMORY_KEY, JSON.stringify(history.slice(-200))); } catch {}
   }
-  loadMemory();
+
+  function cosine(a, b) {
+    let dot = 0, na = 0, nb = 0;
+    for (let i = 0; i < a.length; i++) { dot += a[i]*b[i]; na += a[i]*a[i]; nb += b[i]*b[i]; }
+    return dot / (Math.sqrt(na) * Math.sqrt(nb) + 1e-9);
+  }
+
+  async function embed(text) {
+    const key = getApiKey();
+    if (!key || !S.memory) return null;
+    try {
+      const res = await fetch(EMBED_URL, {
+        method:'POST',
+        headers:{ 'Content-Type':'application/json', 'Authorization':'Bearer ' + key },
+        body: JSON.stringify({ model: EMBED_MODEL, input: text })
+      });
+      if (!res.ok) return null;
+      const data = await res.json();
+      return data?.data?.[0]?.embedding || null;
+    } catch { return null; }
+  }
+
+  async function recallRelevant(query, k = 4) {
+    if (!S.memory || !history.length) return [];
+    const qVec = await embed(query);
+    if (!qVec) return history.slice(-6).filter(m => m.role !== 'system');
+    const scored = [];
+    for (const m of history) {
+      if (m.role === 'system' || !m.embedding) continue;
+      scored.push({ ...m, score: cosine(qVec, m.embedding) });
+    }
+    scored.sort((a, b) => b.score - a.score);
+    return scored.slice(0, k);
+  }
 
   /* ============ VOICE OUTPUT ============ */
   const synth = window.speechSynthesis;
   let voice = null;
+  let currentAudio = null;
 
   function pickVoice() {
     if (!synth) return;
     const vs = synth.getVoices();
     if (!vs.length) return;
-    voice =
-      vs.find(v => /Google UK English Male|Daniel|George|Arthur/i.test(v.name)) ||
-      vs.find(v => v.lang === 'en-GB') ||
-      vs.find(v => v.lang && v.lang.startsWith('en')) ||
-      vs[0];
+    voice = vs.find(v => /Google UK English Male|Daniel|George|Arthur/i.test(v.name))
+         || vs.find(v => v.lang === 'en-GB')
+         || vs.find(v => v.lang && v.lang.startsWith('en'))
+         || vs[0];
   }
   if (synth) { pickVoice(); synth.onvoiceschanged = pickVoice; }
 
-  function speak(text) {
-    if (!S.voiceOutput || !synth) { setState('idle'); afterSpeak(); return; }
+  async function speakNeural(text) {
+    const key = localStorage.getItem(ELEVEN_KEY);
+    if (!key) return false;
+    try {
+      setState('speaking');
+      const res = await fetch(`${ELEVEN_URL}/${ELEVEN_VOICE}`, {
+        method:'POST',
+        headers:{ 'xi-api-key': key, 'Content-Type':'application/json', 'Accept':'audio/mpeg' },
+        body: JSON.stringify({
+          text,
+          model_id:'eleven_turbo_v2_5',
+          voice_settings:{ stability:0.4, similarity_boost:0.75, style:0.3 }
+        })
+      });
+      if (!res.ok) throw new Error('eleven ' + res.status);
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      currentAudio = new Audio(url);
+      currentAudio.onended = () => { setState('idle'); afterSpeak(); URL.revokeObjectURL(url); };
+      currentAudio.onerror = () => { setState('idle'); afterSpeak(); };
+      await currentAudio.play();
+      return true;
+    } catch (e) {
+      console.warn('Neural voice failed', e);
+      return false;
+    }
+  }
+
+  async function speak(text) {
+    addMsg('jarvis', text);
+    if (!S.voiceOutput) { afterSpeak(); return; }
+
+    if (S.neuralVoice && localStorage.getItem(ELEVEN_KEY)) {
+      const ok = await speakNeural(text);
+      if (ok) return;
+    }
+
+    if (!synth) { afterSpeak(); return; }
     synth.cancel();
     const u = new SpeechSynthesisUtterance(text);
     if (voice) u.voice = voice;
-    u.rate = 1.0; u.pitch = 0.85; u.volume = 1;
+    u.rate = 1.0; u.pitch = 0.85;
     u.onstart = () => setState('speaking');
-    u.onend   = () => { setState('idle'); afterSpeak(); };
+    u.onend = () => { setState('idle'); afterSpeak(); };
     u.onerror = () => { setState('idle'); afterSpeak(); };
     setState('speaking');
     synth.speak(u);
@@ -566,67 +692,467 @@
 
   function afterSpeak() {
     if (S.alwaysListen && !S.wakeWord) {
-      // Always-listening mode: resume listening after reply
       clearTimeout(alwaysListenTimer);
-      alwaysListenTimer = setTimeout(() => {
-        if (state === 'idle') startListening();
-      }, 400);
-    } else if (S.alwaysListen && S.wakeWord) {
-      // Both on: restart wake listener
+      alwaysListenTimer = setTimeout(() => { if (state === 'idle') startListening(); }, 400);
+    } else if (S.wakeWord) {
       startWake();
     }
   }
 
-  /* ============ AI CALL ============ */
+  /* ============ API KEYS ============ */
   const getApiKey = () => localStorage.getItem(API_KEY_KEY) || '';
 
-  async function askAI(userText) {
-    const key = getApiKey();
-    if (!key) return null;
+  /* ============ TOOLS ============ */
+  const TOOLS = [
+    {
+      type:'function',
+      function:{
+        name:'get_time',
+        description:'Get the current local time and date.',
+        parameters:{ type:'object', properties:{} }
+      }
+    },
+    {
+      type:'function',
+      function:{
+        name:'web_search',
+        description:'Search the web via DuckDuckGo. Returns top result snippets.',
+        parameters:{
+          type:'object',
+          properties:{ query:{ type:'string', description:'Search query' } },
+          required:['query']
+        }
+      }
+    },
+    {
+      type:'function',
+      function:{
+        name:'get_weather',
+        description:'Get current weather for a city (no API key needed).',
+        parameters:{
+          type:'object',
+          properties:{
+            city:{ type:'string', description:'City name, e.g. "London" or "New York"' }
+          },
+          required:['city']
+        }
+      }
+    },
+    {
+      type:'function',
+      function:{
+        name:'wikipedia',
+        description:'Look up a topic on Wikipedia and return a short summary.',
+        parameters:{
+          type:'object',
+          properties:{ topic:{ type:'string' } },
+          required:['topic']
+        }
+      }
+    },
+    {
+      type:'function',
+      function:{
+        name:'calculate',
+        description:'Evaluate a math expression. E.g. "(5+3)*2".',
+        parameters:{
+          type:'object',
+          properties:{ expression:{ type:'string' } },
+          required:['expression']
+        }
+      }
+    },
+    {
+      type:'function',
+      function:{
+        name:'open_url',
+        description:'Open a URL in a new tab.',
+        parameters:{
+          type:'object',
+          properties:{ url:{ type:'string' } },
+          required:['url']
+        }
+      }
+    },
+    {
+      type:'function',
+      function:{
+        name:'read_clipboard',
+        description:'Read text from the user clipboard. Only works if clipboard permission is enabled.',
+        parameters:{ type:'object', properties:{} }
+      }
+    },
+    {
+      type:'function',
+      function:{
+        name:'write_clipboard',
+        description:'Write text to the user clipboard.',
+        parameters:{
+          type:'object',
+          properties:{ text:{ type:'string' } },
+          required:['text']
+        }
+      }
+    },
+    {
+      type:'function',
+      function:{
+        name:'list_files',
+        description:'List files in the user-picked working folder.',
+        parameters:{ type:'object', properties:{} }
+      }
+    },
+    {
+      type:'function',
+      function:{
+        name:'read_file',
+        description:'Read a text file from the working folder.',
+        parameters:{
+          type:'object',
+          properties:{ name:{ type:'string' } },
+          required:['name']
+        }
+      }
+    },
+    {
+      type:'function',
+      function:{
+        name:'write_file',
+        description:'Create or overwrite a text file in the working folder.',
+        parameters:{
+          type:'object',
+          properties:{
+            name:{ type:'string' },
+            content:{ type:'string' }
+          },
+          required:['name','content']
+        }
+      }
+    },
+    {
+      type:'function',
+      function:{
+        name:'look_at_screen',
+        description:'Capture the shared screen and describe what is on it. Only works if screen vision is enabled.',
+        parameters:{ type:'object', properties:{} }
+      }
+    }
+  ];
 
-    const messages = [
-      { role: 'system', content: SYSTEM_PROMPT },
-      ...(S.memory ? history.slice(-12) : []),
-      { role: 'user', content: userText }
-    ];
-
+  async function webSearch(query) {
     try {
-      const res = await fetch(API_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + key,
-          'HTTP-Referer': location.origin || 'https://localhost',
-          'X-Title': 'JARVIS Web Interface'
-        },
-        body: JSON.stringify({
-          model: MODEL, messages, max_tokens: 200, temperature: 0.8
-        })
-      });
-
-      if (!res.ok) {
-        if (res.status === 401) return '[AI key invalid. Update it in Settings.]';
-        if (res.status === 429) return '[AI is rate-limited, sir. Try again shortly.]';
-        return null;
-      }
-
+      const res = await fetch(`https://api.duckduckgo.com/?q=${encodeURIComponent(query)}&format=json&no_html=1&skip_disambig=1`);
       const data = await res.json();
-      const reply = data?.choices?.[0]?.message?.content?.trim();
-      if (!reply) return null;
+      const bits = [];
+      if (data.AbstractText) bits.push(data.AbstractText);
+      if (data.Answer) bits.push(data.Answer);
+      (data.RelatedTopics || []).slice(0, 3).forEach(t => {
+        if (t.Text) bits.push(t.Text);
+      });
+      return bits.length ? bits.join('\n') : 'No concise answer found.';
+    } catch (e) { return 'Search failed: ' + e.message; }
+  }
 
-      if (S.memory) {
-        history.push({ role: 'user', content: userText });
-        history.push({ role: 'assistant', content: reply });
-        saveMemory();
+  async function getWeather(city) {
+    try {
+      const geo = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1`).then(r => r.json());
+      const loc = geo?.results?.[0];
+      if (!loc) return `Could not find city "${city}".`;
+      const wx = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${loc.latitude}&longitude=${loc.longitude}&current=temperature_2m,weather_code,wind_speed_10m`).then(r => r.json());
+      const c = wx.current;
+      const codeMap = {0:'clear',1:'mostly clear',2:'partly cloudy',3:'overcast',45:'fog',48:'fog',51:'drizzle',53:'drizzle',55:'drizzle',61:'light rain',63:'rain',65:'heavy rain',71:'light snow',73:'snow',75:'heavy snow',80:'showers',81:'showers',82:'heavy showers',95:'thunderstorm'};
+      const desc = codeMap[c.weather_code] || 'unknown';
+      return `${loc.name}: ${c.temperature_2m}°C, ${desc}, wind ${c.wind_speed_10m} km/h.`;
+    } catch (e) { return 'Weather lookup failed: ' + e.message; }
+  }
+
+  async function wikiLookup(topic) {
+    try {
+      const res = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(topic)}`);
+      if (!res.ok) return 'No Wikipedia article found.';
+      const data = await res.json();
+      return data.extract || 'No summary available.';
+    } catch (e) { return 'Wikipedia lookup failed: ' + e.message; }
+  }
+
+  function calculate(expr) {
+    if (!/^[\d\s+\-*/().%]+$/.test(expr)) return 'Invalid expression.';
+    try {
+      const r = Function('"use strict";return (' + expr + ')')();
+      return typeof r === 'number' && isFinite(r) ? String(r) : 'Invalid result.';
+    } catch { return 'Could not compute.'; }
+  }
+
+  /* ---- File System Access ---- */
+  async function pickFolder() {
+    if (!window.showDirectoryPicker) {
+      toast('File Access API not supported here. Use Chrome or Edge.');
+      return;
+    }
+    try {
+      folderHandle = await window.showDirectoryPicker({ mode:'readwrite' });
+      localStorage.setItem(FOLDER_KEY, folderHandle.name);
+      toast(`Working folder: ${folderHandle.name}`);
+      S.files = true; $('setFiles').checked = true; saveSettings();
+      fileCache.clear();
+    } catch (e) { /* user cancelled */ }
+  }
+
+  async function ensureFolder() {
+    if (folderHandle) return true;
+    const name = localStorage.getItem(FOLDER_KEY);
+    if (name && window.showDirectoryPicker) {
+      try {
+        folderHandle = await window.showDirectoryPicker({ mode:'readwrite' });
+        return true;
+      } catch { return false; }
+    }
+    return false;
+  }
+
+  async function listFiles() {
+    if (!await ensureFolder()) return 'No working folder selected. Use Settings → Pick Working Folder.';
+    const names = [];
+    for await (const [name, handle] of folderHandle.entries()) {
+      if (handle.kind === 'file') names.push(name);
+    }
+    fileCache.clear();
+    names.forEach(n => fileCache.set(n, true));
+    return names.length ? 'Files: ' + names.join(', ') : 'Folder is empty.';
+  }
+
+  async function readFileTool(name) {
+    if (!await ensureFolder()) return 'No working folder selected.';
+    try {
+      const fh = await folderHandle.getFileHandle(name);
+      const file = await fh.getFile();
+      const text = await file.text();
+      return text.slice(0, 8000);
+    } catch (e) { return `Could not read "${name}": ${e.message}`; }
+  }
+
+  async function writeFileTool(name, content) {
+    if (!await ensureFolder()) return 'No working folder selected.';
+    try {
+      const fh = await folderHandle.getFileHandle(name, { create:true });
+      const w = await fh.createWritable();
+      await w.write(content);
+      await w.close();
+      return `Wrote ${content.length} chars to "${name}".`;
+    } catch (e) { return `Write failed: ${e.message}`; }
+  }
+
+  /* ---- Screen Vision ---- */
+  async function toggleScreen(on) {
+    if (on) {
+      try {
+        screenStream = await navigator.mediaDevices.getDisplayMedia({ video:{ frameRate:1 } });
+        screenStream.getVideoTracks()[0].onended = () => {
+          screenStream = null;
+          visionPreview.classList.remove('show');
+          $('btnScreen').classList.remove('active');
+          S.screen = false; $('setScreen').checked = false; saveSettings();
+          toast('Screen sharing ended');
+        };
+        visionPreview.classList.add('show');
+        $('btnScreen').classList.add('active');
+        toast('Screen vision active');
+        S.screen = true; $('setScreen').checked = true; saveSettings();
+      } catch (e) {
+        S.screen = false; $('setScreen').checked = false; saveSettings();
+        toast('Screen share cancelled');
       }
-      return reply;
-    } catch (e) {
-      console.warn('AI fetch failed', e);
-      return null;
+    } else {
+      if (screenStream) {
+        screenStream.getTracks().forEach(t => t.stop());
+        screenStream = null;
+      }
+      visionPreview.classList.remove('show');
+      $('btnScreen').classList.remove('active');
+      S.screen = false; $('setScreen').checked = false; saveSettings();
     }
   }
 
-  /* ============ LOCAL COMMANDS ============ */
+  async function captureFrame() {
+    if (!screenStream) return null;
+    const track = screenStream.getVideoTracks()[0];
+    const video = document.createElement('video');
+    video.srcObject = new MediaStream([track]);
+    video.muted = true;
+    await video.play();
+    await new Promise(r => setTimeout(r, 350));
+    const c = document.createElement('canvas');
+    const scale = Math.min(1, 1280 / video.videoWidth);
+    c.width = video.videoWidth * scale;
+    c.height = video.videoHeight * scale;
+    c.getContext('2d').drawImage(video, 0, 0, c.width, c.height);
+    video.pause();
+    const dataUrl = c.toDataURL('image/jpeg', 0.72);
+    visionImg.src = dataUrl;
+    return dataUrl;
+  }
+
+  async function lookAtScreen() {
+    if (!screenStream) return 'Screen vision is not enabled.';
+    const dataUrl = await captureFrame();
+    if (!dataUrl) return 'Could not capture screen.';
+    // Ask vision-capable model to describe
+    const key = getApiKey();
+    if (!key) return 'Need API key for vision.';
+    try {
+      const res = await fetch(API_URL, {
+        method:'POST',
+        headers:{ 'Content-Type':'application/json', 'Authorization':'Bearer ' + key },
+        body: JSON.stringify({
+          model: 'google/gemini-2.0-flash-exp:free',
+          messages:[{
+            role:'user',
+            content:[
+              { type:'text', text:'Describe what you see on this screen in 2-3 short sentences. Focus on what a user would care about.' },
+              { type:'image_url', image_url:{ url: dataUrl } }
+            ]
+          }],
+          max_tokens: 200
+        })
+      });
+      if (!res.ok) return 'Vision model error ' + res.status;
+      const data = await res.json();
+      return data?.choices?.[0]?.message?.content?.trim() || 'No description returned.';
+    } catch (e) { return 'Vision failed: ' + e.message; }
+  }
+
+  /* ---- Tool dispatcher ---- */
+  async function runTool(name, args) {
+    switch (name) {
+      case 'get_time':
+        return new Date().toLocaleString('en-GB', { weekday:'long', day:'numeric', month:'long', hour:'2-digit', minute:'2-digit' });
+      case 'web_search':     return await webSearch(args.query);
+      case 'get_weather':    return await getWeather(args.city);
+      case 'wikipedia':      return await wikiLookup(args.topic);
+      case 'calculate':      return calculate(args.expression);
+      case 'open_url':
+        window.open(args.url, '_blank', 'noopener');
+        return `Opened ${args.url}`;
+      case 'read_clipboard':
+        if (!S.clipboard) return 'Clipboard access is disabled in Settings.';
+        try { return await navigator.clipboard.readText() || '(clipboard empty)'; }
+        catch (e) { return 'Clipboard read blocked: ' + e.message; }
+      case 'write_clipboard':
+        if (!S.clipboard) return 'Clipboard access is disabled in Settings.';
+        try { await navigator.clipboard.writeText(args.text); return 'Copied to clipboard.'; }
+        catch (e) { return 'Clipboard write blocked: ' + e.message; }
+      case 'list_files':     return S.files ? await listFiles() : 'File access is disabled.';
+      case 'read_file':      return S.files ? await readFileTool(args.name) : 'File access is disabled.';
+      case 'write_file':     return S.files ? await writeFileTool(args.name, args.content) : 'File access is disabled.';
+      case 'look_at_screen': return S.screen ? await lookAtScreen() : 'Screen vision is disabled.';
+      default: return 'Unknown tool: ' + name;
+    }
+  }
+
+  /* ============ AI CALL ============ */
+  async function chatCompletion(messages, tools = null) {
+    const key = getApiKey();
+    if (!key) return null;
+    const body = {
+      model: S.model,
+      messages,
+      max_tokens: 700,
+      temperature: 0.75
+    };
+    if (tools && tools.length) { body.tools = tools; body.tool_choice = 'auto'; }
+
+    try {
+      const res = await fetch(API_URL, {
+        method:'POST',
+        headers:{
+          'Content-Type':'application/json',
+          'Authorization':'Bearer ' + key,
+          'HTTP-Referer': location.origin || 'https://localhost',
+          'X-Title':'JARVIS Neural'
+        },
+        body: JSON.stringify(body)
+      });
+      if (!res.ok) {
+        if (res.status === 401) return { error:'[Invalid API key]' };
+        if (res.status === 429) return { error:'[Rate limited — try again shortly, sir.]' };
+        return { error:`[AI error ${res.status}]` };
+      }
+      const data = await res.json();
+      return data?.choices?.[0]?.message || null;
+    } catch (e) {
+      return { error:'[Network error contacting AI core]' };
+    }
+  }
+
+  /* ============ AGENT LOOP ============ */
+  async function runAgent(userText) {
+    const key = getApiKey();
+    if (!key) return "I need an API key to think, sir. Open Settings and add one.";
+
+    // Build memory context (semantic if enabled)
+    const relevant = S.memory ? await recallRelevant(userText) : [];
+    const memLines = relevant.map(m => `${m.role === 'user' ? 'User' : 'You'} said: ${m.content}`).join('\n');
+
+    const messages = [
+      { role:'system', content: SYSTEM_PROMPT + (memLines ? '\n\nRelevant past context:\n' + memLines : '') },
+      { role:'user', content: userText }
+    ];
+
+    const availableTools = S.tools ? TOOLS : null;
+    let steps = 0;
+    const toolCallsLog = [];
+
+    while (steps < AGENT_MAX_STEPS) {
+      steps++;
+      const reply = await chatCompletion(messages, availableTools);
+      if (!reply) return "I couldn't reach my AI core, sir.";
+      if (reply.error) return reply.error;
+
+      // Check for tool calls
+      if (reply.tool_calls && reply.tool_calls.length) {
+        messages.push(reply);
+
+        for (const call of reply.tool_calls) {
+          const fn = call.function?.name;
+          let args = {};
+          try { args = JSON.parse(call.function?.arguments || '{}'); } catch {}
+          addMsg('tool', `⚙ ${fn}(${JSON.stringify(args)})`);
+          const result = await runTool(fn, args);
+          addMsg('tool', `→ ${String(result).slice(0, 200)}${String(result).length > 200 ? '…' : ''}`);
+          toolCallsLog.push({ name: fn, args, result });
+
+          messages.push({
+            role:'tool',
+            tool_call_id: call.id,
+            content: String(result)
+          });
+        }
+        // Loop again so model can use tool results
+        if (!S.agent) break;
+        continue;
+      }
+
+      // Final text
+      const text = (reply.content || '').trim();
+      if (text) {
+        // Store in memory with embedding
+        if (S.memory) {
+          const [uEmb, aEmb] = await Promise.all([embed(userText), embed(text)]);
+          if (uEmb) history.push({ role:'user', content:userText, embedding:uEmb, t:Date.now() });
+          if (aEmb) history.push({ role:'assistant', content:text, embedding:aEmb, t:Date.now() });
+          saveMemory();
+        }
+        return text;
+      }
+
+      // Empty content, try one more
+      if (steps >= AGENT_MAX_STEPS) break;
+    }
+
+    return "I've reached my reasoning limit on this, sir. Perhaps break it into smaller questions.";
+  }
+
+  /* ============ LOCAL FAST COMMANDS ============ */
   const JOKES = [
     'Why did the developer go broke? Because he used up all his cache.',
     'I would tell you a UDP joke, but you might not get it.',
@@ -634,70 +1160,18 @@
     'Why do programmers prefer dark mode? Because light attracts bugs.'
   ];
 
-  function calculate(expr) {
-    if (!/^[\d\s+\-*/().%]+$/.test(expr)) return null;
-    try {
-      const r = Function('"use strict";return (' + expr + ')')();
-      return (typeof r === 'number' && isFinite(r)) ? r : null;
-    } catch { return null; }
-  }
-
   function handleLocal(q) {
     if (/^(hi|hey|hello|yo|greetings)\b/.test(q) || /good (morning|afternoon|evening)/.test(q)) {
       const h = new Date().getHours();
       const part = h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening';
       return `${part}, sir. All systems are operational.`;
     }
-    if (/\b(time|clock)\b/.test(q))
-      return `The current time is ${new Date().toLocaleTimeString('en-GB')}, sir.`;
-    if (/\b(date|day|today)\b/.test(q))
-      return `Today is ${new Date().toLocaleDateString('en-GB',
-        { weekday:'long', day:'numeric', month:'long', year:'numeric' })}.`;
-    if (/(your name|who are you|what are you)/.test(q))
-      return 'I am JARVIS — Just A Rather Very Intelligent System.';
-    if (/\bjoke\b/.test(q))
-      return JOKES[Math.floor(Math.random() * JOKES.length)];
-    if (/(status|systems? check|how are you)/.test(q))
-      return 'All systems nominal, sir.';
-    if (/(thank|thanks|cheers)/.test(q))
-      return 'Always a pleasure, sir.';
-    if (/^open\s+(.+)/.test(q)) {
-      const t = q.match(/^open\s+(.+)/)[1].trim();
-      const sites = { google:'https://google.com', youtube:'https://youtube.com',
-        github:'https://github.com', wikipedia:'https://wikipedia.org',
-        gmail:'https://mail.google.com', maps:'https://maps.google.com',
-        twitter:'https://twitter.com', reddit:'https://reddit.com',
-        spotify:'https://open.spotify.com', netflix:'https://netflix.com' };
-      const url = sites[t] || ('https://' + t.replace(/\s+/g,'') + '.com');
-      window.open(url, '_blank', 'noopener');
-      return `Opening ${t}, sir.`;
-    }
-    if (/^(search|google|look up)\s+(for\s+)?(.+)/.test(q)) {
-      const term = q.match(/^(?:search|google|look up)\s+(?:for\s+)?(.+)/)[1];
-      window.open('https://www.google.com/search?q=' + encodeURIComponent(term), '_blank', 'noopener');
-      return `Searching for "${term}".`;
-    }
-    if (/^(calculate|compute|what is|what's)\s+(.+)/.test(q)) {
-      const expr = q.match(/^(?:calculate|compute|what is|what's)\s+(.+)/)[1]
-        .replace(/plus/g,'+').replace(/minus/g,'-')
-        .replace(/times|multiplied by/g,'*').replace(/divided by/g,'/')
-        .replace(/[^0-9+\-*/().%\s]/g,'');
-      const r = calculate(expr);
-      if (r !== null) return `That would be ${r}.`;
-    }
-    if (/(clear|wipe) (the )?(log|screen|console)/.test(q)) {
-      clearLog();
-      return 'Log cleared, sir.';
-    }
+    if (/\bjoke\b/.test(q)) return JOKES[Math.floor(Math.random() * JOKES.length)];
+    if (/(thank|thanks|cheers)/.test(q)) return 'Always a pleasure, sir.';
+    if (/(clear|wipe) (the )?(log|screen|console)/.test(q)) { clearLog(); return 'Log cleared, sir.'; }
     if (/(forget|clear memory|reset memory|wipe memory)/.test(q)) {
-      history = [];
-      saveMemory();
+      history = []; try { localStorage.removeItem(MEMORY_KEY); } catch {}
       return 'Memory wiped, sir. A fresh start.';
-    }
-    if (/full ?screen/.test(q)) {
-      if (!document.fullscreenElement) document.documentElement.requestFullscreen?.();
-      else document.exitFullscreen?.();
-      return 'Adjusting display mode.';
     }
     return null;
   }
@@ -706,36 +1180,29 @@
   async function handleCommand(raw) {
     const q = raw.toLowerCase().trim().replace(/[?!.]+$/, '');
     if (!q) return;
-
     addMsg('user', raw);
 
     const local = handleLocal(q);
-    if (local) { speak(local); return; }
+    if (local) { await speak(local); return; }
 
-    if (!S.aiEnabled) {
-      speak('AI responses are turned off, sir. You can enable them in Settings.');
-      return;
-    }
-
-    const key = getApiKey();
-    if (!key) {
-      speak('I need an AI key to answer that, sir. Open Settings and tap Manage AI Key.');
-      return;
-    }
+    if (!S.aiEnabled) { await speak('AI responses are turned off, sir.'); return; }
 
     const thinking = addMsg('jarvis', '…processing…', 'thinking');
     setState('thinking');
-
-    const reply = await askAI(raw);
-    thinking.remove();
-
-    if (reply) speak(reply);
-    else speak("I'm having trouble reaching my AI core right now, sir. Please try again.");
+    try {
+      const reply = await runAgent(raw);
+      thinking.remove();
+      await speak(reply);
+    } catch (e) {
+      thinking.remove();
+      await speak('Something went wrong in my reasoning core, sir.');
+      console.error(e);
+    }
   }
 
   /* ============ VOICE INPUT ============ */
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  let recog = null;
+  let recog = null, wakeRecog = null, wakeActive = false;
 
   if (SR) {
     recog = new SR();
@@ -744,7 +1211,6 @@
     recog.lang = 'en-US';
 
     recog.onstart = () => setState('listening');
-
     recog.onresult = e => {
       let interim = '', final = '';
       for (let i = e.resultIndex; i < e.results.length; i++) {
@@ -752,293 +1218,225 @@
         if (e.results[i].isFinal) final += t; else interim += t;
       }
       inputEl.value = final || interim;
-      if (final.trim()) {
-        inputEl.value = '';
-        handleCommand(final.trim());
-      }
+      if (final.trim()) { inputEl.value = ''; handleCommand(final.trim()); }
     };
-
     recog.onerror = e => {
       setState('idle');
-      if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
-        addMsg('jarvis', 'Microphone access was denied.');
-        S.alwaysListen = false;
-        document.getElementById('setAlways').checked = false;
-        saveSettings();
+      if (e.error === 'not-allowed') {
+        addMsg('jarvis', 'Microphone access denied.');
+        S.alwaysListen = false; $('setAlways').checked = false; saveSettings();
       }
     };
-
     recog.onend = () => {
       if (state === 'listening') {
         setState('idle');
-        // Auto-restart if always listening
         if (S.alwaysListen && !S.wakeWord) {
           clearTimeout(alwaysListenTimer);
-          alwaysListenTimer = setTimeout(() => {
-            if (state === 'idle' && S.alwaysListen) startListening();
-          }, 500);
+          alwaysListenTimer = setTimeout(() => { if (S.alwaysListen) startListening(); }, 500);
         }
       }
     };
   }
 
   function startListening() {
-    if (!recog) { addMsg('jarvis', 'Voice input is not supported in this browser.'); return; }
+    if (!recog) { addMsg('jarvis', 'Voice input unsupported.'); return; }
     if (synth) synth.cancel();
-    try { recog.start(); } catch (_) {}
+    if (currentAudio) { try { currentAudio.pause(); } catch {} }
+    try { recog.start(); } catch {}
   }
-
-  function stopListening() {
-    if (recog) { try { recog.stop(); } catch (_) {} }
-    setState('idle');
-  }
-
-  micBtn.addEventListener('click', () => {
-    if (state === 'listening') stopListening();
-    else startListening();
-  });
-
-  /* ============ WAKE WORD ============ */
-  let wakeRecog = null;
-  let wakeActive = false;
+  function stopListening() { if (recog) { try { recog.stop(); } catch {} } setState('idle'); }
+  micBtn.addEventListener('click', () => state === 'listening' ? stopListening() : startListening());
 
   function startWake() {
-    if (!SR) { toast('Wake word requires Chrome or Edge'); return; }
+    if (!SR) { toast('Wake word needs Chrome or Edge'); return; }
     if (wakeRecog && wakeActive) return;
-
     wakeRecog = new SR();
     wakeRecog.continuous = true;
     wakeRecog.interimResults = true;
     wakeRecog.lang = 'en-US';
-
     wakeRecog.onresult = e => {
       for (let i = e.resultIndex; i < e.results.length; i++) {
         const t = e.results[i][0].transcript.toLowerCase();
         if (/\bjarvis\b/.test(t)) {
-          try { wakeRecog.stop(); } catch (_) {}
+          try { wakeRecog.stop(); } catch {}
           wakeActive = false;
-          setState('idle');
           addMsg('jarvis', 'Yes sir?');
           speak('Yes sir?');
-          setTimeout(() => {
-            if (!S.alwaysListen && state !== 'speaking') {
-              // One-shot: after answering, wait for wake again
-              setTimeout(() => { if (S.wakeWord) startWake(); }, 3000);
-            }
-          }, 500);
+          setTimeout(() => { if (S.wakeWord && state !== 'speaking') startWake(); }, 3500);
           return;
         }
       }
     };
-
     wakeRecog.onend = () => {
-      if (wakeActive || S.wakeWord) {
-        // Restart wake listener (unless we're in the middle of a command)
-        if (state === 'idle' && S.wakeWord && !S.alwaysListen) {
-          try { wakeRecog.start(); wakeActive = true; } catch (_) {}
-        } else if (S.wakeWord && S.alwaysListen && state === 'idle') {
-          try { wakeRecog.start(); wakeActive = true; } catch (_) {}
-        }
+      if (S.wakeWord && state === 'idle') {
+        try { wakeRecog.start(); wakeActive = true; } catch {}
       }
     };
-
     wakeRecog.onerror = e => {
       if (e.error === 'not-allowed') {
-        addMsg('jarvis', 'Wake word needs microphone permission.');
-        S.wakeWord = false;
-        document.getElementById('setWake').checked = false;
-        saveSettings();
-        wakeActive = false;
+        S.wakeWord = false; $('setWake').checked = false; saveSettings();
+        toast('Wake word needs mic permission');
       }
     };
-
-    try {
-      wakeRecog.start();
-      wakeActive = true;
-      setStatus('WAKE-READY');
-    } catch (_) {}
+    try { wakeRecog.start(); wakeActive = true; setStatus('WAKE-READY'); } catch {}
   }
 
   function stopWake() {
     wakeActive = false;
-    if (wakeRecog) { try { wakeRecog.stop(); } catch (_) {} }
+    if (wakeRecog) { try { wakeRecog.stop(); } catch {} }
     wakeRecog = null;
   }
 
-  /* ============ SETTINGS UI WIRING ============ */
-  const setWake     = document.getElementById('setWake');
-  const setAlways   = document.getElementById('setAlways');
-  const setVoice    = document.getElementById('setVoice');
-  const setAi       = document.getElementById('setAi');
-  const setMemory   = document.getElementById('setMemory');
-  const setScan     = document.getElementById('setScan');
-  const setViz      = document.getElementById('setViz');
-  const rowWake     = document.getElementById('rowWake');
-  const rowAlways   = document.getElementById('rowAlways');
+  /* ============ SETTINGS UI ============ */
+  const bindToggle = (id, key, onChange) => {
+    const el = $(id);
+    el.addEventListener('change', async () => {
+      S[key] = el.checked;
+      saveSettings();
+      if (onChange) await onChange(el.checked);
+    });
+  };
+
+  bindToggle('setWake','wakeWord', async v => {
+    if (v) { S.alwaysListen = false; $('setAlways').checked = false; stopListening(); startWake(); toast('Wake word on'); }
+    else { stopWake(); toast('Wake word off'); }
+    saveSettings();
+  });
+  bindToggle('setAlways','alwaysListen', async v => {
+    if (v) { S.wakeWord = false; $('setWake').checked = false; stopWake(); startListening(); toast('Always listening on'); }
+    else { stopListening(); clearTimeout(alwaysListenTimer); toast('Always listening off'); }
+    saveSettings();
+  });
+  bindToggle('setVoice','voiceOutput', v => {
+    if (!v && synth) synth.cancel();
+    if (!v && currentAudio) { try { currentAudio.pause(); } catch {} }
+  });
+  bindToggle('setNeural','neuralVoice', v => {
+    if (v && !localStorage.getItem(ELEVEN_KEY)) {
+      toast('Add an ElevenLabs key first');
+      S.neuralVoice = false; $('setNeural').checked = false; saveSettings();
+    }
+  });
+  bindToggle('setAi','aiEnabled');
+  bindToggle('setTools','tools');
+  bindToggle('setAgent','agent');
+  bindToggle('setMemory','memory', v => {
+    if (!v) { history = []; try { localStorage.removeItem(MEMORY_KEY); } catch {} }
+  });
+  bindToggle('setClip','clipboard', async v => {
+    if (v) {
+      try { await navigator.clipboard.readText(); toast('Clipboard access granted'); }
+      catch { toast('Clipboard permission denied'); S.clipboard = false; $('setClip').checked = false; saveSettings(); }
+    }
+  });
+  bindToggle('setFiles','files', async v => {
+    if (v && !folderHandle) await pickFolder();
+    else if (!v) { folderHandle = null; localStorage.removeItem(FOLDER_KEY); }
+  });
+  bindToggle('setScreen','screen', async v => { await toggleScreen(v); });
+  bindToggle('setScan','scanlines', v => document.body.classList.toggle('no-scanlines', !v));
+  bindToggle('setViz','visualizer', v => { canvas.style.display = v ? 'block' : 'none'; });
+
+  $('setModel').addEventListener('change', e => {
+    S.model = e.target.value;
+    saveSettings();
+    toast('Model: ' + S.model.split('/').pop());
+  });
 
   function applySettingsToUI() {
-    setWake.checked   = S.wakeWord;
-    setAlways.checked = S.alwaysListen;
-    setVoice.checked  = S.voiceOutput;
-    setAi.checked     = S.aiEnabled;
-    setMemory.checked = S.memory;
-    setScan.checked   = S.scanlines;
-    setViz.checked    = S.visualizer;
-
+    $('setWake').checked = S.wakeWord;
+    $('setAlways').checked = S.alwaysListen;
+    $('setVoice').checked = S.voiceOutput;
+    $('setNeural').checked = S.neuralVoice;
+    $('setAi').checked = S.aiEnabled;
+    $('setTools').checked = S.tools;
+    $('setAgent').checked = S.agent;
+    $('setMemory').checked = S.memory;
+    $('setClip').checked = S.clipboard;
+    $('setFiles').checked = S.files;
+    $('setScreen').checked = S.screen;
+    $('setScan').checked = S.scanlines;
+    $('setViz').checked = S.visualizer;
+    $('setModel').value = S.model;
     document.body.classList.toggle('no-scanlines', !S.scanlines);
     canvas.style.display = S.visualizer ? 'block' : 'none';
-
-    // Wake + Always are mutually exclusive
-    rowAlways.classList.toggle('disabled', S.wakeWord);
-    rowWake.classList.toggle('disabled', S.alwaysListen);
   }
 
-  function applyVisualSettings() {
-    document.body.style.setProperty('--scan-opacity', S.scanlines ? '.5' : '0');
-    // scanlines handled via a body class
-    document.documentElement.style.setProperty('--scan-display', S.scanlines ? 'block' : 'none');
-    canvas.style.display = S.visualizer ? 'block' : 'none';
-  }
-
-  // Scanline toggle via CSS class
-  const styleTag = document.createElement('style');
-  styleTag.textContent = `body.no-scanlines::after{display:none !important}`;
-  document.head.appendChild(styleTag);
-
-  setWake.addEventListener('change', () => {
-    S.wakeWord = setWake.checked;
-    if (S.wakeWord) {
-      S.alwaysListen = false;
-      setAlways.checked = false;
-      stopListening();
-      startWake();
-      toast('Wake word enabled — say "Jarvis"');
-    } else {
-      stopWake();
-      toast('Wake word disabled');
-    }
-    applySettingsToUI();
-    saveSettings();
-  });
-
-  setAlways.addEventListener('change', () => {
-    S.alwaysListen = setAlways.checked;
-    if (S.alwaysListen) {
-      S.wakeWord = false;
-      setWake.checked = false;
-      stopWake();
-      startListening();
-      toast('Always listening — speak freely');
-    } else {
-      stopListening();
-      clearTimeout(alwaysListenTimer);
-      toast('Always listening off');
-    }
-    applySettingsToUI();
-    saveSettings();
-  });
-
-  setVoice.addEventListener('change', () => {
-    S.voiceOutput = setVoice.checked;
-    if (!S.voiceOutput && synth) synth.cancel();
-    saveSettings();
-    toast(S.voiceOutput ? 'Voice output on' : 'Voice output off');
-  });
-
-  setAi.addEventListener('change', () => {
-    S.aiEnabled = setAi.checked;
-    saveSettings();
-    toast(S.aiEnabled ? 'AI responses on' : 'AI responses off');
-  });
-
-  setMemory.addEventListener('change', () => {
-    S.memory = setMemory.checked;
-    if (!S.memory) {
-      history = [];
-      try { localStorage.removeItem(MEMORY_KEY); } catch {}
-    }
-    saveSettings();
-    toast(S.memory ? 'Memory on' : 'Memory off — cleared');
-  });
-
-  setScan.addEventListener('change', () => {
-    S.scanlines = setScan.checked;
-    document.body.classList.toggle('no-scanlines', !S.scanlines);
-    saveSettings();
-  });
-
-  setViz.addEventListener('change', () => {
-    S.visualizer = setViz.checked;
-    canvas.style.display = S.visualizer ? 'block' : 'none';
-    saveSettings();
-  });
-
-  /* ---- Open/close settings ---- */
-  function openSettings() {
-    settingsEl.classList.add('open');
-    overlayEl.classList.add('show');
-    applySettingsToUI();
-  }
-  function closeSettings() {
-    settingsEl.classList.remove('open');
-    overlayEl.classList.remove('show');
-  }
-
-  document.getElementById('settingsBtn').addEventListener('click', openSettings);
-  document.getElementById('settingsClose').addEventListener('click', closeSettings);
+  function openSettings() { settingsEl.classList.add('open'); overlayEl.classList.add('show'); }
+  function closeSettings() { settingsEl.classList.remove('open'); overlayEl.classList.remove('show'); }
+  $('settingsBtn').addEventListener('click', openSettings);
+  $('settingsClose').addEventListener('click', closeSettings);
   overlayEl.addEventListener('click', closeSettings);
 
-  /* ---- API key modal ---- */
-  function openKeyModal() {
-    keyInput.value = getApiKey();
+  /* ---- API key modals ---- */
+  let keyMode = 'openrouter';
+  function openKeyModal(mode) {
+    keyMode = mode;
+    if (mode === 'openrouter') {
+      $('keyModalTitle').textContent = 'OPENROUTER KEY';
+      $('keyModalDesc').innerHTML = 'Paste your <a href="https://openrouter.ai/keys" target="_blank" rel="noopener">OpenRouter</a> key (starts with <code>sk-or-</code>). Stored only in this browser.';
+      keyInput.value = getApiKey();
+      keyInput.placeholder = 'sk-or-v1-...';
+    } else {
+      $('keyModalTitle').textContent = 'ELEVENLABS KEY';
+      $('keyModalDesc').innerHTML = 'Paste your <a href="https://elevenlabs.io/app/settings/api-keys" target="_blank" rel="noopener">ElevenLabs</a> API key for neural voice.';
+      keyInput.value = localStorage.getItem(ELEVEN_KEY) || '';
+      keyInput.placeholder = 'xi-...';
+    }
     keyModal.classList.add('show');
     setTimeout(() => keyInput.focus(), 100);
   }
-  function closeKeyModal() { keyModal.classList.remove('show'); }
+  const closeKeyModal = () => keyModal.classList.remove('show');
 
-  document.getElementById('btnApiKey').addEventListener('click', openKeyModal);
-  document.getElementById('keyCancel').addEventListener('click', closeKeyModal);
-  document.getElementById('keySave').addEventListener('click', () => {
+  $('btnApiKey').addEventListener('click', () => openKeyModal('openrouter'));
+  $('btnElevenKey').addEventListener('click', () => openKeyModal('eleven'));
+  $('btnPickFolder').addEventListener('click', pickFolder);
+  $('keyCancel').addEventListener('click', closeKeyModal);
+  $('keySave').addEventListener('click', () => {
     const k = keyInput.value.trim();
-    if (k) localStorage.setItem(API_KEY_KEY, k);
-    else localStorage.removeItem(API_KEY_KEY);
+    if (keyMode === 'openrouter') {
+      if (k) localStorage.setItem(API_KEY_KEY, k);
+      else localStorage.removeItem(API_KEY_KEY);
+      toast(k ? 'OpenRouter key saved' : 'Key removed');
+    } else {
+      if (k) localStorage.setItem(ELEVEN_KEY, k);
+      else localStorage.removeItem(ELEVEN_KEY);
+      toast(k ? 'ElevenLabs key saved' : 'Key removed');
+      if (!k) { S.neuralVoice = false; $('setNeural').checked = false; saveSettings(); }
+    }
     closeKeyModal();
-    toast(k ? 'AI key saved' : 'AI key removed');
   });
   keyModal.addEventListener('click', e => { if (e.target === keyModal) closeKeyModal(); });
 
-  /* ---- Reset all ---- */
-  document.getElementById('btnResetAll').addEventListener('click', () => {
-    if (!confirm('Reset all settings to defaults? Conversation memory will also be cleared.')) return;
+  $('btnResetAll').addEventListener('click', () => {
+    if (!confirm('Reset ALL settings, memory, and keys?')) return;
     S = { ...DEFAULT_SETTINGS };
     history = [];
-    try {
-      localStorage.removeItem(SETTINGS_KEY);
-      localStorage.removeItem(MEMORY_KEY);
-    } catch {}
-    stopWake();
-    stopListening();
+    try { [SETTINGS_KEY, MEMORY_KEY, API_KEY_KEY, ELEVEN_KEY, FOLDER_KEY].forEach(k => localStorage.removeItem(k)); } catch {}
+    stopWake(); stopListening();
+    folderHandle = null;
     applySettingsToUI();
     document.body.classList.remove('no-scanlines');
     canvas.style.display = 'block';
-    toast('All settings reset');
+    toast('All reset');
   });
 
-  /* ============ INPUT EVENTS ============ */
+  /* ---- Screen button ---- */
+  $('btnScreen').addEventListener('click', () => toggleScreen(!S.screen));
+
+  /* ============ INPUT ============ */
   inputEl.addEventListener('keydown', e => {
     if (e.key === 'Enter' && inputEl.value.trim()) {
-      const v = inputEl.value.trim();
-      inputEl.value = '';
+      const v = inputEl.value.trim(); inputEl.value = '';
       handleCommand(v);
     }
   });
 
   function clearLog() {
-    logEl.innerHTML = '<div class="panel-title"><span>SYSTEM LOG</span>' +
-      '<button id="clearLog">CLEAR</button></div>';
-    document.getElementById('clearLog').onclick = clearLog;
+    logEl.innerHTML = '<div class="panel-title"><span>SYSTEM LOG</span><button id="clearLog">CLEAR</button></div>';
+    $('clearLog').onclick = clearLog;
   }
-  document.getElementById('clearLog').onclick = clearLog;
+  $('clearLog').onclick = clearLog;
 
   /* ============ VISUALIZER ============ */
   const BARS = 56;
@@ -1061,7 +1459,6 @@
     ctx.clearRect(0, 0, w, h);
     const now = performance.now();
     const gap = w / BARS;
-
     for (let i = 0; i < BARS; i++) {
       let target;
       if (state === 'listening')      target = Math.random() * 0.85 + 0.15;
@@ -1069,18 +1466,13 @@
       else if (state === 'thinking')  target = (Math.sin(now/180 + i*0.9)*0.5+0.5)*0.6+0.2;
       else                            target = (Math.sin(now/620 + i*0.32)*0.5+0.5)*0.13+0.03;
       bars[i] += (target - bars[i]) * 0.22;
-
       const bh = Math.max(2, bars[i] * h * 0.92);
-      const x  = i * gap + gap * 0.22;
-      const bw = gap * 0.56;
-      const y  = (h - bh) / 2;
+      const x = i * gap + gap * 0.22, bw = gap * 0.56, y = (h - bh) / 2;
       const isThink = state === 'thinking';
-
       const grad = ctx.createLinearGradient(0, y, 0, y + bh);
-      grad.addColorStop(0,   isThink ? 'rgba(255,0,230,0.15)' : 'rgba(0,229,255,0.15)');
+      grad.addColorStop(0, isThink ? 'rgba(255,0,230,0.15)' : 'rgba(0,229,255,0.15)');
       grad.addColorStop(0.5, isThink ? 'rgba(255,0,230,0.95)' : 'rgba(0,229,255,0.95)');
-      grad.addColorStop(1,   isThink ? 'rgba(255,0,230,0.15)' : 'rgba(0,229,255,0.15)');
-
+      grad.addColorStop(1, isThink ? 'rgba(255,0,230,0.15)' : 'rgba(0,229,255,0.15)');
       ctx.fillStyle = grad;
       ctx.shadowColor = isThink ? 'rgba(255,0,230,0.75)' : 'rgba(0,229,255,0.75)';
       ctx.shadowBlur = state === 'idle' ? 6 : 14;
@@ -1094,28 +1486,27 @@
   /* ============ BOOT ============ */
   loadSettings();
   applySettingsToUI();
-  applyVisualSettings();
 
   window.addEventListener('load', () => {
     setTimeout(() => {
-      document.getElementById('boot').classList.add('done');
+      $('boot').classList.add('done');
       setTimeout(() => {
         const hasKey = !!getApiKey();
-        let greeting = 'Systems online.';
-        if (hasKey) greeting += ' AI core linked.';
-        else greeting += ' Configure your AI key in Settings to unlock full capabilities.';
-        greeting += ' Good to see you again, sir.';
+        let greeting = 'Systems online. Neural core initialized.';
+        if (!hasKey) greeting += ' Add an OpenRouter key in Settings to unlock my full mind.';
+        else greeting += ' All tools standing by.';
         addMsg('jarvis', greeting);
         setState('idle');
         speak(greeting);
-
-        // Auto-start listening modes if enabled
         if (S.wakeWord) setTimeout(startWake, 1500);
         if (S.alwaysListen) setTimeout(startListening, 1500);
-        if (!hasKey) setTimeout(openKeyModal, 3000);
+        if (!hasKey) setTimeout(() => openKeyModal('openrouter'), 3000);
       }, 600);
-    }, 2100);
+    }, 2200);
   });
+
+  /* expose for testing */
+  window.__jarvis = { runTool, runAgent, TOOLS, captureFrame };
 })();
 </script>
 </body>
