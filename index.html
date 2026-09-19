@@ -171,6 +171,13 @@
   .toggle-info span{font-size:10px;color:rgba(0,229,255,.5);
     font-family:system-ui,sans-serif;line-height:1.5}
 
+  .model-info{padding:12px;border:1px solid var(--faint);border-radius:10px;
+    background:rgba(0,30,42,.35);font-size:10px;line-height:1.6;
+    color:rgba(0,229,255,.65);font-family:system-ui,sans-serif}
+  .model-info strong{color:#d8fbff;display:block;margin-bottom:4px;font-size:11px}
+  .model-info code{background:rgba(0,229,255,.12);padding:2px 6px;border-radius:3px;
+    color:var(--c);font-size:10px}
+
   .switch{position:relative;width:46px;height:24px;flex-shrink:0}
   .switch input{opacity:0;width:0;height:0}
   .slider{position:absolute;inset:0;background:rgba(0,229,255,.1);
@@ -263,6 +270,49 @@
   <div class="settings-body">
 
     <div class="setting-group">
+      <label>AI CORE</label>
+
+      <div class="model-info">
+        <strong>ACTIVE MODEL</strong>
+        GLM 5.2 (free) — Z.ai<br>
+        <code>z-ai/glm-5.2:free</code><br>
+        1M context · Reasoning · Tool use
+      </div>
+
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <strong>AI RESPONSES</strong>
+          <span>Off = local commands only</span>
+        </div>
+        <label class="switch"><input type="checkbox" id="setAi" checked><span class="slider"></span></label>
+      </div>
+
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <strong>TOOL USE</strong>
+          <span>Let AI call web search, weather, files, etc.</span>
+        </div>
+        <label class="switch"><input type="checkbox" id="setTools" checked><span class="slider"></span></label>
+      </div>
+
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <strong>AGENT MODE</strong>
+          <span>Multi-step reasoning with tool chains</span>
+        </div>
+        <label class="switch"><input type="checkbox" id="setAgent" checked><span class="slider"></span></label>
+      </div>
+
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <strong>SEMANTIC MEMORY</strong>
+          <span>Embedding-based recall of past chats</span>
+        </div>
+        <label class="switch"><input type="checkbox" id="setMemory" checked><span class="slider"></span></label>
+      </div>
+    </div>
+
+    <div class="setting-group">
       <label>VOICE CONTROL</label>
 
       <div class="toggle-row">
@@ -295,42 +345,6 @@
           <span>Ultra-realistic voice. Requires API key.</span>
         </div>
         <label class="switch"><input type="checkbox" id="setNeural"><span class="slider"></span></label>
-      </div>
-    </div>
-
-    <div class="setting-group">
-      <label>AI CORE</label>
-
-      <div class="toggle-row">
-        <div class="toggle-info">
-          <strong>AI RESPONSES</strong>
-          <span>Off = local commands only</span>
-        </div>
-        <label class="switch"><input type="checkbox" id="setAi" checked><span class="slider"></span></label>
-      </div>
-
-      <div class="toggle-row">
-        <div class="toggle-info">
-          <strong>TOOL USE</strong>
-          <span>Let AI call web search, weather, files, etc.</span>
-        </div>
-        <label class="switch"><input type="checkbox" id="setTools" checked><span class="slider"></span></label>
-      </div>
-
-      <div class="toggle-row">
-        <div class="toggle-info">
-          <strong>AGENT MODE</strong>
-          <span>Multi-step reasoning with tool chains</span>
-        </div>
-        <label class="switch"><input type="checkbox" id="setAgent" checked><span class="slider"></span></label>
-      </div>
-
-      <div class="toggle-row">
-        <div class="toggle-info">
-          <strong>SEMANTIC MEMORY</strong>
-          <span>Embedding-based recall of past chats</span>
-        </div>
-        <label class="switch"><input type="checkbox" id="setMemory" checked><span class="slider"></span></label>
       </div>
     </div>
 
@@ -415,7 +429,7 @@
       <div class="dot"></div>
       <div>
         <h1>J.A.R.V.I.S.</h1>
-        <small>NEURAL CORE · TOOL USE · VISION</small>
+        <small>NEURAL CORE · GLM 5.2 · VISION</small>
       </div>
     </div>
     <div class="header-right">
@@ -462,12 +476,12 @@
   /* ============ CONFIG ============ */
   const API_URL = 'https://openrouter.ai/api/v1/chat/completions';
   const EMBED_URL = 'https://openrouter.ai/api/v1/embeddings';
-  
-  // LOCKED MODEL — Qwen3.6 Plus (free, supports tools + vision)
-  // This is the only model used. No dropdown, no switching.
-  const MODEL = 'qwen/qwen3.6-plus:free';
+
+  // LOCKED MODEL — GLM 5.2 (free) from Z.ai
+  // Strong reasoning, tool use, long-horizon agent workflows.
+  const MODEL = 'z-ai/glm-5.2:free';
   const EMBED_MODEL = 'openai/text-embedding-3-small';
-  
+
   const ELEVEN_URL = 'https://api.elevenlabs.io/v1/text-to-speech';
   const ELEVEN_VOICE = 'onwK4e9ZLuTAKqWW03F9'; // Daniel (British male)
 
@@ -478,8 +492,8 @@ You have tools available. Use them when needed instead of guessing.
 If asked to control something you cannot, say so plainly.
 You may see the user's screen if vision is enabled. Reference what you see naturally.`;
 
-  const SETTINGS_KEY  = 'jarvis_settings_v3';
-  const MEMORY_KEY    = 'jarvis_memory_v3';
+  const SETTINGS_KEY  = 'jarvis_settings_v4';
+  const MEMORY_KEY    = 'jarvis_memory_v4';
   const API_KEY_KEY   = 'jarvis_api_key';
   const ELEVEN_KEY    = 'jarvis_eleven_key';
   const FOLDER_KEY    = 'jarvis_folder_name';
@@ -1027,7 +1041,7 @@ You may see the user's screen if vision is enabled. Reference what you see natur
     const body = {
       model: MODEL,
       messages,
-      max_tokens: 700,
+      max_tokens: 800,
       temperature: 0.75
     };
     if (tools && tools.length) { body.tools = tools; body.tool_choice = 'auto'; }
@@ -1044,10 +1058,14 @@ You may see the user's screen if vision is enabled. Reference what you see natur
         body: JSON.stringify(body)
       });
       if (!res.ok) {
-        if (res.status === 401) return { error:'[Invalid API key]' };
-        if (res.status === 429) return { error:'[Rate limited — try again shortly, sir.]' };
-        if (res.status === 404) return { error:'[AI model unavailable. Try again later, sir.]' };
-        return { error:`[AI error ${res.status}]` };
+        let detail = '';
+        try { const err = await res.json(); detail = err?.error?.message || ''; } catch {}
+        console.warn('AI error', res.status, detail);
+        if (res.status === 401) return { error:'[Invalid API key — check Settings.]' };
+        if (res.status === 402) return { error:'[Out of credits on OpenRouter.]' };
+        if (res.status === 429) return { error:'[Rate limited — wait a moment and try again, sir.]' };
+        if (res.status === 404) return { error:'[Model unavailable right now. Try again shortly.]' };
+        return { error:`[AI error ${res.status}${detail ? ': ' + detail : ''}]` };
       }
       const data = await res.json();
       return data?.choices?.[0]?.message || null;
@@ -1424,9 +1442,8 @@ You may see the user's screen if vision is enabled. Reference what you see natur
       const bh = Math.max(2, bars[i] * h * 0.92);
       const x = i * gap + gap * 0.22, bw = gap * 0.56, y = (h - bh) / 2;
       const isThink = state === 'thinking';
-      const grad = ctx initialized.createLinearGradient(.0, y, 0, y +';
- bh);
-      grad.addColorStop(0       , isThink ? ' ifrgba(255,0 (!,230,0.15)' : 'rgba(0,229,255,0.15)');
+      const grad = ctx.createLinearGradient(0, y, 0, y + bh);
+      grad.addColorStop(0, isThink ? 'rgba(255,0,230,0.15)' : 'rgba(0,229,255,0.15)');
       grad.addColorStop(0.5, isThink ? 'rgba(255,0,230,0.95)' : 'rgba(0,229,255,0.95)');
       grad.addColorStop(1, isThink ? 'rgba(255,0,230,0.15)' : 'rgba(0,229,255,0.15)');
       ctx.fillStyle = grad;
@@ -1448,7 +1465,8 @@ You may see the user's screen if vision is enabled. Reference what you see natur
       $('boot').classList.add('done');
       setTimeout(() => {
         const hasKey = !!getApiKey();
-        let greeting = 'Systems online. Neural corehasKey) greeting += ' Add an OpenRouter key in Settings to unlock my full mind.';
+        let greeting = 'Systems online. Neural core initialized with GLM 5.2.';
+        if (!hasKey) greeting += ' Add an OpenRouter key in Settings to unlock my full mind.';
         else greeting += ' All tools standing by.';
         addMsg('jarvis', greeting);
         setState('idle');
@@ -1460,7 +1478,7 @@ You may see the user's screen if vision is enabled. Reference what you see natur
     }, 2200);
   });
 
-  window.__jarvis = { runTool, runAgent, TOOLS, captureFrame };
+  window.__jarvis = { runTool, runAgent, TOOLS, captureFrame, MODEL };
 })();
 </script>
 </body>
