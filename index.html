@@ -176,7 +176,7 @@
     color:rgba(0,229,255,.65);font-family:system-ui,sans-serif}
   .model-info strong{color:#d8fbff;display:block;margin-bottom:4px;font-size:11px}
   .model-info code{background:rgba(0,229,255,.12);padding:2px 6px;border-radius:3px;
-    color:var(--c);font-size:10px}
+    color:var(--c);font-size:10px;word-break:break-all}
 
   .switch{position:relative;width:46px;height:24px;flex-shrink:0}
   .switch input{opacity:0;width:0;height:0}
@@ -274,9 +274,10 @@
 
       <div class="model-info">
         <strong>ACTIVE MODEL</strong>
-        GLM 5.2 (free) — Z.ai<br>
-        <code>z-ai/glm-5.2:free</code><br>
-        1M context · Reasoning · Tool use
+        NVIDIA Nemotron 3 Ultra (free)<br>
+        <code>nvidia/nemotron-3-ultra-550b-a55b:free</code><br>
+        1M context · Agentic · Tool use<br>
+        <span style="color:rgba(0,229,255,.45);font-size:9px">Fallback: <code>openrouter/free</code></span>
       </div>
 
       <div class="toggle-row">
@@ -429,7 +430,7 @@
       <div class="dot"></div>
       <div>
         <h1>J.A.R.V.I.S.</h1>
-        <small>NEURAL CORE · GLM 5.2 · VISION</small>
+        <small>NEURAL CORE · NEMOTRON 3 ULTRA · VISION</small>
       </div>
     </div>
     <div class="header-right">
@@ -477,9 +478,14 @@
   const API_URL = 'https://openrouter.ai/api/v1/chat/completions';
   const EMBED_URL = 'https://openrouter.ai/api/v1/embeddings';
 
-  // LOCKED MODEL — GLM 5.2 (free) from Z.ai
-  // Strong reasoning, tool use, long-horizon agent workflows.
-  const MODEL = 'z-ai/glm-5.2:free';
+  // PRIMARY MODEL — NVIDIA Nemotron 3 Ultra (free)
+  // 1M context, agentic workflows, tool calling, vision support.
+  const MODEL = 'nvidia/nemotron-3-ultra-550b-a55b:free';
+
+  // FALLBACK — OpenRouter Free Models Router
+  // Auto-routes to any available free model supporting tools + vision.
+  const FALLBACK_MODEL = 'openrouter/free';
+
   const EMBED_MODEL = 'openai/text-embedding-3-small';
 
   const ELEVEN_URL = 'https://api.elevenlabs.io/v1/text-to-speech';
@@ -492,8 +498,8 @@ You have tools available. Use them when needed instead of guessing.
 If asked to control something you cannot, say so plainly.
 You may see the user's screen if vision is enabled. Reference what you see naturally.`;
 
-  const SETTINGS_KEY  = 'jarvis_settings_v4';
-  const MEMORY_KEY    = 'jarvis_memory_v4';
+  const SETTINGS_KEY  = 'jarvis_settings_v5';
+  const MEMORY_KEY    = 'jarvis_memory_v5';
   const API_KEY_KEY   = 'jarvis_api_key';
   const ELEVEN_KEY    = 'jarvis_eleven_key';
   const FOLDER_KEY    = 'jarvis_folder_name';
@@ -696,139 +702,18 @@ You may see the user's screen if vision is enabled. Reference what you see natur
 
   /* ============ TOOLS ============ */
   const TOOLS = [
-    {
-      type:'function',
-      function:{
-        name:'get_time',
-        description:'Get the current local time and date.',
-        parameters:{ type:'object', properties:{} }
-      }
-    },
-    {
-      type:'function',
-      function:{
-        name:'web_search',
-        description:'Search the web via DuckDuckGo. Returns top result snippets.',
-        parameters:{
-          type:'object',
-          properties:{ query:{ type:'string', description:'Search query' } },
-          required:['query']
-        }
-      }
-    },
-    {
-      type:'function',
-      function:{
-        name:'get_weather',
-        description:'Get current weather for a city (no API key needed).',
-        parameters:{
-          type:'object',
-          properties:{
-            city:{ type:'string', description:'City name, e.g. "London" or "New York"' }
-          },
-          required:['city']
-        }
-      }
-    },
-    {
-      type:'function',
-      function:{
-        name:'wikipedia',
-        description:'Look up a topic on Wikipedia and return a short summary.',
-        parameters:{
-          type:'object',
-          properties:{ topic:{ type:'string' } },
-          required:['topic']
-        }
-      }
-    },
-    {
-      type:'function',
-      function:{
-        name:'calculate',
-        description:'Evaluate a math expression. E.g. "(5+3)*2".',
-        parameters:{
-          type:'object',
-          properties:{ expression:{ type:'string' } },
-          required:['expression']
-        }
-      }
-    },
-    {
-      type:'function',
-      function:{
-        name:'open_url',
-        description:'Open a URL in a new tab.',
-        parameters:{
-          type:'object',
-          properties:{ url:{ type:'string' } },
-          required:['url']
-        }
-      }
-    },
-    {
-      type:'function',
-      function:{
-        name:'read_clipboard',
-        description:'Read text from the user clipboard. Only works if clipboard permission is enabled.',
-        parameters:{ type:'object', properties:{} }
-      }
-    },
-    {
-      type:'function',
-      function:{
-        name:'write_clipboard',
-        description:'Write text to the user clipboard.',
-        parameters:{
-          type:'object',
-          properties:{ text:{ type:'string' } },
-          required:['text']
-        }
-      }
-    },
-    {
-      type:'function',
-      function:{
-        name:'list_files',
-        description:'List files in the user-picked working folder.',
-        parameters:{ type:'object', properties:{} }
-      }
-    },
-    {
-      type:'function',
-      function:{
-        name:'read_file',
-        description:'Read a text file from the working folder.',
-        parameters:{
-          type:'object',
-          properties:{ name:{ type:'string' } },
-          required:['name']
-        }
-      }
-    },
-    {
-      type:'function',
-      function:{
-        name:'write_file',
-        description:'Create or overwrite a text file in the working folder.',
-        parameters:{
-          type:'object',
-          properties:{
-            name:{ type:'string' },
-            content:{ type:'string' }
-          },
-          required:['name','content']
-        }
-      }
-    },
-    {
-      type:'function',
-      function:{
-        name:'look_at_screen',
-        description:'Capture the shared screen and describe what is on it. Only works if screen vision is enabled.',
-        parameters:{ type:'object', properties:{} }
-      }
-    }
+    { type:'function', function:{ name:'get_time', description:'Get the current local time and date.', parameters:{ type:'object', properties:{} } } },
+    { type:'function', function:{ name:'web_search', description:'Search the web via DuckDuckGo. Returns top result snippets.', parameters:{ type:'object', properties:{ query:{ type:'string', description:'Search query' } }, required:['query'] } } },
+    { type:'function', function:{ name:'get_weather', description:'Get current weather for a city (no API key needed).', parameters:{ type:'object', properties:{ city:{ type:'string', description:'City name, e.g. "London" or "New York"' } }, required:['city'] } } },
+    { type:'function', function:{ name:'wikipedia', description:'Look up a topic on Wikipedia and return a short summary.', parameters:{ type:'object', properties:{ topic:{ type:'string' } }, required:['topic'] } } },
+    { type:'function', function:{ name:'calculate', description:'Evaluate a math expression. E.g. "(5+3)*2".', parameters:{ type:'object', properties:{ expression:{ type:'string' } }, required:['expression'] } } },
+    { type:'function', function:{ name:'open_url', description:'Open a URL in a new tab.', parameters:{ type:'object', properties:{ url:{ type:'string' } }, required:['url'] } } },
+    { type:'function', function:{ name:'read_clipboard', description:'Read text from the user clipboard. Only works if clipboard permission is enabled.', parameters:{ type:'object', properties:{} } } },
+    { type:'function', function:{ name:'write_clipboard', description:'Write text to the user clipboard.', parameters:{ type:'object', properties:{ text:{ type:'string' } }, required:['text'] } } },
+    { type:'function', function:{ name:'list_files', description:'List files in the user-picked working folder.', parameters:{ type:'object', properties:{} } } },
+    { type:'function', function:{ name:'read_file', description:'Read a text file from the working folder.', parameters:{ type:'object', properties:{ name:{ type:'string' } }, required:['name'] } } },
+    { type:'function', function:{ name:'write_file', description:'Create or overwrite a text file in the working folder.', parameters:{ type:'object', properties:{ name:{ type:'string' }, content:{ type:'string' } }, required:['name','content'] } } },
+    { type:'function', function:{ name:'look_at_screen', description:'Capture the shared screen and describe what is on it. Only works if screen vision is enabled.', parameters:{ type:'object', properties:{} } } }
   ];
 
   async function webSearch(query) {
@@ -838,9 +723,7 @@ You may see the user's screen if vision is enabled. Reference what you see natur
       const bits = [];
       if (data.AbstractText) bits.push(data.AbstractText);
       if (data.Answer) bits.push(data.Answer);
-      (data.RelatedTopics || []).slice(0, 3).forEach(t => {
-        if (t.Text) bits.push(t.Text);
-      });
+      (data.RelatedTopics || []).slice(0, 3).forEach(t => { if (t.Text) bits.push(t.Text); });
       return bits.length ? bits.join('\n') : 'No concise answer found.';
     } catch (e) { return 'Search failed: ' + e.message; }
   }
@@ -876,10 +759,7 @@ You may see the user's screen if vision is enabled. Reference what you see natur
   }
 
   async function pickFolder() {
-    if (!window.showDirectoryPicker) {
-      toast('File Access API not supported here. Use Chrome or Edge.');
-      return;
-    }
+    if (!window.showDirectoryPicker) { toast('File Access API not supported here. Use Chrome or Edge.'); return; }
     try {
       folderHandle = await window.showDirectoryPicker({ mode:'readwrite' });
       localStorage.setItem(FOLDER_KEY, folderHandle.name);
@@ -892,10 +772,8 @@ You may see the user's screen if vision is enabled. Reference what you see natur
     if (folderHandle) return true;
     const name = localStorage.getItem(FOLDER_KEY);
     if (name && window.showDirectoryPicker) {
-      try {
-        folderHandle = await window.showDirectoryPicker({ mode:'readwrite' });
-        return true;
-      } catch { return false; }
+      try { folderHandle = await window.showDirectoryPicker({ mode:'readwrite' }); return true; }
+      catch { return false; }
     }
     return false;
   }
@@ -903,9 +781,7 @@ You may see the user's screen if vision is enabled. Reference what you see natur
   async function listFiles() {
     if (!await ensureFolder()) return 'No working folder selected. Use Settings → Pick Working Folder.';
     const names = [];
-    for await (const [name, handle] of folderHandle.entries()) {
-      if (handle.kind === 'file') names.push(name);
-    }
+    for await (const [name, handle] of folderHandle.entries()) { if (handle.kind === 'file') names.push(name); }
     return names.length ? 'Files: ' + names.join(', ') : 'Folder is empty.';
   }
 
@@ -914,8 +790,7 @@ You may see the user's screen if vision is enabled. Reference what you see natur
     try {
       const fh = await folderHandle.getFileHandle(name);
       const file = await fh.getFile();
-      const text = await file.text();
-      return text.slice(0, 8000);
+      return (await file.text()).slice(0, 8000);
     } catch (e) { return `Could not read "${name}": ${e.message}`; }
   }
 
@@ -950,10 +825,7 @@ You may see the user's screen if vision is enabled. Reference what you see natur
         toast('Screen share cancelled');
       }
     } else {
-      if (screenStream) {
-        screenStream.getTracks().forEach(t => t.stop());
-        screenStream = null;
-      }
+      if (screenStream) { screenStream.getTracks().forEach(t => t.stop()); screenStream = null; }
       visionPreview.classList.remove('show');
       $('btnScreen').classList.remove('active');
       S.screen = false; $('setScreen').checked = false; saveSettings();
@@ -1009,15 +881,12 @@ You may see the user's screen if vision is enabled. Reference what you see natur
 
   async function runTool(name, args) {
     switch (name) {
-      case 'get_time':
-        return new Date().toLocaleString('en-GB', { weekday:'long', day:'numeric', month:'long', hour:'2-digit', minute:'2-digit' });
-      case 'web_search':     return await webSearch(args.query);
-      case 'get_weather':    return await getWeather(args.city);
-      case 'wikipedia':      return await wikiLookup(args.topic);
-      case 'calculate':      return calculate(args.expression);
-      case 'open_url':
-        window.open(args.url, '_blank', 'noopener');
-        return `Opened ${args.url}`;
+      case 'get_time':        return new Date().toLocaleString('en-GB', { weekday:'long', day:'numeric', month:'long', hour:'2-digit', minute:'2-digit' });
+      case 'web_search':      return await webSearch(args.query);
+      case 'get_weather':     return await getWeather(args.city);
+      case 'wikipedia':       return await wikiLookup(args.topic);
+      case 'calculate':       return calculate(args.expression);
+      case 'open_url':        window.open(args.url, '_blank', 'noopener'); return `Opened ${args.url}`;
       case 'read_clipboard':
         if (!S.clipboard) return 'Clipboard access is disabled in Settings.';
         try { return await navigator.clipboard.readText() || '(clipboard empty)'; }
@@ -1026,52 +895,65 @@ You may see the user's screen if vision is enabled. Reference what you see natur
         if (!S.clipboard) return 'Clipboard access is disabled in Settings.';
         try { await navigator.clipboard.writeText(args.text); return 'Copied to clipboard.'; }
         catch (e) { return 'Clipboard write blocked: ' + e.message; }
-      case 'list_files':     return S.files ? await listFiles() : 'File access is disabled.';
-      case 'read_file':      return S.files ? await readFileTool(args.name) : 'File access is disabled.';
-      case 'write_file':     return S.files ? await writeFileTool(args.name, args.content) : 'File access is disabled.';
-      case 'look_at_screen': return S.screen ? await lookAtScreen() : 'Screen vision is disabled.';
+      case 'list_files':      return S.files ? await listFiles() : 'File access is disabled.';
+      case 'read_file':       return S.files ? await readFileTool(args.name) : 'File access is disabled.';
+      case 'write_file':      return S.files ? await writeFileTool(args.name, args.content) : 'File access is disabled.';
+      case 'look_at_screen':  return S.screen ? await lookAtScreen() : 'Screen vision is disabled.';
       default: return 'Unknown tool: ' + name;
     }
   }
 
-  /* ============ AI CALL ============ */
+  /* ============ AI CALL (with fallback) ============ */
   async function chatCompletion(messages, tools = null) {
     const key = getApiKey();
     if (!key) return null;
-    const body = {
-      model: MODEL,
-      messages,
-      max_tokens: 800,
-      temperature: 0.75
-    };
-    if (tools && tools.length) { body.tools = tools; body.tool_choice = 'auto'; }
 
-    try {
-      const res = await fetch(API_URL, {
-        method:'POST',
-        headers:{
-          'Content-Type':'application/json',
-          'Authorization':'Bearer ' + key,
-          'HTTP-Referer': location.origin || 'https://localhost',
-          'X-Title':'JARVIS Neural'
-        },
-        body: JSON.stringify(body)
-      });
-      if (!res.ok) {
-        let detail = '';
-        try { const err = await res.json(); detail = err?.error?.message || ''; } catch {}
-        console.warn('AI error', res.status, detail);
-        if (res.status === 401) return { error:'[Invalid API key — check Settings.]' };
-        if (res.status === 402) return { error:'[Out of credits on OpenRouter.]' };
-        if (res.status === 429) return { error:'[Rate limited — wait a moment and try again, sir.]' };
-        if (res.status === 404) return { error:'[Model unavailable right now. Try again shortly.]' };
-        return { error:`[AI error ${res.status}${detail ? ': ' + detail : ''}]` };
+    async function attempt(model) {
+      const body = { model: model, messages, max_tokens: 800, temperature: 0.75 };
+      if (tools && tools.length) { body.tools = tools; body.tool_choice = 'auto'; }
+
+      try {
+        const res = await fetch(API_URL, {
+          method:'POST',
+          headers:{
+            'Content-Type':'application/json',
+            'Authorization':'Bearer ' + key,
+            'HTTP-Referer': location.origin || 'https://localhost',
+            'X-Title':'JARVIS Neural'
+          },
+          body: JSON.stringify(body)
+        });
+
+        if (res.status === 404) return { needsFallback: true };
+
+        if (!res.ok) {
+          let detail = '';
+          try { const err = await res.json(); detail = err?.error?.message || ''; } catch {}
+          console.warn('AI error', res.status, detail);
+          if (res.status === 401) return { error:'[Invalid API key — check Settings.]' };
+          if (res.status === 402) return { error:'[Out of credits on OpenRouter.]' };
+          if (res.status === 429) return { error:'[Rate limited — wait a moment and try again, sir.]' };
+          return { error:`[AI error ${res.status}${detail ? ': ' + detail : ''}]` };
+        }
+
+        const data = await res.json();
+        const reply = data?.choices?.[0]?.message || null;
+        if (reply) reply._model = data?.model || model;
+        return reply;
+      } catch (e) {
+        return { error:'[Network error contacting AI core]' };
       }
-      const data = await res.json();
-      return data?.choices?.[0]?.message || null;
-    } catch (e) {
-      return { error:'[Network error contacting AI core]' };
     }
+
+    let reply = await attempt(MODEL);
+
+    if (reply && reply.needsFallback) {
+      console.warn('Primary model unavailable — switching to fallback router');
+      addMsg('tool', '⚠ Primary model unavailable, using fallback router…');
+      reply = await attempt(FALLBACK_MODEL);
+    }
+
+    return reply;
   }
 
   /* ============ AGENT LOOP ============ */
@@ -1095,10 +977,10 @@ You may see the user's screen if vision is enabled. Reference what you see natur
       const reply = await chatCompletion(messages, availableTools);
       if (!reply) return "I couldn't reach my AI core, sir.";
       if (reply.error) return reply.error;
+      if (reply.needsFallback) return "The AI model isn't responding right now, sir.";
 
       if (reply.tool_calls && reply.tool_calls.length) {
         messages.push(reply);
-
         for (const call of reply.tool_calls) {
           const fn = call.function?.name;
           let args = {};
@@ -1106,12 +988,7 @@ You may see the user's screen if vision is enabled. Reference what you see natur
           addMsg('tool', `⚙ ${fn}(${JSON.stringify(args)})`);
           const result = await runTool(fn, args);
           addMsg('tool', `→ ${String(result).slice(0, 200)}${String(result).length > 200 ? '…' : ''}`);
-
-          messages.push({
-            role:'tool',
-            tool_call_id: call.id,
-            content: String(result)
-          });
+          messages.push({ role:'tool', tool_call_id: call.id, content: String(result) });
         }
         if (!S.agent) break;
         continue;
@@ -1119,6 +996,7 @@ You may see the user's screen if vision is enabled. Reference what you see natur
 
       const text = (reply.content || '').trim();
       if (text) {
+        if (reply._model) addMsg('tool', `◆ responded via ${reply._model}`);
         if (S.memory) {
           const [uEmb, aEmb] = await Promise.all([embed(userText), embed(text)]);
           if (uEmb) history.push({ role:'user', content:userText, embedding:uEmb, t:Date.now() });
@@ -1465,7 +1343,7 @@ You may see the user's screen if vision is enabled. Reference what you see natur
       $('boot').classList.add('done');
       setTimeout(() => {
         const hasKey = !!getApiKey();
-        let greeting = 'Systems online. Neural core initialized with GLM 5.2.';
+        let greeting = 'Systems online. Neural core initialized with Nemotron 3 Ultra.';
         if (!hasKey) greeting += ' Add an OpenRouter key in Settings to unlock my full mind.';
         else greeting += ' All tools standing by.';
         addMsg('jarvis', greeting);
@@ -1478,7 +1356,7 @@ You may see the user's screen if vision is enabled. Reference what you see natur
     }, 2200);
   });
 
-  window.__jarvis = { runTool, runAgent, TOOLS, captureFrame, MODEL };
+  window.__jarvis = { runTool, runAgent, TOOLS, captureFrame, MODEL, FALLBACK_MODEL };
 })();
 </script>
 </body>
