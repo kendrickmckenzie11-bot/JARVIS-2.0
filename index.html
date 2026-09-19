@@ -18,39 +18,31 @@
     --ok:#3ee87e;
     --danger:#ff5c7a;
   }
-
   *{box-sizing:border-box}
   html,body{height:100%}
   body{
-    margin:0;
-    background:#02060d;
-    color:var(--text);
+    margin:0;background:#02060d;color:var(--text);
     font-family:ui-monospace,"SF Mono",Menlo,Consolas,"Courier New",monospace;
-    font-size:13px;
-    letter-spacing:.04em;
-    overflow:hidden;
+    font-size:13px;letter-spacing:.04em;overflow:hidden;
     -webkit-font-smoothing:antialiased;
   }
   button{font-family:inherit;letter-spacing:inherit;color:inherit}
 
-  /* ---------- background ---------- */
   .bg-grid,.bg-vignette,.bg-scan{position:fixed;inset:0;pointer-events:none;z-index:0}
   .bg-grid{
     background:
       radial-gradient(circle at 50% 42%, rgba(0,130,180,.22), transparent 62%),
       linear-gradient(rgba(0,229,255,.045) 1px, transparent 1px) 0 0/100% 42px,
       linear-gradient(90deg, rgba(0,229,255,.045) 1px, transparent 1px) 0 0/42px 100%;
-    transition:opacity .3s;
   }
-  body.no-grid .bg-grid{opacity:0}
+  body.no-grid .bg-grid{display:none}
   .bg-vignette{background:radial-gradient(circle at 50% 50%, transparent 45%, rgba(0,0,0,.75) 100%)}
   .bg-scan{
     background:repeating-linear-gradient(to bottom, rgba(0,229,255,.035) 0 1px, transparent 1px 3px);
-    mix-blend-mode:screen;opacity:.5;transition:opacity .3s;
+    mix-blend-mode:screen;opacity:.5;
   }
-  body.reduced-motion .bg-scan{opacity:0}
+  body.reduced-motion .bg-scan{display:none}
 
-  /* ---------- layout ---------- */
   #app{position:relative;z-index:1;height:100%;display:grid;grid-template-rows:auto 1fr auto}
 
   header{
@@ -71,10 +63,9 @@
   #clock{color:var(--cyan);text-shadow:0 0 10px rgba(0,229,255,.4)}
 
   .listen-badge{
-    display:none;align-items:center;gap:6px;
-    padding:4px 10px;border:1px solid rgba(62,232,126,.45);
-    background:rgba(62,232,126,.08);color:var(--ok);
-    font-size:10px;letter-spacing:.22em;border-radius:2px;
+    display:none;align-items:center;gap:6px;padding:4px 10px;
+    border:1px solid rgba(62,232,126,.45);background:rgba(62,232,126,.08);
+    color:var(--ok);font-size:10px;letter-spacing:.22em;border-radius:2px;
   }
   .listen-badge.on{display:inline-flex}
   .listen-badge .pulse{
@@ -83,16 +74,17 @@
   }
   .listen-badge.paused{border-color:rgba(255,179,71,.5);background:rgba(255,179,71,.08);color:var(--warn)}
   .listen-badge.paused .pulse{background:var(--warn);box-shadow:0 0 8px var(--warn)}
-  @keyframes pulseDot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.75)}}
+  @keyframes pulseDot{0%,100%{opacity:1}50%{opacity:.4}}
 
   .icon-btn{
-    width:34px;height:34px;display:grid;place-items:center;
+    width:36px;height:36px;display:grid;place-items:center;
     background:transparent;border:1px solid var(--line);
     color:var(--cyan);cursor:pointer;border-radius:2px;
-    transition:all .2s;font-size:15px;
+    transition:all .2s;font-size:16px;line-height:1;padding:0;
   }
   .icon-btn:hover{border-color:var(--cyan-soft);background:rgba(0,229,255,.08);box-shadow:0 0 14px rgba(0,229,255,.2)}
   .icon-btn.active{background:rgba(0,229,255,.15);border-color:var(--cyan)}
+  .icon-btn svg{display:block}
 
   main{
     display:grid;
@@ -109,10 +101,6 @@
     padding:14px;display:flex;flex-direction:column;min-height:0;
     clip-path:polygon(0 14px,14px 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%);
   }
-  .panel::after{
-    content:'';position:absolute;inset:0;pointer-events:none;
-    background:linear-gradient(180deg, rgba(0,229,255,.05), transparent 30%);
-  }
   .panel.hidden{display:none}
   .panel-title{
     display:flex;align-items:center;justify-content:space-between;
@@ -122,7 +110,6 @@
   }
   .panel-title .tag{color:var(--dim);letter-spacing:.14em}
 
-  /* ---------- stats ---------- */
   .stat{margin-bottom:11px}
   .stat .row{display:flex;justify-content:space-between;font-size:10px;color:var(--dim);margin-bottom:5px}
   .stat .row b{color:var(--text);font-weight:500}
@@ -136,7 +123,6 @@
   .readouts{margin-top:auto;padding-top:12px;border-top:1px solid var(--line-soft);font-size:10px;color:var(--dim);line-height:1.9}
   .readouts span{color:var(--text)}
 
-  /* ---------- core ---------- */
   .core{position:relative;display:flex;align-items:center;justify-content:center;min-height:0}
   #reactor{width:100%;height:100%;display:block}
   .core-overlay{
@@ -149,7 +135,6 @@
   }
   .core-sub{font-size:10px;color:var(--dim);letter-spacing:.24em;margin-top:8px;min-height:14px}
 
-  /* ---------- log ---------- */
   #log{
     flex:1;overflow-y:auto;min-height:0;padding-right:6px;
     display:flex;flex-direction:column;gap:7px;
@@ -168,7 +153,6 @@
   .log-line.warn .m{color:var(--warn)}
   .log-line.ok .m{color:var(--ok)}
 
-  /* ---------- footer ---------- */
   footer{
     padding:12px 20px 18px;border-top:1px solid var(--line);
     background:linear-gradient(0deg, rgba(0,40,60,.35), transparent);
@@ -178,7 +162,7 @@
     border:1px solid var(--line);background:rgba(0,20,32,.6);padding:8px 12px;
     clip-path:polygon(0 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%);
   }
-  .console .prompt{color:var(--cyan);font-size:14px;text-shadow:0 0 8px rgba(0,229,255,.6)}
+  .console .prompt{color:var(--cyan);font-size:14px}
   #cmd{
     flex:1;background:transparent;border:0;outline:0;
     color:var(--text);font-family:inherit;font-size:13px;letter-spacing:.06em;
@@ -190,10 +174,10 @@
     border:1px solid var(--cyan-soft);
     background:radial-gradient(circle at 50% 40%, rgba(0,229,255,.22), rgba(0,229,255,.04));
     color:var(--cyan);cursor:pointer;display:grid;place-items:center;
-    transition:transform .15s ease, box-shadow .25s ease, background .25s ease;
+    transition:transform .15s, box-shadow .25s, background .25s;
+    padding:0;
   }
   .mic:hover{transform:scale(1.06);box-shadow:0 0 18px rgba(0,229,255,.35)}
-  .mic svg{width:20px;height:20px;fill:currentColor}
   .mic.listening{
     background:radial-gradient(circle at 50% 40%, rgba(0,229,255,.5), rgba(0,229,255,.1));
     box-shadow:0 0 26px rgba(0,229,255,.75);
@@ -203,59 +187,49 @@
   .mic.always{
     border-color:var(--ok);
     background:radial-gradient(circle at 50% 40%, rgba(62,232,126,.35), rgba(62,232,126,.05));
-    color:var(--ok);
-    box-shadow:0 0 22px rgba(62,232,126,.4);
+    color:var(--ok);box-shadow:0 0 22px rgba(62,232,126,.4);
   }
   .mic.always.listening{box-shadow:0 0 30px rgba(62,232,126,.75)}
-  .mic::after{
-    content:'';position:absolute;inset:-6px;border-radius:50%;
-    border:1px solid rgba(0,229,255,.35);opacity:0;transition:opacity .3s;
-  }
-  .mic.listening::after{opacity:1;animation:ripple 1.6s infinite}
-  @keyframes ripple{0%{transform:scale(.9);opacity:.9}100%{transform:scale(1.5);opacity:0}}
-  .mic.muted{opacity:.4}
+  .mic.muted{opacity:.45}
 
   .hint{text-align:center;color:#2f6d80;font-size:10px;letter-spacing:.2em;margin-top:9px}
   .hint b{color:var(--cyan-soft);font-weight:500}
 
-  /* ---------- boot ---------- */
   #boot{
     position:fixed;inset:0;z-index:80;background:#02060d;
     display:flex;flex-direction:column;align-items:center;justify-content:center;
-    gap:20px;padding:24px;transition:opacity .8s ease, visibility .8s;
+    gap:20px;padding:24px;transition:opacity .8s, visibility .8s;
   }
   #boot.done{opacity:0;visibility:hidden;pointer-events:none}
-  #bootLog{width:min(560px,90vw);font-size:12px;line-height:2;color:var(--cyan-soft);min-height:220px}
+  #bootLog{width:min(560px,90vw);font-size:12px;line-height:2;color:var(--cyan-soft);min-height:200px}
   #bootLog div{opacity:0;animation:fadeIn .25s forwards}
   #bootLog .ok{color:var(--cyan)}
   #bootBar{width:min(560px,90vw);height:2px;background:rgba(0,229,255,.12);overflow:hidden}
   #bootBar i{display:block;height:100%;width:0;background:var(--cyan);box-shadow:0 0 12px var(--cyan);transition:width .35s}
-  .boot-title{font-size:26px;letter-spacing:.6em;color:#eafcff;text-shadow:0 0 26px rgba(0,229,255,.8);margin:0 0 4px}
+  .boot-title{font-size:26px;letter-spacing:.6em;color:#eafcff;text-shadow:0 0 26px rgba(0,229,255,.8);margin:0}
 
-  /* ---------- settings ---------- */
   .settings-backdrop{
     position:fixed;inset:0;background:rgba(0,5,10,.6);
     backdrop-filter:blur(2px);z-index:45;
     opacity:0;visibility:hidden;transition:opacity .3s, visibility .3s;
   }
-  .settings-backdrop.open{opacity:1;visibility:visible}
+  body.settings-open .settings-backdrop{opacity:1;visibility:visible}
 
   .settings-panel{
     position:fixed;top:0;right:0;bottom:0;width:min(420px,94vw);
-    background:rgba(2,10,17,.97);
-    border-left:1px solid var(--line);
-    z-index:50;
-    display:flex;flex-direction:column;
+    background:rgba(2,10,17,.97);border-left:1px solid var(--line);
+    z-index:50;display:flex;flex-direction:column;
     transform:translateX(105%);
     transition:transform .38s cubic-bezier(.4,0,.2,1);
     box-shadow:-30px 0 60px rgba(0,0,0,.6);
   }
-  .settings-panel.open{transform:translateX(0)}
+  body.settings-open .settings-panel{transform:translateX(0)}
 
   .settings-header{
     display:flex;align-items:center;justify-content:space-between;
     padding:16px 20px;border-bottom:1px solid var(--line);
     background:linear-gradient(180deg, rgba(0,60,90,.25), transparent);
+    flex:0 0 auto;
   }
   .settings-header h2{
     margin:0;font-size:12px;letter-spacing:.42em;color:var(--cyan);
@@ -269,19 +243,14 @@
   .settings-body::-webkit-scrollbar{width:6px}
   .settings-body::-webkit-scrollbar-thumb{background:rgba(0,229,255,.25);border-radius:3px}
 
-  .setting-group{
-    margin-bottom:26px;padding-bottom:20px;
-    border-bottom:1px solid var(--line-soft);
-  }
+  .setting-group{margin-bottom:26px;padding-bottom:20px;border-bottom:1px solid var(--line-soft)}
   .setting-group:last-of-type{border-bottom:0}
   .setting-group h3{
     margin:0 0 14px;font-size:10px;letter-spacing:.3em;
     color:var(--cyan);text-transform:uppercase;font-weight:600;
     display:flex;align-items:center;gap:8px;
   }
-  .setting-group h3::after{
-    content:'';flex:1;height:1px;background:var(--line-soft);
-  }
+  .setting-group h3::after{content:'';flex:1;height:1px;background:var(--line-soft)}
 
   .setting-row{
     display:flex;align-items:center;justify-content:space-between;
@@ -291,39 +260,32 @@
   .setting-row.col{flex-direction:column;align-items:stretch;gap:8px;cursor:default}
   .setting-row.col > span{
     display:flex;justify-content:space-between;align-items:center;
-    color:var(--dim);font-size:11px;letter-spacing:.06em;
+    color:var(--dim);font-size:11px;
   }
   .setting-row.col > span b{color:var(--cyan);font-weight:500;font-variant-numeric:tabular-nums}
 
-  .setting-help{
-    font-size:10.5px;color:#3d6b7a;line-height:1.65;
-    margin:-4px 0 10px;letter-spacing:.02em;
-  }
+  .setting-help{font-size:10.5px;color:#3d6b7a;line-height:1.65;margin:-4px 0 10px}
 
-  /* switch */
   .switch{
     appearance:none;-webkit-appearance:none;
     width:42px;height:22px;border-radius:11px;
-    background:rgba(0,229,255,.10);
-    border:1px solid var(--line);
+    background:rgba(0,229,255,.10);border:1px solid var(--line);
     position:relative;cursor:pointer;flex:0 0 auto;
     transition:background .25s, border-color .25s, box-shadow .25s;
   }
   .switch::after{
     content:'';position:absolute;top:2px;left:2px;
     width:16px;height:16px;border-radius:50%;
-    background:#4d7f8e;transition:all .25s cubic-bezier(.4,0,.2,1);
+    background:#4d7f8e;transition:all .25s;
   }
   .switch:checked{background:rgba(0,229,255,.3);border-color:var(--cyan);box-shadow:0 0 12px rgba(0,229,255,.35)}
   .switch:checked::after{left:22px;background:var(--cyan);box-shadow:0 0 10px var(--cyan)}
-  .switch:focus-visible{outline:2px solid var(--cyan-soft);outline-offset:2px}
 
-  .text-input, select.text-input{
+  .text-input{
     width:100%;background:rgba(0,20,32,.7);
     border:1px solid var(--line);color:var(--text);
-    font-family:inherit;font-size:12px;letter-spacing:.04em;
+    font-family:inherit;font-size:12px;
     padding:9px 11px;border-radius:2px;outline:0;
-    transition:border-color .2s, box-shadow .2s;
   }
   .text-input:focus{border-color:var(--cyan-soft);box-shadow:0 0 12px rgba(0,229,255,.2)}
   select.text-input{cursor:pointer}
@@ -337,8 +299,7 @@
   input[type=range].range::-webkit-slider-thumb{
     -webkit-appearance:none;appearance:none;
     width:14px;height:14px;border-radius:50%;
-    background:var(--cyan);box-shadow:0 0 12px rgba(0,229,255,.7);
-    cursor:pointer;border:0;
+    background:var(--cyan);box-shadow:0 0 12px rgba(0,229,255,.7);cursor:pointer;border:0;
   }
   input[type=range].range::-moz-range-thumb{
     width:14px;height:14px;border-radius:50%;border:0;
@@ -355,29 +316,28 @@
   .btn:hover{background:rgba(0,229,255,.18);border-color:var(--cyan-soft);box-shadow:0 0 16px rgba(0,229,255,.25)}
   .btn:active{transform:translateY(1px)}
   .btn.danger{color:var(--danger);border-color:rgba(255,92,122,.3);background:rgba(255,92,122,.06)}
-  .btn.danger:hover{background:rgba(255,92,122,.15);border-color:rgba(255,92,122,.6);box-shadow:0 0 16px rgba(255,92,122,.25)}
+  .btn.danger:hover{background:rgba(255,92,122,.15);border-color:rgba(255,92,122,.6)}
 
   .settings-footer{
     padding:16px 20px;border-top:1px solid var(--line-soft);
     font-size:10px;color:#2f6d80;letter-spacing:.2em;text-align:center;
+    flex:0 0 auto;
   }
 
-  /* ---------- toast ---------- */
   .toast{
     position:fixed;bottom:110px;left:50%;
     transform:translate(-50%,20px);
     background:rgba(0,229,255,.12);
-    border:1px solid var(--cyan-soft);
-    color:var(--cyan);padding:10px 20px;
-    font-size:11px;letter-spacing:.22em;text-transform:uppercase;
-    opacity:0;transition:all .3s;z-index:70;pointer-events:none;
-    backdrop-filter:blur(8px);border-radius:2px;
+    border:1px solid var(--cyan-soft);color:var(--cyan);
+    padding:10px 20px;font-size:11px;letter-spacing:.22em;
+    text-transform:uppercase;opacity:0;transition:all .3s;
+    z-index:70;pointer-events:none;border-radius:2px;
     box-shadow:0 0 24px rgba(0,229,255,.25);
+    white-space:nowrap;max-width:90vw;overflow:hidden;text-overflow:ellipsis;
   }
   .toast.show{opacity:1;transform:translate(-50%,0)}
-  .toast.warn{background:rgba(255,179,71,.12);border-color:rgba(255,179,71,.5);color:var(--warn);box-shadow:0 0 24px rgba(255,179,71,.25)}
+  .toast.warn{background:rgba(255,179,71,.12);border-color:rgba(255,179,71,.5);color:var(--warn)}
 
-  /* ---------- alert flash ---------- */
   body.flash::before{
     content:'';position:fixed;inset:0;z-index:65;
     background:radial-gradient(circle at 50% 50%, rgba(0,229,255,.35), transparent 70%);
@@ -385,7 +345,6 @@
   }
   @keyframes flashFade{from{opacity:1}to{opacity:0}}
 
-  /* ---------- responsive ---------- */
   @media (max-width:1000px){
     main{grid-template-columns:1fr;grid-template-rows:auto minmax(240px,1fr) minmax(160px,auto);overflow-y:auto}
     main.no-telemetry,main.no-log,main.no-telemetry.no-log{grid-template-columns:1fr}
@@ -411,14 +370,14 @@
 <div class="bg-vignette"></div>
 <div class="bg-scan"></div>
 
-<!-- ================= BOOT ================= -->
+<!-- BOOT -->
 <div id="boot">
   <h1 class="boot-title">J.A.R.V.I.S.</h1>
   <div id="bootLog"></div>
   <div id="bootBar"><i></i></div>
 </div>
 
-<!-- ================= APP ================= -->
+<!-- APP -->
 <div id="app">
   <header>
     <div class="brand">
@@ -433,15 +392,17 @@
       <span class="hide-sm" id="netLabel">UPLINK: SECURE</span>
       <span id="clock">--:--:--</span>
       <button class="icon-btn" id="settingsBtn" title="Settings" aria-label="Open settings">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M19.14 12.94a7.5 7.5 0 0 0 .06-.94 7.5 7.5 0 0 0-.06-.94l2.03-1.58a.5.5 0 0 0 .12-.64l-1.92-3.32a.5.5 0 0 0-.6-.22l-2.39.96a7.3 7.3 0 0 0-1.62-.94l-.36-2.54a.5.5 0 0 0-.5-.42h-3.84a.5.5 0 0 0-.5.42l-.36 2.54c-.59.24-1.13.56-1.62.94l-2.39-.96a.5.5 0 0 0-.6.22L2.67 8.84a.5.5 0 0 0 .12.64l2.03 1.58c-.04.31-.06.62-.06.94s.02.63.06.94l-2.03 1.58a.5.5 0 0 0-.12.64l1.92 3.32c.13.22.39.3.6.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.04.24.25.42.5.42h3.84c.25 0 .46-.18.5-.42l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .6-.22l1.92-3.32a.5.5 0 0 0-.12-.64l-2.03-1.58zM12 15.6A3.6 3.6 0 1 1 12 8.4a3.6 3.6 0 0 1 0 7.2z"/></svg>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
       </button>
     </div>
   </header>
 
   <main id="mainGrid">
-    <!-- LEFT PANEL -->
     <aside class="panel" id="telemetryPanel">
-      <div class="panel-title">System Diagnostics <span class="tag">v5.0</span></div>
+      <div class="panel-title">System Diagnostics <span class="tag">v6.0</span></div>
 
       <div class="stat">
         <div class="row"><span>ARC REACTOR</span><b id="v-pwr">98%</b></div>
@@ -473,7 +434,6 @@
       </div>
     </aside>
 
-    <!-- CENTER CORE -->
     <section class="core">
       <canvas id="reactor"></canvas>
       <div class="core-overlay">
@@ -482,7 +442,6 @@
       </div>
     </section>
 
-    <!-- RIGHT PANEL -->
     <aside class="panel" id="logPanel">
       <div class="panel-title">Activity Log <span class="tag" id="logCount">0</span></div>
       <div id="log"></div>
@@ -495,7 +454,11 @@
       <input id="cmd" type="text" autocomplete="off" spellcheck="false"
              placeholder="Type a command, or press the mic and speak…" />
       <button class="mic" id="micBtn" title="Toggle voice input" aria-label="Toggle voice input">
-        <svg viewBox="0 0 24 24"><path d="M12 14a3 3 0 0 0 3-3V6a3 3 0 1 0-6 0v5a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11h-2z"/></svg>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <rect x="9" y="3" width="6" height="11" rx="3"/>
+          <path d="M5 11v1a7 7 0 0 0 14 0v-1" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <line x1="12" y1="19" x2="12" y2="22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
       </button>
     </div>
     <div class="hint">
@@ -508,17 +471,16 @@
   </footer>
 </div>
 
-<!-- ================= SETTINGS ================= -->
+<!-- SETTINGS -->
 <div class="settings-backdrop" id="settingsBackdrop"></div>
 
-<aside class="settings-panel" id="settingsPanel" aria-hidden="true">
+<aside class="settings-panel" id="settingsPanel">
   <div class="settings-header">
     <h2>Settings</h2>
-    <button class="icon-btn" id="settingsClose" aria-label="Close settings">✕</button>
+    <button class="icon-btn" id="settingsClose" aria-label="Close settings" style="font-size:18px">✕</button>
   </div>
 
   <div class="settings-body">
-
     <section class="setting-group">
       <h3>Microphone</h3>
       <label class="setting-row">
@@ -526,7 +488,7 @@
         <input type="checkbox" id="setAlwaysOn" class="switch">
       </label>
       <div class="setting-help">
-        Keeps the microphone active permanently. When enabled, JARVIS never stops listening
+        Keeps the microphone permanently active. When enabled, JARVIS never stops listening
         — the recognizer auto-restarts after every silence, speech, or error.
       </div>
 
@@ -536,7 +498,6 @@
       </label>
       <div class="setting-help">
         When always-listening is on, only respond after hearing the wake word.
-        Say <b>“Jarvis, what's the time?”</b> instead of everything being processed.
       </div>
 
       <label class="setting-row col">
@@ -556,7 +517,6 @@
           <option value="de-DE">Deutsch</option>
           <option value="it-IT">Italiano</option>
           <option value="pt-BR">Português (Brasil)</option>
-          <option value="nl-NL">Nederlands</option>
           <option value="ja-JP">日本語</option>
           <option value="ko-KR">한국어</option>
           <option value="zh-CN">中文 (简体)</option>
@@ -597,22 +557,18 @@
 
     <section class="setting-group">
       <h3>Interface</h3>
-
       <label class="setting-row">
         <span>Telemetry panel</span>
         <input type="checkbox" id="setTelemetry" class="switch">
       </label>
-
       <label class="setting-row">
         <span>Activity log panel</span>
         <input type="checkbox" id="setLogPanel" class="switch">
       </label>
-
       <label class="setting-row">
         <span>Grid background</span>
         <input type="checkbox" id="setGrid" class="switch">
       </label>
-
       <label class="setting-row">
         <span>Reduced motion</span>
         <input type="checkbox" id="setReduced" class="switch">
@@ -626,1354 +582,1466 @@
       <button class="btn danger" id="resetBtn">Reset all settings</button>
     </section>
 
-    <div class="settings-footer">J.A.R.V.I.S. v5.0 · Saved automatically</div>
+    <div class="settings-footer">J.A.R.V.I.S. v6.0 · Saved automatically</div>
   </div>
 </aside>
 
 <script>
-"use strict";
+(function () {
+  "use strict";
 
-/* ============================================================
-   0. HELPERS
-   ============================================================ */
-const $ = (id) => document.getElementById(id);
-const sleep = (ms) => new Promise(r => setTimeout(r, ms));
-const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
-const rand = (a, b) => a + Math.random() * (b - a);
-const cap = (s) => s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
-const round = (n, d = 6) => Math.round(n * Math.pow(10, d)) / Math.pow(10, d);
+  // ==================== UTILITIES ====================
+  function $(id) { return document.getElementById(id); }
+  function sleep(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+  function clamp(v, a, b) { return Math.min(b, Math.max(a, v)); }
+  function rand(a, b) { return a + Math.random() * (b - a); }
+  function cap(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
+  function round(n) { return Math.round(n * 1e6) / 1e6; }
 
-/* ============================================================
-   1. SETTINGS MANAGER
-   ============================================================ */
-const STORAGE_KEY = "jarvis.settings.v5";
+  // ==================== SETTINGS ====================
+  var STORAGE_KEY = "jarvis.settings.v6";
+  var DEFAULTS = {
+    alwaysOn: false,
+    requireWake: false,
+    wakeWord: "jarvis",
+    lang: "en-US",
+    voiceName: "",
+    rate: 0.96,
+    pitch: 0.82,
+    volume: 1.0,
+    speak: true,
+    showTelemetry: true,
+    showLog: true,
+    showGrid: true,
+    reducedMotion: false,
+    userName: "",
+    memories: {},
+    notes: []
+  };
 
-const DEFAULT_SETTINGS = {
-  alwaysOn: false,
-  requireWake: true,
-  wakeWord: "jarvis",
-  lang: "en-US",
-  voiceName: "",
-  rate: 0.96,
-  pitch: 0.82,
-  volume: 1.0,
-  speak: true,
-  showTelemetry: true,
-  showLog: true,
-  showGrid: true,
-  reducedMotion: false,
-  userName: "",
-  memories: {},
-  notes: []
-};
-
-let settings = loadSettings();
-
-function loadSettings() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
-    const parsed = JSON.parse(raw);
-    return Object.assign(JSON.parse(JSON.stringify(DEFAULT_SETTINGS)), parsed);
-  } catch (e) {
-    return JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
+  function loadSettings() {
+    var s = JSON.parse(JSON.stringify(DEFAULTS));
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        var parsed = JSON.parse(raw);
+        for (var k in parsed) if (parsed.hasOwnProperty(k)) s[k] = parsed[k];
+        s.memories = parsed.memories || {};
+        s.notes = parsed.notes || [];
+      }
+    } catch (e) {}
+    return s;
   }
-}
 
-function saveSettings() {
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(settings)); } catch (e) {}
-}
-
-function applySettings() {
-  document.body.classList.toggle("no-grid", !settings.showGrid);
-  document.body.classList.toggle("reduced-motion", settings.reducedMotion);
-
-  $("telemetryPanel").classList.toggle("hidden", !settings.showTelemetry);
-  $("logPanel").classList.toggle("hidden", !settings.showLog);
-  const main = $("mainGrid");
-  main.classList.toggle("no-telemetry", !settings.showTelemetry);
-  main.classList.toggle("no-log", !settings.showLog);
-
-  $("memCount").textContent = Object.keys(settings.memories).length;
-
-  // reflect in UI
-  $("setAlwaysOn").checked = settings.alwaysOn;
-  $("setRequireWake").checked = settings.requireWake;
-  $("setWakeWord").value = settings.wakeWord;
-  $("setLang").value = settings.lang;
-  $("setSpeak").checked = settings.speak;
-  $("setTelemetry").checked = settings.showTelemetry;
-  $("setLogPanel").checked = settings.showLog;
-  $("setGrid").checked = settings.showGrid;
-  $("setReduced").checked = settings.reducedMotion;
-  $("setRate").value = settings.rate;
-  $("setPitch").value = settings.pitch;
-  $("setVolume").value = settings.volume;
-  $("valRate").textContent = Number(settings.rate).toFixed(2);
-  $("valPitch").textContent = Number(settings.pitch).toFixed(2);
-  $("valVolume").textContent = Number(settings.volume).toFixed(2);
-
-  updateListenBadge();
-  updateMicAppearance();
-}
-
-/* ============================================================
-   2. BOOT SEQUENCE
-   ============================================================ */
-const BOOT_LINES = [
-  ["INITIALISING J.A.R.V.I.S. KERNEL", "OK"],
-  ["LOADING NEURAL INTERFACE", "OK"],
-  ["CALIBRATING SENSOR ARRAY", "OK"],
-  ["MOUNTING STARK INDUSTRIES DATABASE", "OK"],
-  ["ESTABLISHING SECURE UPLINK", "OK"],
-  ["ARC REACTOR OUTPUT", "98.4%"],
-  ["LOADING COMMAND PROTOCOLS", "214"],
-  ["ALL SYSTEMS NOMINAL", ""]
-];
-
-(async function boot() {
-  const box = $("bootLog");
-  const bar = $("bootBar").firstElementChild;
-  for (let i = 0; i < BOOT_LINES.length; i++) {
-    const [label, status] = BOOT_LINES[i];
-    const dots = ".".repeat(Math.max(4, 42 - label.length));
-    const row = document.createElement("div");
-    row.innerHTML = `${label} <span style="color:#1d5b6b">${dots}</span> <span class="ok">${status}</span>`;
-    box.appendChild(row);
-    bar.style.width = ((i + 1) / BOOT_LINES.length * 100) + "%";
-    await sleep(i === BOOT_LINES.length - 1 ? 380 : rand(130, 260));
+  function saveSettings() {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(settings)); } catch (e) {}
   }
-  await sleep(400);
-  $("boot").classList.add("done");
-  logLine("Interface initialised. Standing by.", "jarvis");
-  if (settings.alwaysOn) {
-    logLine("Always-listening mode active.", "ok");
-    setTimeout(() => startListening(), 600);
+
+  var settings = loadSettings();
+
+  // ==================== STATE ====================
+  var logCount = 0;
+  var listening = false;
+  var wantListening = false;
+  var speaking = false;
+  var userHasInteracted = false;
+  var energy = 0.2;
+  var energyCur = 0.2;
+  var jarvisVoice = null;
+  var allVoices = [];
+  var recognition = null;
+  var micSupported = false;
+  var awakeUntil = 0;
+  var restartTimer = null;
+  var pendingAction = null;
+  var activeTimers = [];
+  var startTime = Date.now();
+
+  // Element references (populated in init)
+  var els = {};
+
+  // ==================== LOGGING ====================
+  function logLine(text, type) {
+    if (!els.log) return;
+    var row = document.createElement("div");
+    row.className = "log-line " + (type || "sys");
+    var t = document.createElement("span");
+    t.className = "t";
+    t.textContent = new Date().toLocaleTimeString("en-GB", { hour12: false });
+    var m = document.createElement("span");
+    m.className = "m";
+    m.textContent = text;
+    row.appendChild(t);
+    row.appendChild(m);
+    els.log.appendChild(row);
+    els.log.scrollTop = els.log.scrollHeight;
+    logCount++;
+    if (els.logCount) els.logCount.textContent = logCount;
+    while (els.log.children.length > 300) els.log.removeChild(els.log.firstChild);
   }
-})();
 
-/* ============================================================
-   3. LOGGING
-   ============================================================ */
-const logEl = $("log");
-let logCount = 0;
+  // ==================== TOAST ====================
+  function toast(msg, type) {
+    var t = document.createElement("div");
+    t.className = "toast" + (type === "warn" ? " warn" : "");
+    t.textContent = msg;
+    document.body.appendChild(t);
+    requestAnimationFrame(function () { t.classList.add("show"); });
+    setTimeout(function () {
+      t.classList.remove("show");
+      setTimeout(function () { t.remove(); }, 400);
+    }, 2200);
+  }
 
-function logLine(text, type = "sys") {
-  const row = document.createElement("div");
-  row.className = "log-line " + type;
-  const t = document.createElement("span");
-  t.className = "t";
-  t.textContent = new Date().toLocaleTimeString("en-GB", { hour12: false });
-  const m = document.createElement("span");
-  m.className = "m";
-  m.textContent = text;
-  row.append(t, m);
-  logEl.appendChild(row);
-  logEl.scrollTop = logEl.scrollHeight;
-  logCount++;
-  $("logCount").textContent = logCount;
-  while (logEl.children.length > 300) logEl.removeChild(logEl.firstChild);
-}
+  function flashScreen() {
+    document.body.classList.add("flash");
+    setTimeout(function () { document.body.classList.remove("flash"); }, 1300);
+  }
 
-/* ============================================================
-   4. TOASTS + FLASH + BEEP
-   ============================================================ */
-function toast(msg, type) {
-  const t = document.createElement("div");
-  t.className = "toast" + (type === "warn" ? " warn" : "");
-  t.textContent = msg;
-  document.body.appendChild(t);
-  requestAnimationFrame(() => t.classList.add("show"));
-  setTimeout(() => {
-    t.classList.remove("show");
-    setTimeout(() => t.remove(), 400);
-  }, 2200);
-}
+  // ==================== AUDIO BEEP ====================
+  var audioCtx = null;
+  function beep(freq, dur, vol) {
+    try {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      var o = audioCtx.createOscillator();
+      var g = audioCtx.createGain();
+      o.type = "sine";
+      o.frequency.value = freq || 880;
+      g.gain.setValueAtTime(vol || 0.12, audioCtx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + (dur || 0.15));
+      o.connect(g);
+      g.connect(audioCtx.destination);
+      o.start();
+      o.stop(audioCtx.currentTime + (dur || 0.15));
+    } catch (e) {}
+  }
 
-function flashScreen() {
-  document.body.classList.add("flash");
-  setTimeout(() => document.body.classList.remove("flash"), 1300);
-}
+  // ==================== SPEECH SYNTHESIS ====================
+  function refreshVoices() {
+    if (!("speechSynthesis" in window)) return;
+    allVoices = speechSynthesis.getVoices();
+    if (!allVoices.length) return;
 
-let audioCtx = null;
-function beep(freq = 880, dur = 0.15, vol = 0.12) {
-  try {
-    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    const o = audioCtx.createOscillator();
-    const g = audioCtx.createGain();
-    o.type = "sine";
-    o.frequency.value = freq;
-    g.gain.setValueAtTime(vol, audioCtx.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + dur);
-    o.connect(g).connect(audioCtx.destination);
-    o.start();
-    o.stop(audioCtx.currentTime + dur);
-  } catch (e) {}
-}
+    var sel = els.setVoice;
+    if (sel) {
+      sel.innerHTML = '<option value="">System default</option>';
+      for (var i = 0; i < allVoices.length; i++) {
+        var opt = document.createElement("option");
+        opt.value = allVoices[i].name;
+        opt.textContent = allVoices[i].name + " (" + allVoices[i].lang + ")";
+        sel.appendChild(opt);
+      }
+      sel.value = settings.voiceName || "";
+    }
 
-/* ============================================================
-   5. SPEECH SYNTHESIS
-   ============================================================ */
-let jarvisVoice = null;
-let speaking = false;
-let userHasInteracted = false;
-let allVoices = [];
-
-function refreshVoices() {
-  if (!("speechSynthesis" in window)) return;
-  allVoices = speechSynthesis.getVoices();
-  if (!allVoices.length) return;
-
-  // Populate the select
-  const sel = $("setVoice");
-  const current = settings.voiceName;
-  sel.innerHTML = '<option value="">System default</option>';
-  allVoices.forEach(v => {
-    const opt = document.createElement("option");
-    opt.value = v.name;
-    opt.textContent = `${v.name} (${v.lang})`;
-    sel.appendChild(opt);
-  });
-  sel.value = current || "";
-
-  // Pick preferred default
-  const preferred = ["Daniel", "Google UK English Male", "Microsoft Ryan Online",
+    var preferred = ["Daniel", "Google UK English Male", "Microsoft Ryan Online",
                      "Microsoft George Online", "Arthur", "Oliver", "en-GB"];
-  for (const name of preferred) {
-    const v = allVoices.find(v => v.name === name || v.name.includes(name));
-    if (v) { jarvisVoice = v; break; }
-  }
-  if (!jarvisVoice) jarvisVoice = allVoices.find(v => v.lang === "en-GB") || allVoices[0];
-  $("voiceName").textContent = (jarvisVoice.name || "DEFAULT").toUpperCase().slice(0, 16);
-}
-
-if ("speechSynthesis" in window) {
-  refreshVoices();
-  speechSynthesis.onvoiceschanged = refreshVoices;
-  setTimeout(refreshVoices, 600);
-  setTimeout(refreshVoices, 1800);
-} else {
-  $("voiceName").textContent = "UNSUPPORTED";
-}
-
-function pickVoiceByName(name) {
-  if (!name) return null;
-  return allVoices.find(v => v.name === name) || null;
-}
-
-function speak(text) {
-  if (!settings.speak) return;
-  if (!("speechSynthesis" in window)) return;
-  if (!userHasInteracted) return;
-  try {
-    speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(text);
-    const v = pickVoiceByName(settings.voiceName) || jarvisVoice;
-    if (v) u.voice = v;
-    u.rate = Number(settings.rate);
-    u.pitch = Number(settings.pitch);
-    u.volume = Number(settings.volume);
-    u.onstart = () => {
-      speaking = true;
-      setStatus("SPEAKING");
-      energy = Math.max(energy, 0.6);
-      // pause recognition so we don't hear ourselves (when always on)
-      if (settings.alwaysOn && recognition) {
-        try { recognition.abort(); } catch (e) {}
+    jarvisVoice = null;
+    for (var p = 0; p < preferred.length; p++) {
+      for (var v = 0; v < allVoices.length; v++) {
+        if (allVoices[v].name === preferred[p] || allVoices[v].name.indexOf(preferred[p]) > -1) {
+          jarvisVoice = allVoices[v];
+          break;
+        }
       }
-    };
-    const done = () => {
-      speaking = false;
-      if (!listening) setStatus("ONLINE", "ALL SYSTEMS NOMINAL");
-      scheduleRestart(400);
-    };
-    u.onend = done;
-    u.onerror = done;
-    speechSynthesis.speak(u);
-  } catch (e) {}
-}
+      if (jarvisVoice) break;
+    }
+    if (!jarvisVoice) {
+      for (var j = 0; j < allVoices.length; j++) {
+        if (allVoices[j].lang === "en-GB") { jarvisVoice = allVoices[j]; break; }
+      }
+    }
+    if (!jarvisVoice && allVoices.length) jarvisVoice = allVoices[0];
 
-/* ============================================================
-   6. ARC REACTOR CANVAS
-   ============================================================ */
-const canvas = $("reactor");
-const ctx = canvas.getContext("2d");
-let W = 0, H = 0;
-let energy = 0.18;
-let energyCur = 0.18;
+    if (els.voiceName) {
+      els.voiceName.textContent = jarvisVoice ? jarvisVoice.name.toUpperCase().slice(0, 16) : "DEFAULT";
+    }
+  }
 
-function resizeCanvas() {
-  const rect = canvas.getBoundingClientRect();
-  const dpr = Math.min(window.devicePixelRatio || 1, 2);
-  W = Math.max(rect.width, 1);
-  H = Math.max(rect.height, 1);
-  canvas.width = Math.floor(W * dpr);
-  canvas.height = Math.floor(H * dpr);
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-}
-window.addEventListener("resize", resizeCanvas);
+  function pickVoiceByName(name) {
+    if (!name) return null;
+    for (var i = 0; i < allVoices.length; i++) {
+      if (allVoices[i].name === name) return allVoices[i];
+    }
+    return null;
+  }
 
-function arcSeg(cx, cy, rot, radius, start, len, lw, color, glow) {
-  ctx.save();
-  ctx.translate(cx, cy);
-  ctx.rotate(rot);
-  ctx.beginPath();
-  ctx.arc(0, 0, radius, start, start + len);
-  ctx.lineWidth = lw;
-  ctx.strokeStyle = color;
-  ctx.lineCap = "round";
-  if (glow) { ctx.shadowBlur = glow; ctx.shadowColor = color; }
-  ctx.stroke();
-  ctx.restore();
-}
+  function speak(text) {
+    if (!settings.speak) return;
+    if (!("speechSynthesis" in window)) return;
+    if (!userHasInteracted) return;
+    try {
+      speechSynthesis.cancel();
+      var u = new SpeechSynthesisUtterance(text);
+      var v = pickVoiceByName(settings.voiceName) || jarvisVoice;
+      if (v) u.voice = v;
+      u.rate = Number(settings.rate);
+      u.pitch = Number(settings.pitch);
+      u.volume = Number(settings.volume);
+      u.onstart = function () {
+        speaking = true;
+        setStatus("SPEAKING");
+        energy = Math.max(energy, 0.6);
+        updateListenBadge();
+      };
+      u.onend = function () {
+        speaking = false;
+        if (!listening) setStatus("ONLINE", "ALL SYSTEMS NOMINAL");
+        updateListenBadge();
+      };
+      u.onerror = function () {
+        speaking = false;
+        updateListenBadge();
+      };
+      speechSynthesis.speak(u);
+    } catch (e) {}
+  }
 
-function drawReactor(now) {
-  ctx.clearRect(0, 0, W, H);
-  const cx = W / 2, cy = H / 2;
-  const R = Math.min(W, H) / 2 - 10;
-  if (R <= 0) return;
+  // ==================== STATUS ====================
+  var statusResetTimer = null;
 
-  const motion = settings.reducedMotion ? 0.15 : 1;
-  const pulse = Math.sin(now / 900) * 0.5 + 0.5;
-  const e = energyCur;
+  function setStatus(text, sub) {
+    if (els.statusText) els.statusText.textContent = text;
+    if (sub !== undefined && els.coreSub) els.coreSub.textContent = sub;
+    clearTimeout(statusResetTimer);
+    if (text !== "ONLINE") {
+      statusResetTimer = setTimeout(function () {
+        if (!listening) {
+          if (els.statusText) els.statusText.textContent = "ONLINE";
+          if (els.coreSub) els.coreSub.textContent = "ALL SYSTEMS NOMINAL";
+        }
+      }, 3400);
+    }
+  }
 
-  // outer dashed ring
-  ctx.save();
-  ctx.translate(cx, cy);
-  ctx.rotate(now / 26000 * motion);
-  ctx.beginPath();
-  ctx.arc(0, 0, R * 0.97, 0, Math.PI * 2);
-  ctx.setLineDash([2, 7]);
-  ctx.lineWidth = 1.2;
-  ctx.strokeStyle = "rgba(0,229,255,.30)";
-  ctx.stroke();
-  ctx.restore();
+  function respond(text, sub) {
+    logLine(text, "jarvis");
+    setStatus("RESPONDING", sub || "");
+    speak(text);
+  }
 
-  // tick marks
-  ctx.save();
-  ctx.translate(cx, cy);
-  ctx.rotate(now / 60000 * motion);
-  for (let i = 0; i < 72; i++) {
-    const a = (i / 72) * Math.PI * 2;
-    const long = i % 6 === 0;
-    const r1 = R * 0.80;
-    const r2 = R * (long ? 0.88 : 0.845);
+  // ==================== CLOCK & UPTIME ====================
+  function tickClock() {
+    if (els.clock) els.clock.textContent = new Date().toLocaleTimeString("en-GB", { hour12: false });
+  }
+
+  function tickUptime() {
+    var s = Math.floor((Date.now() - startTime) / 1000);
+    var hh = String(Math.floor(s / 3600)).padStart(2, "0");
+    var mm = String(Math.floor((s % 3600) / 60)).padStart(2, "0");
+    var ss = String(s % 60).padStart(2, "0");
+    if (els.uptime) els.uptime.textContent = hh + ":" + mm + ":" + ss;
+  }
+
+  // ==================== TELEMETRY ====================
+  function updateStats() {
+    var pwr = clamp(97 + rand(-1.2, 1.2), 90, 100);
+    var cpu = clamp(28 + Math.sin(Date.now() / 4000) * 12 + rand(-9, 9), 4, 97);
+    var mem = clamp(54 + rand(-5, 5), 20, 95);
+    var net = clamp(62 + rand(-18, 18), 5, 99);
+    var tmp = clamp(41 + rand(-3, 4), 30, 80);
+
+    function setStat(id, val, suffix) {
+      var bar = $("b-" + id);
+      var lab = $("v-" + id);
+      if (bar) bar.style.width = val + "%";
+      if (lab) lab.textContent = Math.round(val) + (suffix || "%");
+    }
+    setStat("pwr", pwr);
+    setStat("cpu", cpu);
+    setStat("mem", mem);
+    setStat("net", net);
+    setStat("tmp", tmp, "°C");
+
+    energy = 0.14 + (cpu / 100) * 0.22 + (pwr / 100) * 0.10;
+    if (listening) energy = Math.max(energy, 0.7);
+  }
+
+  // ==================== ARC REACTOR CANVAS ====================
+  var canvas = null, ctx = null;
+  var W = 0, H = 0;
+
+  function resizeCanvas() {
+    if (!canvas) return;
+    var rect = canvas.getBoundingClientRect();
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = Math.max(rect.width, 1);
+    H = Math.max(rect.height, 1);
+    canvas.width = Math.floor(W * dpr);
+    canvas.height = Math.floor(H * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function arcSeg(cx, cy, rot, radius, start, len, lw, color, glow) {
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(rot);
     ctx.beginPath();
-    ctx.moveTo(Math.cos(a) * r1, Math.sin(a) * r1);
-    ctx.lineTo(Math.cos(a) * r2, Math.sin(a) * r2);
-    ctx.strokeStyle = long ? "rgba(0,229,255,.55)" : "rgba(0,229,255,.20)";
-    ctx.lineWidth = long ? 1.6 : 1;
+    ctx.arc(0, 0, radius, start, start + len);
+    ctx.lineWidth = lw;
+    ctx.strokeStyle = color;
+    ctx.lineCap = "round";
+    if (glow) { ctx.shadowBlur = glow; ctx.shadowColor = color; }
     ctx.stroke();
-  }
-  ctx.restore();
-
-  // rotating arcs
-  const rotA = now / 5200 * motion;
-  const rotB = -now / 3600 * motion;
-  const rotC = now / 2400 * motion;
-
-  arcSeg(cx, cy, rotA, R * 0.90, 0, Math.PI * 0.34, 2.4, "rgba(0,229,255,.85)", 14);
-  arcSeg(cx, cy, rotA, R * 0.90, Math.PI * 0.62, Math.PI * 0.20, 2.4, "rgba(0,229,255,.55)", 10);
-  arcSeg(cx, cy, rotB, R * 0.78, 0, Math.PI * 0.42, 3.2, "rgba(120,245,255,.75)", 16);
-  arcSeg(cx, cy, rotB, R * 0.78, Math.PI * 0.78, Math.PI * 0.14, 3.2, "rgba(120,245,255,.45)", 10);
-  arcSeg(cx, cy, rotC, R * 0.64, 0, Math.PI * 0.24, 1.8, "rgba(0,229,255,.65)", 12);
-  arcSeg(cx, cy, rotC, R * 0.64, Math.PI * 0.45, Math.PI * 0.30, 1.8, "rgba(0,229,255,.35)", 8);
-
-  // sweep
-  const sweep = now / 1500 * motion;
-  for (let i = 0; i < 14; i++) {
-    const alpha = (1 - i / 14) * 0.32;
-    arcSeg(cx, cy, sweep - i * 0.045, R * 0.70, 0, 0.05, 6, `rgba(150,250,255,${alpha})`, 0);
+    ctx.restore();
   }
 
-  // inner ring
-  ctx.save();
-  ctx.translate(cx, cy);
-  ctx.beginPath();
-  ctx.arc(0, 0, R * 0.52, 0, Math.PI * 2);
-  ctx.lineWidth = 1;
-  ctx.strokeStyle = `rgba(0,229,255,${0.22 + e * 0.35})`;
-  ctx.stroke();
-  ctx.restore();
+  function drawReactor(now) {
+    if (!ctx) return;
+    ctx.clearRect(0, 0, W, H);
+    var cx = W / 2, cy = H / 2;
+    var R = Math.min(W, H) / 2 - 10;
+    if (R <= 0) return;
 
-  // core glow
-  const coreR = R * 0.20 * (1 + 0.07 * pulse + 0.30 * e);
-  const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, coreR * 3.4);
-  g.addColorStop(0, "rgba(235,255,255,.98)");
-  g.addColorStop(0.18, "rgba(150,250,255,.85)");
-  g.addColorStop(0.42, "rgba(0,200,255,.35)");
-  g.addColorStop(0.75, "rgba(0,140,220,.10)");
-  g.addColorStop(1, "rgba(0,120,200,0)");
-  ctx.fillStyle = g;
-  ctx.beginPath();
-  ctx.arc(cx, cy, coreR * 3.4, 0, Math.PI * 2);
-  ctx.fill();
+    var motion = settings.reducedMotion ? 0.15 : 1;
+    var pulse = Math.sin(now / 900) * 0.5 + 0.5;
+    var e = energyCur;
 
-  // core ring
-  ctx.beginPath();
-  ctx.arc(cx, cy, coreR, 0, Math.PI * 2);
-  ctx.lineWidth = 2;
-  ctx.strokeStyle = "rgba(220,255,255,.9)";
-  ctx.shadowBlur = 24;
-  ctx.shadowColor = "rgba(0,229,255,.9)";
-  ctx.stroke();
-  ctx.shadowBlur = 0;
+    // Outer dashed ring
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(now / 26000 * motion);
+    ctx.beginPath();
+    ctx.arc(0, 0, R * 0.97, 0, Math.PI * 2);
+    ctx.setLineDash([2, 7]);
+    ctx.lineWidth = 1.2;
+    ctx.strokeStyle = "rgba(0,229,255,.30)";
+    ctx.stroke();
+    ctx.restore();
 
-  // particles
-  if (!settings.reducedMotion) {
-    const n = 26;
-    for (let i = 0; i < n; i++) {
-      const seed = i * 137.508;
-      const ang = (seed + now / (2000 + (i % 7) * 400)) % (Math.PI * 2);
-      const rr = R * (0.30 + ((i % 9) / 9) * 0.58);
-      const x = cx + Math.cos(ang) * rr;
-      const y = cy + Math.sin(ang) * rr;
-      const size = 1 + (i % 3) * 0.6;
+    // Tick marks
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(now / 60000 * motion);
+    for (var i = 0; i < 72; i++) {
+      var a = (i / 72) * Math.PI * 2;
+      var isLong = i % 6 === 0;
+      var r1 = R * 0.80;
+      var r2 = R * (isLong ? 0.88 : 0.845);
       ctx.beginPath();
-      ctx.arc(x, y, size, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(140,245,255,${0.22 + 0.4 * e})`;
-      ctx.fill();
+      ctx.moveTo(Math.cos(a) * r1, Math.sin(a) * r1);
+      ctx.lineTo(Math.cos(a) * r2, Math.sin(a) * r2);
+      ctx.strokeStyle = isLong ? "rgba(0,229,255,.55)" : "rgba(0,229,255,.20)";
+      ctx.lineWidth = isLong ? 1.6 : 1;
+      ctx.stroke();
     }
-  }
-}
+    ctx.restore();
 
-let lastFrame = performance.now();
-function loop(now) {
-  const dt = Math.min(now - lastFrame, 60);
-  lastFrame = now;
-  energyCur += (energy - energyCur) * clamp(dt / 180, 0, 1);
-  drawReactor(now);
-  requestAnimationFrame(loop);
-}
+    // Rotating arcs
+    var rotA = now / 5200 * motion;
+    var rotB = -now / 3600 * motion;
+    var rotC = now / 2400 * motion;
 
-/* ============================================================
-   7. STATUS / TELEMETRY
-   ============================================================ */
-let statusResetTimer = null;
+    arcSeg(cx, cy, rotA, R * 0.90, 0, Math.PI * 0.34, 2.4, "rgba(0,229,255,.85)", 14);
+    arcSeg(cx, cy, rotA, R * 0.90, Math.PI * 0.62, Math.PI * 0.20, 2.4, "rgba(0,229,255,.55)", 10);
+    arcSeg(cx, cy, rotB, R * 0.78, 0, Math.PI * 0.42, 3.2, "rgba(120,245,255,.75)", 16);
+    arcSeg(cx, cy, rotB, R * 0.78, Math.PI * 0.78, Math.PI * 0.14, 3.2, "rgba(120,245,255,.45)", 10);
+    arcSeg(cx, cy, rotC, R * 0.64, 0, Math.PI * 0.24, 1.8, "rgba(0,229,255,.65)", 12);
+    arcSeg(cx, cy, rotC, R * 0.64, Math.PI * 0.45, Math.PI * 0.30, 1.8, "rgba(0,229,255,.35)", 8);
 
-function setStatus(text, sub) {
-  $("statusText").textContent = text;
-  if (sub !== undefined) $("coreSub").textContent = sub;
-  clearTimeout(statusResetTimer);
-  if (text !== "ONLINE") {
-    statusResetTimer = setTimeout(() => {
-      if (!listening) {
-        $("statusText").textContent = "ONLINE";
-        $("coreSub").textContent = "ALL SYSTEMS NOMINAL";
+    // Sweep
+    var sweep = now / 1500 * motion;
+    for (var k = 0; k < 14; k++) {
+      var alpha = (1 - k / 14) * 0.32;
+      arcSeg(cx, cy, sweep - k * 0.045, R * 0.70, 0, 0.05, 6, "rgba(150,250,255," + alpha + ")", 0);
+    }
+
+    // Inner ring
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.beginPath();
+    ctx.arc(0, 0, R * 0.52, 0, Math.PI * 2);
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = "rgba(0,229,255," + (0.22 + e * 0.35) + ")";
+    ctx.stroke();
+    ctx.restore();
+
+    // Core glow
+    var coreR = R * 0.20 * (1 + 0.07 * pulse + 0.30 * e);
+    var g = ctx.createRadialGradient(cx, cy, 0, cx, cy, coreR * 3.4);
+    g.addColorStop(0, "rgba(235,255,255,.98)");
+    g.addColorStop(0.18, "rgba(150,250,255,.85)");
+    g.addColorStop(0.42, "rgba(0,200,255,.35)");
+    g.addColorStop(0.75, "rgba(0,140,220,.10)");
+    g.addColorStop(1, "rgba(0,120,200,0)");
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.arc(cx, cy, coreR * 3.4, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Core ring
+    ctx.beginPath();
+    ctx.arc(cx, cy, coreR, 0, Math.PI * 2);
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = "rgba(220,255,255,.9)";
+    ctx.shadowBlur = 24;
+    ctx.shadowColor = "rgba(0,229,255,.9)";
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    // Particles
+    if (!settings.reducedMotion) {
+      var n = 26;
+      for (var p = 0; p < n; p++) {
+        var seed = p * 137.508;
+        var ang = (seed + now / (2000 + (p % 7) * 400)) % (Math.PI * 2);
+        var rr = R * (0.30 + ((p % 9) / 9) * 0.58);
+        var px = cx + Math.cos(ang) * rr;
+        var py = cy + Math.sin(ang) * rr;
+        var sz = 1 + (p % 3) * 0.6;
+        ctx.beginPath();
+        ctx.arc(px, py, sz, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(140,245,255," + (0.22 + 0.4 * e) + ")";
+        ctx.fill();
       }
-    }, 3400);
+    }
   }
-}
 
-function respond(text, sub) {
-  logLine(text, "jarvis");
-  setStatus("RESPONDING", sub || "");
-  speak(text);
-}
+  var lastFrame = 0;
+  function loop(now) {
+    var dt = Math.min(now - lastFrame, 60);
+    lastFrame = now;
+    energyCur += (energy - energyCur) * clamp(dt / 180, 0, 1);
+    drawReactor(now);
+    requestAnimationFrame(loop);
+  }
 
-function tickClock() {
-  $("clock").textContent = new Date().toLocaleTimeString("en-GB", { hour12: false });
-}
-setInterval(tickClock, 1000); tickClock();
+  // ==================== SPEECH RECOGNITION ====================
+  function setupRecognition() {
+    var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    micSupported = !!SR;
+    if (!micSupported) return;
 
-const startTime = Date.now();
-setInterval(() => {
-  const s = Math.floor((Date.now() - startTime) / 1000);
-  const hh = String(Math.floor(s / 3600)).padStart(2, "0");
-  const mm = String(Math.floor((s % 3600) / 60)).padStart(2, "0");
-  const ss = String(s % 60).padStart(2, "0");
-  $("uptime").textContent = `${hh}:${mm}:${ss}`;
-}, 1000);
+    recognition = new SR();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.lang = settings.lang;
+    recognition.maxAlternatives = 1;
 
-function updateStats() {
-  const pwr = clamp(97 + rand(-1.2, 1.2), 90, 100);
-  const cpu = clamp(28 + Math.sin(Date.now() / 4000) * 12 + rand(-9, 9), 4, 97);
-  const mem = clamp(54 + rand(-5, 5), 20, 95);
-  const net = clamp(62 + rand(-18, 18), 5, 99);
-  const tmp = clamp(41 + rand(-3, 4), 30, 80);
-
-  const set = (id, val, suffix = "%") => {
-    $("b-" + id).style.width = val + "%";
-    $("v-" + id).textContent = Math.round(val) + suffix;
-  };
-  set("pwr", pwr);
-  set("cpu", cpu);
-  set("mem", mem);
-  set("net", net);
-  set("tmp", tmp, "°C");
-
-  energy = 0.14 + (cpu / 100) * 0.22 + (pwr / 100) * 0.10;
-  if (listening) energy = Math.max(energy, 0.7);
-}
-setInterval(updateStats, 1400);
-updateStats();
-
-/* ============================================================
-   8. SPEECH RECOGNITION (with always-on support)
-   ============================================================ */
-const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-let recognition = null;
-let listening = false;
-let wantListening = false;   // user/setting intent
-let micSupported = !!SR;
-let awakeUntil = 0;          // wake-word window
-let restartTimer = null;
-
-const micBtn = $("micBtn");
-const cmdInput = $("cmd");
-
-if (micSupported) {
-  recognition = new SR();
-  recognition.continuous = true;
-  recognition.interimResults = true;
-  recognition.lang = settings.lang;
-  recognition.maxAlternatives = 1;
-
-  recognition.onstart = () => {
-    listening = true;
-    micBtn.classList.add("listening");
-    $("micState").textContent = settings.alwaysOn ? "ALWAYS ON" : "LISTENING";
-    setStatus("LISTENING", settings.alwaysOn ? "ALWAYS-ON CHANNEL ACTIVE" : "AWAITING VOICE INPUT");
-    energy = 0.8;
-    updateListenBadge();
-    updateMicAppearance();
-  };
-
-  recognition.onresult = (ev) => {
-    let interim = "", final = "";
-    for (let i = ev.resultIndex; i < ev.results.length; i++) {
-      const tr = ev.results[i][0].transcript;
-      if (ev.results[i].isFinal) final += tr; else interim += tr;
-    }
-    if (interim && !final) cmdInput.value = interim;
-    if (!final) return;
-
-    const transcript = final.trim();
-    if (!transcript) return;
-    cmdInput.value = "";
-
-    processTranscript(transcript);
-  };
-
-  recognition.onerror = (ev) => {
-    const map = {
-      "not-allowed": "Microphone access denied. Enable it in browser settings.",
-      "service-not-allowed": "Speech service blocked by browser.",
-      "no-speech": "No speech detected.",
-      "audio-capture": "No microphone found.",
-      "network": "Speech service unreachable.",
-      "aborted": "Voice channel interrupted."
-    };
-    const msg = map[ev.error] || ("Voice error: " + ev.error);
-    if (ev.error !== "aborted" && ev.error !== "no-speech") {
-      logLine(msg, "warn");
-      toast(msg, "warn");
-    }
-    if (ev.error === "not-allowed" || ev.error === "service-not-allowed" || ev.error === "audio-capture") {
-      wantListening = false;
-      settings.alwaysOn = false;
-      saveSettings();
-      applySettings();
+    recognition.onstart = function () {
+      listening = true;
+      els.micBtn.classList.add("listening");
+      els.micState.textContent = settings.alwaysOn ? "ALWAYS ON" : "LISTENING";
+      setStatus("LISTENING", settings.alwaysOn ? "ALWAYS-ON CHANNEL ACTIVE" : "AWAITING VOICE INPUT");
+      energy = 0.8;
       updateListenBadge();
-    }
-  };
+      updateMicAppearance();
+    };
 
-  recognition.onend = () => {
-    listening = false;
-    micBtn.classList.remove("listening");
-    $("micState").textContent = settings.alwaysOn ? (wantListening ? "RESTARTING" : "PAUSED") : "STANDBY";
-    if ($("statusText").textContent === "LISTENING") {
-      setStatus("ONLINE", "ALL SYSTEMS NOMINAL");
-    }
-    updateListenBadge();
-    updateMicAppearance();
-    if (wantListening) scheduleRestart(260);
-  };
-} else {
-  $("micState").textContent = "UNSUPPORTED";
-  micBtn.title = "Voice input not supported in this browser";
-  logLine("Speech recognition unsupported — use Chrome or Edge for voice.", "warn");
-}
+    recognition.onresult = function (ev) {
+      var interim = "", final = "";
+      for (var i = ev.resultIndex; i < ev.results.length; i++) {
+        var tr = ev.results[i][0].transcript;
+        if (ev.results[i].isFinal) final += tr;
+        else interim += tr;
+      }
+      if (interim && !final) els.cmd.value = interim;
+      if (!final) return;
 
-function scheduleRestart(delay = 300) {
-  if (!wantListening) return;
-  if (speaking) return;               // wait until TTS finishes
-  if (!settings.alwaysOn) return;     // one-shot mode doesn't auto-restart
-  clearTimeout(restartTimer);
-  restartTimer = setTimeout(() => {
-    if (wantListening && !listening && !speaking) {
+      var text = final.trim();
+      if (!text) return;
+      els.cmd.value = "";
+
+      // Ignore our own voice
+      if (speaking) return;
+
+      processTranscript(text);
+    };
+
+    recognition.onerror = function (ev) {
+      var map = {
+        "not-allowed": "Microphone access denied.",
+        "service-not-allowed": "Speech service blocked.",
+        "no-speech": "No speech detected.",
+        "audio-capture": "No microphone found.",
+        "network": "Speech service unreachable.",
+        "aborted": "Voice channel interrupted."
+      };
+      var msg = map[ev.error] || ("Voice error: " + ev.error);
+      if (ev.error !== "aborted" && ev.error !== "no-speech") {
+        logLine(msg, "warn");
+        toast(msg, "warn");
+      }
+      if (ev.error === "not-allowed" || ev.error === "service-not-allowed" || ev.error === "audio-capture") {
+        wantListening = false;
+        settings.alwaysOn = false;
+        saveSettings();
+        applySettings();
+        updateListenBadge();
+      }
+    };
+
+    recognition.onend = function () {
+      listening = false;
+      if (els.micBtn) els.micBtn.classList.remove("listening");
+      if (els.micState) els.micState.textContent = settings.alwaysOn ? (wantListening ? "RESTARTING" : "PAUSED") : "STANDBY";
+      if (els.statusText && els.statusText.textContent === "LISTENING") {
+        setStatus("ONLINE", "ALL SYSTEMS NOMINAL");
+      }
+      updateListenBadge();
+      updateMicAppearance();
+
+      // Auto-restart when always-on
+      if (wantListening && settings.alwaysOn && !speaking) {
+        scheduleRestart(280);
+      }
+    };
+  }
+
+  function scheduleRestart(delay) {
+    clearTimeout(restartTimer);
+    restartTimer = setTimeout(function () {
+      if (!wantListening || listening || speaking) return;
       try { recognition.start(); }
       catch (e) { scheduleRestart(700); }
+    }, delay || 300);
+  }
+
+  function startListening() {
+    if (!micSupported) {
+      logLine("Voice input isn't supported here.", "warn");
+      toast("Voice not supported", "warn");
+      return;
     }
-  }, delay);
-}
-
-function startListening() {
-  if (!micSupported) {
-    logLine("Voice input isn't supported in this browser.", "warn");
-    return;
+    if ("speechSynthesis" in window) speechSynthesis.cancel();
+    wantListening = true;
+    if (!listening) {
+      try { recognition.start(); }
+      catch (e) { scheduleRestart(500); }
+    }
+    updateListenBadge();
+    updateMicAppearance();
   }
-  if ("speechSynthesis" in window) speechSynthesis.cancel();
-  wantListening = true;
-  if (!listening) {
-    try { recognition.start(); }
-    catch (e) { scheduleRestart(500); }
+
+  function stopListening() {
+    wantListening = false;
+    clearTimeout(restartTimer);
+    if (listening) { try { recognition.stop(); } catch (e) {} }
+    updateListenBadge();
+    updateMicAppearance();
   }
-  updateListenBadge();
-}
 
-function stopListening() {
-  wantListening = false;
-  clearTimeout(restartTimer);
-  if (listening) { try { recognition.stop(); } catch (e) {} }
-  updateListenBadge();
-  updateMicAppearance();
-}
-
-function toggleMic() {
-  userHasInteracted = true;
-  if (!micSupported) {
-    logLine("Voice input isn't supported here. Please type instead.", "warn");
-    toast("Voice not supported", "warn");
-    return;
+  function toggleMic() {
+    userHasInteracted = true;
+    if (!micSupported) {
+      logLine("Voice input isn't supported here. Type instead.", "warn");
+      toast("Voice not supported", "warn");
+      return;
+    }
+    if (wantListening) stopListening();
+    else startListening();
   }
-  if (wantListening) stopListening();
-  else startListening();
-}
 
-micBtn.addEventListener("click", toggleMic);
+  function processTranscript(text) {
+    var needWake = settings.alwaysOn && settings.requireWake;
+    var awake = Date.now() < awakeUntil;
 
-/* --- transcript processing (wake word aware) --- */
-function processTranscript(transcript) {
-  const needWake = settings.alwaysOn && settings.requireWake;
-  const awake = Date.now() < awakeUntil;
+    if (needWake && !awake) {
+      var ww = (settings.wakeWord || "jarvis").toLowerCase().trim();
+      var lower = text.toLowerCase();
+      var idx = ww ? lower.indexOf(ww) : -1;
+      if (idx === -1) return; // ignore ambient speech
 
-  if (needWake && !awake) {
-    const ww = (settings.wakeWord || "jarvis").toLowerCase().trim();
-    const lower = transcript.toLowerCase();
-    const idx = ww ? lower.indexOf(ww) : -1;
+      var rest = text.slice(idx + ww.length).replace(/^[\s,.:;!?\-]+/, "").trim();
+      logLine(text, "user");
 
-    if (idx === -1) {
-      // Ignore — mic picked up ambient speech
+      if (!rest) {
+        awakeUntil = Date.now() + 9000;
+        beep(660, 0.1, 0.08);
+        respond("Yes?");
+        return;
+      }
+      handleCommand(rest);
       return;
     }
 
-    const rest = transcript.slice(idx + ww.length).replace(/^[\s,.:;!?\-]+/, "").trim();
-    logLine(transcript, "user");
+    if (awake) awakeUntil = 0;
+    logLine(text, "user");
+    handleCommand(text);
+  }
 
-    if (!rest) {
-      awakeUntil = Date.now() + 9000;
-      beep(660, 0.1, 0.08);
-      respond("Yes?");
+  // ==================== UI STATE ====================
+  function updateListenBadge() {
+    var badge = els.listenBadge;
+    var txt = els.listenBadgeText;
+    if (!badge) return;
+    if (!settings.alwaysOn) {
+      badge.classList.remove("on", "paused");
       return;
     }
-    handleCommand(rest);
-    return;
-  }
-
-  if (awake) awakeUntil = 0;
-  logLine(transcript, "user");
-  handleCommand(transcript);
-}
-
-/* --- UI state helpers --- */
-function updateListenBadge() {
-  const badge = $("listenBadge");
-  const text = $("listenBadgeText");
-  if (!settings.alwaysOn) {
-    badge.classList.remove("on", "paused");
-    return;
-  }
-  badge.classList.add("on");
-  if (listening) {
-    badge.classList.remove("paused");
-    text.textContent = "ALWAYS LISTENING";
-  } else {
-    badge.classList.add("paused");
-    text.textContent = speaking ? "PAUSED — SPEAKING" : "ALWAYS ON — PAUSED";
-  }
-}
-
-function updateMicAppearance() {
-  micBtn.classList.toggle("always", settings.alwaysOn);
-  micBtn.classList.toggle("muted", settings.alwaysOn && !wantListening);
-  micBtn.title = settings.alwaysOn
-    ? (wantListening ? "Always-listening active — click to pause" : "Always-listening paused — click to resume")
-    : "Toggle voice input";
-}
-
-/* ============================================================
-   9. COMMAND ENGINE — helpers
-   ============================================================ */
-
-// --- pending confirmation ---
-let pendingAction = null;
-
-// --- timers ---
-const activeTimers = [];
-
-function setTimer(seconds, label) {
-  const id = setTimeout(() => {
-    const msg = label ? `Timer complete — ${label}.` : "Your timer has finished.";
-    logLine(msg, "jarvis");
-    setStatus("ALERT", "TIMER COMPLETE");
-    energy = 1;
-    flashScreen();
-    beep(880, 0.18, 0.15);
-    setTimeout(() => beep(1320, 0.18, 0.15), 220);
-    setTimeout(() => beep(1760, 0.25, 0.15), 440);
-    speak(msg);
-    const i = activeTimers.indexOf(id);
-    if (i > -1) activeTimers.splice(i, 1);
-  }, seconds * 1000);
-  activeTimers.push(id);
-  return id;
-}
-
-// --- safe math evaluator ---
-function safeEval(expr) {
-  let e = String(expr).toLowerCase().trim();
-  e = e.replace(/(\d+(?:\.\d+)?)\s*(?:%|percent)\s*of\s*/g, "($1/100)*");
-  e = e.replace(/\bplus\b/g, "+")
-       .replace(/\bminus\b/g, "-")
-       .replace(/\bmultiplied by\b|\btimes\b/g, "*")
-       .replace(/\bdivided by\b|\bover\b/g, "/")
-       .replace(/\bto the power of\b/g, "**")
-       .replace(/[x×]/g, "*")
-       .replace(/÷/g, "/")
-       .replace(/−/g, "-")
-       .replace(/\^/g, "**")
-       .replace(/,/g, "");
-  if (!/^[\d+\-*/().\s]+$/.test(e)) return null;
-  try {
-    const result = Function('"use strict";return (' + e + ')')();
-    if (typeof result !== "number" || !isFinite(result)) return null;
-    return result;
-  } catch (err) { return null; }
-}
-
-function looksLikeMath(s) {
-  if (!/\d/.test(s)) return false;
-  return /[+\-*/x×÷^%]|\b(plus|minus|times|divided|multiplied|percent|of)\b/i.test(s);
-}
-
-// --- unit conversion ---
-const UNIT_GROUPS = {
-  length: { km:1000, kilometer:1000, kilometers:1000, m:1, meter:1, meters:1, metre:1, metres:1,
-            cm:0.01, centimeter:0.01, centimeters:0.01, mm:0.001,
-            mi:1609.344, mile:1609.344, miles:1609.344,
-            ft:0.3048, foot:0.3048, feet:0.3048,
-            in:0.0254, inch:0.0254, inches:0.0254,
-            yd:0.9144, yard:0.9144, yards:0.9144 },
-  weight: { kg:1000, kilogram:1000, kilograms:1000, g:1, gram:1, grams:1, mg:0.001,
-            lb:453.592, lbs:453.592, pound:453.592, pounds:453.592,
-            oz:28.3495, ounce:28.3495, ounces:28.3495, st:6350.29, stone:6350.29 },
-  volume: { l:1, liter:1, liters:1, litre:1, litres:1, ml:0.001,
-            gal:3.78541, gallon:3.78541, gallons:3.78541,
-            cup:0.236588, cups:0.236588, pint:0.473176, pints:0.473176 }
-};
-
-const TEMP_ALIASES = {
-  c:"c", celsius:"c", "°c":"c", centigrade:"c",
-  f:"f", fahrenheit:"f", "°f":"f",
-  k:"k", kelvin:"k"
-};
-
-function convertUnits(val, from, to) {
-  from = from.toLowerCase(); to = to.toLowerCase();
-
-  // temperature
-  if (TEMP_ALIASES[from] && TEMP_ALIASES[to]) {
-    const f = TEMP_ALIASES[from], t = TEMP_ALIASES[to];
-    let c;
-    if (f === "c") c = val;
-    else if (f === "f") c = (val - 32) * 5 / 9;
-    else c = val - 273.15;
-    let out;
-    if (t === "c") out = c;
-    else if (t === "f") out = c * 9 / 5 + 32;
-    else out = c + 273.15;
-    return { value: out, unit: to };
-  }
-
-  // grouped units
-  for (const group of Object.values(UNIT_GROUPS)) {
-    if (group[from] != null && group[to] != null) {
-      const inBase = val * group[from];
-      return { value: inBase / group[to], unit: to };
-    }
-  }
-  return null;
-}
-
-// --- content libraries ---
-const JOKES = [
-  "Why did the developer go broke? He used up all his cache.",
-  "There are only two hard things in computer science: cache invalidation, naming things, and off-by-one errors.",
-  "Why do programmers prefer dark mode? Because light attracts bugs.",
-  "A SQL query walks into a bar, approaches two tables and asks: may I join you?",
-  "I would tell you a UDP joke, but you might not get it.",
-  "Why did the AI cross the road? To optimise the other side.",
-  "There are 10 types of people in the world: those who understand binary, and those who don't.",
-  "Why was the JavaScript developer sad? Because he didn't know how to null his feelings."
-];
-
-const QUOTES = [
-  "Sometimes you gotta run before you can walk. — Tony Stark",
-  "The best way to predict the future is to invent it. — Alan Kay",
-  "Any sufficiently advanced technology is indistinguishable from magic. — Arthur C. Clarke",
-  "Simplicity is the ultimate sophistication. — Leonardo da Vinci",
-  "The only way to do great work is to love what you do. — Steve Jobs",
-  "We are what we repeatedly do. Excellence, then, is not an act, but a habit. — Aristotle",
-  "Programs must be written for people to read, and only incidentally for machines to execute. — Abelson & Sussman"
-];
-
-/* ============================================================
-   10. COMMAND ENGINE — dispatcher
-   ============================================================ */
-function handleCommand(input) {
-  const raw = String(input).trim();
-  if (!raw) return;
-  const t = raw.toLowerCase().replace(/[?!.,]+$/g, "").trim();
-  const tRaw = raw.trim();
-
-  /* ---------- confirmation of pending action ---------- */
-  if (pendingAction) {
-    if (/^(yes|yeah|yep|yup|sure|ok|okay|do it|please do|affirmative|go ahead|confirm)\b/.test(t)) {
-      const a = pendingAction; pendingAction = null;
-      return a();
-    }
-    if (/^(no|nope|nah|negative|cancel|nevermind|never mind|stop)\b/.test(t)) {
-      pendingAction = null;
-      return respond("Cancelled.");
+    badge.classList.add("on");
+    if (listening && !speaking) {
+      badge.classList.remove("paused");
+      txt.textContent = "ALWAYS LISTENING";
+    } else {
+      badge.classList.add("paused");
+      txt.textContent = speaking ? "PAUSED — SPEAKING" : "ALWAYS ON — PAUSED";
     }
   }
 
-  /* ---------- name ---------- */
-  let m;
-  if ((m = t.match(/^(?:my name is|call me|i am|i'm)\s+([a-z][a-z '\-]{0,38})$/))) {
-    const name = m[1].trim();
-    settings.userName = name;
-    saveSettings();
-    return respond(`Noted. I'll call you ${cap(name)}.`);
-  }
-  if (/what(?:'s| is) my name|who am i\b/.test(t)) {
-    return settings.userName
-      ? respond(`You're ${cap(settings.userName)}, of course.`)
-      : respond("You haven't told me your name yet. Say 'call me' followed by your name.");
+  function updateMicAppearance() {
+    if (!els.micBtn) return;
+    els.micBtn.classList.toggle("always", !!settings.alwaysOn);
+    els.micBtn.classList.toggle("muted", !!settings.alwaysOn && !wantListening);
+    els.micBtn.title = settings.alwaysOn
+      ? (wantListening ? "Always-listening active — click to pause" : "Always-listening paused — click to resume")
+      : "Toggle voice input";
   }
 
-  /* ---------- memory ---------- */
-  if ((m = t.match(/^(?:remember|memorise|memorize|store)(?: that)?\s+(?:my\s+)?(.+?)\s+(?:is|are|equals?)\s+(.+)$/))) {
-    const key = m[1].trim().replace(/^my\s+/, "");
-    const val = m[2].trim();
-    if (key.length > 60 || val.length > 200) return respond("That's a bit long for me to store.");
-    settings.memories[key] = val;
-    saveSettings();
-    applySettings();
-    beep(880, 0.08, 0.08);
-    return respond(`Stored. I'll remember that your ${key} is ${val}.`);
+  // ==================== APPLY SETTINGS ====================
+  function applySettings() {
+    document.body.classList.toggle("no-grid", !settings.showGrid);
+    document.body.classList.toggle("reduced-motion", !!settings.reducedMotion);
+
+    if (els.telemetryPanel) els.telemetryPanel.classList.toggle("hidden", !settings.showTelemetry);
+    if (els.logPanel) els.logPanel.classList.toggle("hidden", !settings.showLog);
+    if (els.mainGrid) {
+      els.mainGrid.classList.toggle("no-telemetry", !settings.showTelemetry);
+      els.mainGrid.classList.toggle("no-log", !settings.showLog);
+    }
+    if (els.memCount) els.memCount.textContent = Object.keys(settings.memories).length;
+
+    // Reflect into UI
+    if (els.setAlwaysOn) els.setAlwaysOn.checked = !!settings.alwaysOn;
+    if (els.setRequireWake) els.setRequireWake.checked = !!settings.requireWake;
+    if (els.setWakeWord) els.setWakeWord.value = settings.wakeWord;
+    if (els.setLang) els.setLang.value = settings.lang;
+    if (els.setSpeak) els.setSpeak.checked = !!settings.speak;
+    if (els.setTelemetry) els.setTelemetry.checked = !!settings.showTelemetry;
+    if (els.setLogPanel) els.setLogPanel.checked = !!settings.showLog;
+    if (els.setGrid) els.setGrid.checked = !!settings.showGrid;
+    if (els.setReduced) els.setReduced.checked = !!settings.reducedMotion;
+    if (els.setRate) els.setRate.value = settings.rate;
+    if (els.setPitch) els.setPitch.value = settings.pitch;
+    if (els.setVolume) els.setVolume.value = settings.volume;
+    if (els.valRate) els.valRate.textContent = Number(settings.rate).toFixed(2);
+    if (els.valPitch) els.valPitch.textContent = Number(settings.pitch).toFixed(2);
+    if (els.valVolume) els.valVolume.textContent = Number(settings.volume).toFixed(2);
+
+    updateListenBadge();
+    updateMicAppearance();
   }
-  if ((m = t.match(/^(?:what(?:'s| is)|do you remember)\s+my\s+(.+?)$/))) {
-    const key = m[1].trim();
-    if (settings.memories[key]) return respond(`Your ${key} is ${settings.memories[key]}.`);
-    const close = Object.keys(settings.memories).find(k => k.includes(key) || key.includes(k));
-    if (close) return respond(`Did you mean your ${close}? It's ${settings.memories[close]}.`);
-    return respond(`I don't have anything stored for "${key}".`);
+
+  // ==================== SETTINGS PANEL UI ====================
+  function openSettings() {
+    document.body.classList.add("settings-open");
+    if (els.settingsBtn) els.settingsBtn.classList.add("active");
   }
-  if ((m = t.match(/^forget\s+(?:my\s+)?(.+)$/))) {
-    const key = m[1].trim().replace(/^my\s+/, "");
-    if (settings.memories[key]) {
-      delete settings.memories[key];
+  function closeSettings() {
+    document.body.classList.remove("settings-open");
+    if (els.settingsBtn) els.settingsBtn.classList.remove("active");
+  }
+  function toggleSettings() {
+    if (document.body.classList.contains("settings-open")) closeSettings();
+    else openSettings();
+  }
+
+  // ==================== COMMAND ENGINE HELPERS ====================
+  function setTimer(seconds, label) {
+    var id = setTimeout(function () {
+      var msg = label ? ("Timer complete — " + label + ".") : "Your timer has finished.";
+      logLine(msg, "jarvis");
+      setStatus("ALERT", "TIMER COMPLETE");
+      energy = 1;
+      flashScreen();
+      beep(880, 0.18, 0.15);
+      setTimeout(function () { beep(1320, 0.18, 0.15); }, 220);
+      setTimeout(function () { beep(1760, 0.25, 0.15); }, 440);
+      speak(msg);
+      var i = activeTimers.indexOf(id);
+      if (i > -1) activeTimers.splice(i, 1);
+    }, seconds * 1000);
+    activeTimers.push(id);
+    return id;
+  }
+
+  function safeEval(expr) {
+    var e = String(expr).toLowerCase().trim();
+    e = e.replace(/(\d+(?:\.\d+)?)\s*(?:%|percent)\s*of\s*/g, "($1/100)*");
+    e = e.replace(/\bplus\b/g, "+")
+         .replace(/\bminus\b/g, "-")
+         .replace(/\bmultiplied by\b|\btimes\b/g, "*")
+         .replace(/\bdivided by\b|\bover\b/g, "/")
+         .replace(/\bto the power of\b/g, "**")
+         .replace(/[x×]/g, "*")
+         .replace(/÷/g, "/")
+         .replace(/−/g, "-")
+         .replace(/\^/g, "**")
+         .replace(/,/g, "");
+    if (!/^[\d+\-*/().\s]+$/.test(e)) return null;
+    try {
+      var result = Function('"use strict";return (' + e + ')')();
+      if (typeof result !== "number" || !isFinite(result)) return null;
+      return result;
+    } catch (err) { return null; }
+  }
+
+  function looksLikeMath(s) {
+    if (!/\d/.test(s)) return false;
+    return /[+\-*/x×÷^%]|\b(plus|minus|times|divided|multiplied|percent|of)\b/i.test(s);
+  }
+
+  var UNIT_GROUPS = {
+    length: { km:1000, kilometer:1000, kilometers:1000, m:1, meter:1, meters:1, metre:1, metres:1,
+              cm:0.01, centimeter:0.01, centimeters:0.01, mm:0.001,
+              mi:1609.344, mile:1609.344, miles:1609.344,
+              ft:0.3048, foot:0.3048, feet:0.3048,
+              in:0.0254, inch:0.0254, inches:0.0254,
+              yd:0.9144, yard:0.9144, yards:0.9144 },
+    weight: { kg:1000, kilogram:1000, kilograms:1000, g:1, gram:1, grams:1, mg:0.001,
+              lb:453.592, lbs:453.592, pound:453.592, pounds:453.592,
+              oz:28.3495, ounce:28.3495, ounces:28.3495, st:6350.29, stone:6350.29 },
+    volume: { l:1, liter:1, liters:1, litre:1, litres:1, ml:0.001,
+              gal:3.78541, gallon:3.78541, gallons:3.78541,
+              cup:0.236588, cups:0.236588, pint:0.473176, pints:0.473176 }
+  };
+
+  var TEMP_ALIASES = { c:"c", celsius:"c", "°c":"c", centigrade:"c",
+                       f:"f", fahrenheit:"f", "°f":"f",
+                       k:"k", kelvin:"k" };
+
+  function convertUnits(val, from, to) {
+    from = from.toLowerCase();
+    to = to.toLowerCase();
+
+    if (TEMP_ALIASES[from] && TEMP_ALIASES[to]) {
+      var f = TEMP_ALIASES[from], t = TEMP_ALIASES[to];
+      var c;
+      if (f === "c") c = val;
+      else if (f === "f") c = (val - 32) * 5 / 9;
+      else c = val - 273.15;
+      var out;
+      if (t === "c") out = c;
+      else if (t === "f") out = c * 9 / 5 + 32;
+      else out = c + 273.15;
+      return { value: out, unit: to };
+    }
+    for (var gname in UNIT_GROUPS) {
+      var group = UNIT_GROUPS[gname];
+      if (group[from] != null && group[to] != null) {
+        return { value: (val * group[from]) / group[to], unit: to };
+      }
+    }
+    return null;
+  }
+
+  var JOKES = [
+    "Why did the developer go broke? He used up all his cache.",
+    "There are only two hard things in computer science: cache invalidation, naming things, and off-by-one errors.",
+    "Why do programmers prefer dark mode? Because light attracts bugs.",
+    "A SQL query walks into a bar, approaches two tables and asks: may I join you?",
+    "I would tell you a UDP joke, but you might not get it.",
+    "Why did the AI cross the road? To optimise the other side.",
+    "There are 10 types of people in the world: those who understand binary, and those who don't."
+  ];
+
+  var QUOTES = [
+    "Sometimes you gotta run before you can walk. — Tony Stark",
+    "The best way to predict the future is to invent it. — Alan Kay",
+    "Any sufficiently advanced technology is indistinguishable from magic. — Arthur C. Clarke",
+    "Simplicity is the ultimate sophistication. — Leonardo da Vinci",
+    "The only way to do great work is to love what you do. — Steve Jobs",
+    "We are what we repeatedly do. Excellence, then, is not an act, but a habit. — Aristotle"
+  ];
+
+  // ==================== WEATHER ====================
+  var WX = {
+    0: "clear skies", 1: "mainly clear", 2: "partly cloudy", 3: "overcast",
+    45: "foggy", 48: "freezing fog", 51: "light drizzle", 53: "drizzle",
+    55: "heavy drizzle", 61: "light rain", 63: "rain", 65: "heavy rain",
+    71: "light snow", 73: "snow", 75: "heavy snow", 80: "rain showers",
+    81: "rain showers", 82: "violent rain showers", 95: "a thunderstorm",
+    96: "a thunderstorm with hail", 99: "a severe thunderstorm with hail"
+  };
+
+  function getWeather() {
+    return new Promise(function (resolve, reject) {
+      if (!navigator.geolocation) return reject(new Error("no-geo"));
+      navigator.geolocation.getCurrentPosition(function (pos) {
+        var lat = pos.coords.latitude;
+        var lon = pos.coords.longitude;
+        var url = "https://api.open-meteo.com/v1/forecast?latitude=" + lat + "&longitude=" + lon + "&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m";
+        fetch(url).then(function (r) { return r.json(); })
+          .then(function (data) { resolve(data.current); })
+          .catch(reject);
+      }, function () { reject(new Error("denied")); }, { timeout: 9000 });
+    });
+  }
+
+  // ==================== COMMAND DISPATCHER ====================
+  function askConfirm(prompt, action) {
+    pendingAction = action;
+    respond(prompt);
+  }
+
+  function handleCommand(input) {
+    var raw = String(input).trim();
+    if (!raw) return;
+    var t = raw.toLowerCase().replace(/[?!.,]+$/g, "").trim();
+    var tRaw = raw.trim();
+    var m;
+
+    // Confirmation of pending action
+    if (pendingAction) {
+      if (/^(yes|yeah|yep|yup|sure|ok|okay|do it|please do|affirmative|go ahead|confirm)\b/.test(t)) {
+        var a = pendingAction;
+        pendingAction = null;
+        return a();
+      }
+      if (/^(no|nope|nah|negative|cancel|nevermind|never mind|stop)\b/.test(t)) {
+        pendingAction = null;
+        return respond("Cancelled.");
+      }
+    }
+
+    // Name
+    if ((m = t.match(/^(?:my name is|call me|i am|i'm)\s+([a-z][a-z '\-]{0,38})$/))) {
+      settings.userName = m[1].trim();
+      saveSettings();
+      return respond("Noted. I'll call you " + cap(settings.userName) + ".");
+    }
+    if (/what(?:'s| is) my name|who am i\b/.test(t)) {
+      return settings.userName
+        ? respond("You're " + cap(settings.userName) + ", of course.")
+        : respond("You haven't told me your name yet.");
+    }
+
+    // Memory
+    if ((m = t.match(/^(?:remember|memorise|memorize|store)(?: that)?\s+(?:my\s+)?(.+?)\s+(?:is|are|equals?)\s+(.+)$/))) {
+      var key = m[1].trim().replace(/^my\s+/, "");
+      var val = m[2].trim();
+      if (key.length > 60 || val.length > 200) return respond("That's a bit long for me to store.");
+      settings.memories[key] = val;
       saveSettings();
       applySettings();
-      return respond(`Forgotten: ${key}.`);
+      beep(880, 0.08, 0.08);
+      return respond("Stored. I'll remember that your " + key + " is " + val + ".");
     }
-    return respond(`I don't have a memory for "${key}".`);
-  }
-  if (/^(?:list|show|what do you)(?: me)?(?: my)? memories/.test(t)) {
-    const keys = Object.keys(settings.memories);
-    if (!keys.length) return respond("I haven't stored any memories yet.");
-    const list = keys.map(k => `${k}: ${settings.memories[k]}`).join(". ");
-    logLine("Memories — " + list, "sys");
-    return respond(`I remember ${keys.length} things. ${list}`);
-  }
-
-  /* ---------- notes ---------- */
-  if ((m = t.match(/^(?:take a note|note that|note down|add note|make a note|write down)\s*:?\s*(.+)$/))) {
-    settings.notes.push({ text: m[1].trim(), at: Date.now() });
-    saveSettings();
-    applySettings();
-    beep(880, 0.08, 0.08);
-    return respond(`Note saved. You now have ${settings.notes.length} note${settings.notes.length === 1 ? "" : "s"}.`);
-  }
-  if (/^(?:read|show|list|what are)(?: me)?(?: my)? notes?/.test(t)) {
-    if (!settings.notes.length) return respond("You don't have any notes.");
-    const list = settings.notes.map((n, i) => `${i + 1}. ${n.text}`).join(". ");
-    logLine("Notes — " + list, "sys");
-    return respond(`You have ${settings.notes.length} note${settings.notes.length === 1 ? "" : "s"}. ${list}`);
-  }
-  if (/^(?:clear|delete|erase)(?: all)?(?: my)? notes?/.test(t)) {
-    const n = settings.notes.length;
-    settings.notes = [];
-    saveSettings();
-    applySettings();
-    return respond(`All ${n} note${n === 1 ? "" : "s"} cleared.`);
-  }
-
-  /* ---------- greetings ---------- */
-  if (/^(hi|hey|hello|yo|greetings|good (morning|afternoon|evening)|howdy)\b/.test(t)) {
-    const h = new Date().getHours();
-    const part = h < 12 ? "Good morning" : h < 18 ? "Good afternoon" : "Good evening";
-    const name = settings.userName ? `, ${cap(settings.userName)}` : "";
-    return respond(`${part}${name}. All systems are operational. How may I assist you?`);
-  }
-
-  /* ---------- time & date ---------- */
-  if (/\b(time|clock)\b/.test(t) && !/timetable|timer/.test(t) && !/set a timer/.test(t)) {
-    const now = new Date();
-    const time = now.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit", hour12: true });
-    return respond(`The current time is ${time}.`);
-  }
-  if (/\b(date|day|today)\b/.test(t) && !/update/.test(t)) {
-    const now = new Date();
-    const d = now.toLocaleDateString(undefined, { weekday: "long", day: "numeric", month: "long", year: "numeric" });
-    return respond(`Today is ${d}.`);
-  }
-
-  /* ---------- identity ---------- */
-  if (/(who are you|your name|what are you|introduce yourself)/.test(t)) {
-    return respond("I am J.A.R.V.I.S. — Just A Rather Very Intelligent System. A browser-based interface built to assist you.");
-  }
-  if (/(how are you|status report|system status|systems check)/.test(t)) {
-    return respond("All systems nominal. Arc reactor at 98 percent. No anomalies detected.");
-  }
-  if (/(what can you do|your capabilities|abilities)/.test(t) && !/help/.test(t)) {
-    return respond("I can manage timers, take notes, remember things for you, convert units, perform calculations, report the weather, open websites, run searches, and control the interface. Say 'help' for a full list.");
-  }
-
-  /* ---------- timers / reminders ---------- */
-  if ((m = t.match(/^(?:set (?:a )?timer(?: for)?|timer for|remind me in|in)\s+(\d+(?:\.\d+)?)\s*(seconds?|secs?|s|minutes?|mins?|m|hours?|hrs?|h)\b(.*)$/))) {
-    const val = parseFloat(m[1]);
-    const unit = m[2];
-    let secs = val;
-    if (/^m/.test(unit)) secs = val * 60;
-    else if (/^h/.test(unit)) secs = val * 3600;
-    if (secs <= 0 || secs > 86400) return respond("Please choose a duration between 1 second and 24 hours.");
-    const labelMatch = m[3].match(/(?:to|for|about|that)\s+(.+)$/);
-    const label = labelMatch ? labelMatch[1].trim() : "";
-    setTimer(secs, label);
-    const pretty = secs < 60 ? `${Math.round(secs)} seconds` : secs < 3600 ? `${round(secs / 60, 2)} minutes` : `${round(secs / 3600, 2)} hours`;
-    return respond(label ? `Timer set for ${pretty} — ${label}.` : `Timer set for ${pretty}.`);
-  }
-  if (/^(?:cancel|clear|stop)(?: all)? timers?/.test(t)) {
-    const n = activeTimers.length;
-    activeTimers.forEach(id => clearTimeout(id));
-    activeTimers.length = 0;
-    return respond(n ? `Cancelled ${n} timer${n === 1 ? "" : "s"}.` : "There are no active timers.");
-  }
-
-  /* ---------- weather ---------- */
-  if (/\b(weather|temperature outside|forecast|how hot|how cold)\b/.test(t)) {
-    setStatus("PROCESSING", "QUERYING METEOROLOGICAL DATA");
-    logLine("Requesting location and weather data…", "sys");
-    getWeather().then((cur) => {
-      const desc = WX[cur.weather_code] || "indeterminate conditions";
-      const temp = Math.round(cur.temperature_2m);
-      const feels = Math.round(cur.apparent_temperature);
-      respond(`Currently ${temp} degrees Celsius with ${desc}. It feels like ${feels} degrees, with winds at ${Math.round(cur.wind_speed_10m)} kilometres per hour.`);
-    }).catch((err) => {
-      if (err.message === "denied") respond("I require location permission to retrieve local weather.");
-      else if (err.message === "no-geo") respond("Your browser does not support geolocation.");
-      else respond("I'm unable to reach the meteorological service at the moment.");
-    });
-    return;
-  }
-
-  /* ---------- open websites ---------- */
-  const openMatch = t.match(/^(?:open|launch|go to|navigate to|bring up)\s+(.+)$/);
-  if (openMatch) {
-    const target = openMatch[1].replace(/\s+(website|site|page|dot com|\.com)$/g, "").trim();
-    const sites = {
-      "youtube": "https://www.youtube.com",
-      "google": "https://www.google.com",
-      "github": "https://www.github.com",
-      "gmail": "https://mail.google.com",
-      "reddit": "https://www.reddit.com",
-      "wikipedia": "https://www.wikipedia.org",
-      "twitter": "https://twitter.com",
-      "x": "https://x.com",
-      "spotify": "https://open.spotify.com",
-      "chatgpt": "https://chat.openai.com",
-      "maps": "https://maps.google.com",
-      "news": "https://news.google.com",
-      "netflix": "https://www.netflix.com",
-      "twitch": "https://www.twitch.tv",
-      "stack overflow": "https://stackoverflow.com",
-      "stark industries": "https://www.marvel.com"
-    };
-    let url = sites[target];
-    if (!url && /^[\w-]+(\.[\w-]+)+$/.test(target)) url = "https://" + target;
-    if (url) {
-      logLine("Opening " + url, "sys");
-      window.open(url, "_blank", "noopener");
-      return respond(`Opening ${target}.`);
+    if ((m = t.match(/^(?:what(?:'s| is)|do you remember)\s+my\s+(.+?)$/))) {
+      var k2 = m[1].trim();
+      if (settings.memories[k2]) return respond("Your " + k2 + " is " + settings.memories[k2] + ".");
+      for (var mk in settings.memories) {
+        if (mk.indexOf(k2) > -1 || k2.indexOf(mk) > -1) {
+          return respond("Did you mean your " + mk + "? It's " + settings.memories[mk] + ".");
+        }
+      }
+      return respond("I don't have anything stored for \"" + k2 + "\".");
     }
-    return respond(`I don't have a shortcut for "${target}". Try a full web address.`);
-  }
-
-  /* ---------- web search ---------- */
-  const searchMatch = t.match(/^(?:search|google|look up|find|search for)\s+(?:for\s+)?(.+)$/);
-  if (searchMatch) {
-    const q = searchMatch[1];
-    logLine("Searching the web for: " + q, "sys");
-    window.open("https://www.google.com/search?q=" + encodeURIComponent(q), "_blank", "noopener");
-    return respond(`Searching for ${q}.`);
-  }
-
-  /* ---------- wikipedia ---------- */
-  const wikiMatch = tRaw.match(/^(?:who is|who was|what is|what's|tell me about|define)\s+(.{2,80})$/i);
-  if (wikiMatch) {
-    const q = wikiMatch[1].replace(/[?.!]+$/, "").trim();
-    // skip if it's a math or known command
-    if (!looksLikeMath(q) && !/^(the )?(time|date|weather)/.test(q.toLowerCase())) {
-      logLine(`Looking up "${q}" on Wikipedia…`, "sys");
-      window.open("https://en.wikipedia.org/wiki/Special:Search?search=" + encodeURIComponent(q), "_blank", "noopener");
-      return respond(`Looking up ${q} on Wikipedia.`);
+    if ((m = t.match(/^forget\s+(?:my\s+)?(.+)$/))) {
+      var fk = m[1].trim().replace(/^my\s+/, "");
+      if (settings.memories[fk]) {
+        delete settings.memories[fk];
+        saveSettings();
+        applySettings();
+        return respond("Forgotten: " + fk + ".");
+      }
+      return respond("I don't have a memory for \"" + fk + "\".");
     }
-  }
-
-  /* ---------- unit conversion ---------- */
-  if ((m = t.match(/^(?:convert\s+)?(-?\d+(?:\.\d+)?)\s*(?:degrees?\s+)?([a-z°]+)\s+(?:to|in|into)\s+(?:degrees?\s+)?([a-z°]+)$/))) {
-    const val = parseFloat(m[1]);
-    const result = convertUnits(val, m[2], m[3]);
-    if (result) {
-      const out = round(result.value, 4);
-      return respond(`${val} ${m[2]} equals ${out} ${m[3]}.`);
+    if (/^(?:list|show|what do you)(?: me)?(?: my)? memories/.test(t)) {
+      var keys = Object.keys(settings.memories);
+      if (!keys.length) return respond("I haven't stored any memories yet.");
+      var list = [];
+      for (var ki = 0; ki < keys.length; ki++) list.push(keys[ki] + ": " + settings.memories[keys[ki]]);
+      logLine("Memories — " + list.join(". "), "sys");
+      return respond("I remember " + keys.length + " things. " + list.join(". "));
     }
-  }
 
-  /* ---------- random ---------- */
-  if (/\b(roll|throw)\b.*\b(dice|die|d6|d20)\b/.test(t) || /^roll a? (dice|die)/.test(t)) {
-    const n = Math.floor(Math.random() * 6) + 1;
-    return respond(`You rolled a ${n}.`);
-  }
-  if (/\b(flip|toss)\b.*\bcoin\b/.test(t)) {
-    return respond(Math.random() < 0.5 ? "Heads." : "Tails.");
-  }
-  if ((m = t.match(/random number(?: between)?\s*(\d+)\s*(?:and|to|-)\s*(\d+)/))) {
-    const a = parseInt(m[1], 10), b = parseInt(m[2], 10);
-    const lo = Math.min(a, b), hi = Math.max(a, b);
-    return respond(`Your random number is ${Math.floor(Math.random() * (hi - lo + 1)) + lo}.`);
-  }
-  if (/^(pick|choose)\s+(?:a\s+)?(?:random\s+)?(?:number|one)/.test(t)) {
-    return respond(`I pick ${Math.floor(Math.random() * 100) + 1}.`);
-  }
-
-  /* ---------- jokes & quotes ---------- */
-  if (/\b(joke|make me laugh|something funny)\b/.test(t)) {
-    return respond(JOKES[Math.floor(Math.random() * JOKES.length)]);
-  }
-  if (/\b(inspire me|quote|motivat)/.test(t)) {
-    return respond(QUOTES[Math.floor(Math.random() * QUOTES.length)]);
-  }
-
-  /* ---------- system info ---------- */
-  if (/\b(battery|power level|charge)\b/.test(t)) {
-    if (navigator.getBattery) {
-      navigator.getBattery().then(b => {
-        respond(`Battery at ${Math.round(b.level * 100)} percent${b.charging ? " and charging" : ""}.`);
-      }).catch(() => respond("I can't read the battery on this device."));
-    } else {
-      respond("Battery status isn't available in this browser.");
+    // Notes
+    if ((m = t.match(/^(?:take a note|note that|note down|add note|make a note|write down)\s*:?\s*(.+)$/))) {
+      settings.notes.push({ text: m[1].trim(), at: Date.now() });
+      saveSettings();
+      applySettings();
+      beep(880, 0.08, 0.08);
+      return respond("Note saved. You now have " + settings.notes.length + " note" + (settings.notes.length === 1 ? "" : "s") + ".");
     }
-    return;
-  }
-  if (/\b(ip|network info|my ip)\b/.test(t)) {
-    setStatus("PROCESSING", "QUERYING NETWORK");
-    fetch("https://api.ipify.org?format=json")
-      .then(r => r.json())
-      .then(d => respond(`Your public IP address is ${d.ip}.`))
-      .catch(() => respond("I couldn't reach the network service."));
-    return;
-  }
-  if (/\b(system info|device info|screen size|resolution|browser)\b/.test(t)) {
-    const w = window.screen.width, h = window.screen.height;
-    const cores = navigator.hardwareConcurrency || "unknown";
-    const lang = navigator.language;
-    return respond(`Display is ${w} by ${h}. ${cores} logical cores available. Browser language ${lang}.`);
-  }
-
-  /* ---------- clipboard ---------- */
-  if ((m = t.match(/^(?:copy|clipboard)\s+(.+)$/))) {
-    const text = m[1];
-    navigator.clipboard.writeText(text)
-      .then(() => respond("Copied to clipboard."))
-      .catch(() => respond("I couldn't access the clipboard."));
-    return;
-  }
-
-  /* ---------- interface control ---------- */
-  if (/^(?:clear|wipe)(?: the)?(?: activity)?(?: log)?$/.test(t) || /^clear log/.test(t)) {
-    logEl.innerHTML = "";
-    logCount = 0;
-    $("logCount").textContent = "0";
-    logLine("Activity log cleared.", "sys");
-    return respond("Log cleared.");
-  }
-  if (/(full ?screen|maximise|maximize)/.test(t)) {
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen?.();
-      return respond("Entering full screen.");
-    } else {
-      document.exitFullscreen?.();
-      return respond("Exiting full screen.");
+    if (/^(?:read|show|list|what are)(?: me)?(?: my)? notes?/.test(t)) {
+      if (!settings.notes.length) return respond("You don't have any notes.");
+      var nlist = settings.notes.map(function (n, i) { return (i + 1) + ". " + n.text; }).join(". ");
+      logLine("Notes — " + nlist, "sys");
+      return respond("You have " + settings.notes.length + " note" + (settings.notes.length === 1 ? "" : "s") + ". " + nlist);
     }
-  }
-  if (/(stop talking|be quiet|silence|shut up|mute yourself)/.test(t)) {
-    if ("speechSynthesis" in window) speechSynthesis.cancel();
-    logLine("Voice output suppressed.", "sys");
-    return;
-  }
-  if (/(settings|preferences|options)/.test(t) && /open|show|display/.test(t)) {
-    openSettings();
-    return respond("Opening settings.");
-  }
+    if (/^(?:clear|delete|erase)(?: all)?(?: my)? notes?/.test(t)) {
+      var nc = settings.notes.length;
+      settings.notes = [];
+      saveSettings();
+      applySettings();
+      return respond("All " + nc + " note" + (nc === 1 ? "" : "s") + " cleared.");
+    }
 
-  /* ---------- standby ---------- */
-  if (/(shut down|power off|standby|sleep mode|good night)/.test(t)) {
-    setStatus("STANDBY", "ENTERING LOW POWER MODE");
-    energy = 0.05;
-    setTimeout(() => { if (!listening) setStatus("ONLINE", "ALL SYSTEMS NOMINAL"); }, 5000);
-    return respond("Entering standby. Wake me when you need me.");
-  }
+    // Greetings
+    if (/^(hi|hey|hello|yo|greetings|good (morning|afternoon|evening)|howdy)\b/.test(t)) {
+      var h = new Date().getHours();
+      var part = h < 12 ? "Good morning" : h < 18 ? "Good afternoon" : "Good evening";
+      var nameStr = settings.userName ? ", " + cap(settings.userName) : "";
+      return respond(part + nameStr + ". All systems are operational. How may I assist you?");
+    }
 
-  /* ---------- help ---------- */
-  if (/^(help|commands|what can i say|list commands)/.test(t)) {
-    const help = [
-      "Time & date, weather.",
-      "Set timers: 'set a timer for 5 minutes'.",
-      "Take notes: 'note that I need milk', 'read my notes'.",
-      "Remember things: 'remember my wifi password is hunter2'.",
-      "Convert units: 'convert 10 km to miles'.",
-      "Calculate: 'what is 15% of 240'.",
-      "Open sites: 'open github'. Search: 'search for arc reactors'.",
-      "Random: 'roll a dice', 'flip a coin'.",
-      "Say 'settings' to configure me."
-    ].join(" ");
-    logLine("Available protocols: " + help, "sys");
-    return respond(help);
-  }
+    // Time
+    if (/\b(time|clock)\b/.test(t) && !/timetable|timer/.test(t) && !/set a timer/.test(t)) {
+      var nowT = new Date();
+      return respond("The current time is " + nowT.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit", hour12: true }) + ".");
+    }
+    // Date
+    if (/\b(date|day|today)\b/.test(t) && !/update/.test(t)) {
+      var nowD = new Date();
+      return respond("Today is " + nowD.toLocaleDateString(undefined, { weekday: "long", day: "numeric", month: "long", year: "numeric" }) + ".");
+    }
 
-  /* ---------- math (fallback before search confirm) ---------- */
-  if (looksLikeMath(t)) {
-    const cleaned = t.replace(/^(?:calculate|compute|what(?:'s| is)|solve|evaluate|eval)\s+/i, "");
-    const result = safeEval(cleaned);
-    if (result !== null) return respond(`The result is ${round(result)}.`);
-  }
+    // Identity
+    if (/(who are you|your name|what are you|introduce yourself)/.test(t)) {
+      return respond("I am J.A.R.V.I.S. — Just A Rather Very Intelligent System. A browser-based interface built to assist you.");
+    }
+    if (/(how are you|status report|system status|systems check)/.test(t)) {
+      return respond("All systems nominal. Arc reactor at 98 percent. No anomalies detected.");
+    }
+    if (/(what can you do|your capabilities|abilities)/.test(t) && !/help/.test(t)) {
+      return respond("I can manage timers, take notes, remember things, convert units, perform calculations, report the weather, open websites, run searches, and control the interface. Say 'help' for a full list.");
+    }
 
-  /* ---------- fallback with offer to search ---------- */
-  askConfirm(
-    `I'm afraid I don't have a protocol for "${raw}". Shall I search the web for it?`,
-    () => {
+    // Timers
+    if ((m = t.match(/^(?:set (?:a )?timer(?: for)?|timer for|remind me in|in)\s+(\d+(?:\.\d+)?)\s*(seconds?|secs?|s|minutes?|mins?|m|hours?|hrs?|h)\b(.*)$/))) {
+      var tval = parseFloat(m[1]);
+      var tunit = m[2];
+      var secs = tval;
+      if (/^m/.test(tunit)) secs = tval * 60;
+      else if (/^h/.test(tunit)) secs = tval * 3600;
+      if (secs <= 0 || secs > 86400) return respond("Please choose a duration between 1 second and 24 hours.");
+      var labelMatch = m[3].match(/(?:to|for|about|that)\s+(.+)$/);
+      var label = labelMatch ? labelMatch[1].trim() : "";
+      setTimer(secs, label);
+      var pretty = secs < 60 ? (Math.round(secs) + " seconds") :
+                   secs < 3600 ? (round(secs / 60) + " minutes") :
+                   (round(secs / 3600) + " hours");
+      return respond(label ? "Timer set for " + pretty + " — " + label + "." : "Timer set for " + pretty + ".");
+    }
+    if (/^(?:cancel|clear|stop)(?: all)? timers?/.test(t)) {
+      var tn = activeTimers.length;
+      for (var ti = 0; ti < activeTimers.length; ti++) clearTimeout(activeTimers[ti]);
+      activeTimers = [];
+      return respond(tn ? ("Cancelled " + tn + " timer" + (tn === 1 ? "" : "s") + ".") : "There are no active timers.");
+    }
+
+    // Weather
+    if (/\b(weather|temperature outside|forecast|how hot|how cold)\b/.test(t)) {
+      setStatus("PROCESSING", "QUERYING METEOROLOGICAL DATA");
+      logLine("Requesting location and weather data…", "sys");
+      getWeather().then(function (cur) {
+        var desc = WX[cur.weather_code] || "indeterminate conditions";
+        var temp = Math.round(cur.temperature_2m);
+        var feels = Math.round(cur.apparent_temperature);
+        respond("Currently " + temp + " degrees Celsius with " + desc + ". It feels like " + feels + " degrees, with winds at " + Math.round(cur.wind_speed_10m) + " kilometres per hour.");
+      }).catch(function (err) {
+        if (err.message === "denied") respond("I require location permission to retrieve local weather.");
+        else if (err.message === "no-geo") respond("Your browser does not support geolocation.");
+        else respond("I'm unable to reach the meteorological service at the moment.");
+      });
+      return;
+    }
+
+    // Open websites
+    var openMatch = t.match(/^(?:open|launch|go to|navigate to|bring up)\s+(.+)$/);
+    if (openMatch) {
+      var target = openMatch[1].replace(/\s+(website|site|page|dot com|\.com)$/g, "").trim();
+      var sites = {
+        "youtube": "https://www.youtube.com",
+        "google": "https://www.google.com",
+        "github": "https://www.github.com",
+        "gmail": "https://mail.google.com",
+        "reddit": "https://www.reddit.com",
+        "wikipedia": "https://www.wikipedia.org",
+        "twitter": "https://twitter.com",
+        "x": "https://x.com",
+        "spotify": "https://open.spotify.com",
+        "chatgpt": "https://chat.openai.com",
+        "maps": "https://maps.google.com",
+        "news": "https://news.google.com",
+        "netflix": "https://www.netflix.com",
+        "twitch": "https://www.twitch.tv",
+        "stack overflow": "https://stackoverflow.com"
+      };
+      var url = sites[target];
+      if (!url && /^[\w-]+(\.[\w-]+)+$/.test(target)) url = "https://" + target;
+      if (url) {
+        logLine("Opening " + url, "sys");
+        window.open(url, "_blank", "noopener");
+        return respond("Opening " + target + ".");
+      }
+      return respond("I don't have a shortcut for \"" + target + "\". Try a full web address.");
+    }
+
+    // Search
+    var searchMatch = t.match(/^(?:search|google|look up|find|search for)\s+(?:for\s+)?(.+)$/);
+    if (searchMatch) {
+      var q = searchMatch[1];
+      logLine("Searching the web for: " + q, "sys");
+      window.open("https://www.google.com/search?q=" + encodeURIComponent(q), "_blank", "noopener");
+      return respond("Searching for " + q + ".");
+    }
+
+    // Wikipedia
+    var wikiMatch = tRaw.match(/^(?:who is|who was|what is|what's|tell me about|define)\s+(.{2,80})$/i);
+    if (wikiMatch) {
+      var wq = wikiMatch[1].replace(/[?.!]+$/, "").trim();
+      if (!looksLikeMath(wq) && !/^(the )?(time|date|weather)/.test(wq.toLowerCase())) {
+        logLine("Looking up \"" + wq + "\" on Wikipedia…", "sys");
+        window.open("https://en.wikipedia.org/wiki/Special:Search?search=" + encodeURIComponent(wq), "_blank", "noopener");
+        return respond("Looking up " + wq + " on Wikipedia.");
+      }
+    }
+
+    // Unit conversion
+    if ((m = t.match(/^(?:convert\s+)?(-?\d+(?:\.\d+)?)\s*(?:degrees?\s+)?([a-z°]+)\s+(?:to|in|into)\s+(?:degrees?\s+)?([a-z°]+)$/))) {
+      var cval = parseFloat(m[1]);
+      var cres = convertUnits(cval, m[2], m[3]);
+      if (cres) return respond(cval + " " + m[2] + " equals " + round(cres.value) + " " + m[3] + ".");
+    }
+
+    // Random
+    if (/\b(roll|throw)\b.*\b(dice|die|d6|d20)\b/.test(t) || /^roll a? (dice|die)/.test(t)) {
+      return respond("You rolled a " + (Math.floor(Math.random() * 6) + 1) + ".");
+    }
+    if (/\b(flip|toss)\b.*\bcoin\b/.test(t)) {
+      return respond(Math.random() < 0.5 ? "Heads." : "Tails.");
+    }
+    if ((m = t.match(/random number(?: between)?\s*(\d+)\s*(?:and|to|-)\s*(\d+)/))) {
+      var r1 = parseInt(m[1], 10), r2 = parseInt(m[2], 10);
+      var lo = Math.min(r1, r2), hi = Math.max(r1, r2);
+      return respond("Your random number is " + (Math.floor(Math.random() * (hi - lo + 1)) + lo) + ".");
+    }
+
+    // Jokes / quotes
+    if (/\b(joke|make me laugh|something funny)\b/.test(t)) {
+      return respond(JOKES[Math.floor(Math.random() * JOKES.length)]);
+    }
+    if (/\b(inspire me|quote|motivat)/.test(t)) {
+      return respond(QUOTES[Math.floor(Math.random() * QUOTES.length)]);
+    }
+
+    // Battery
+    if (/\b(battery|power level|charge)\b/.test(t)) {
+      if (navigator.getBattery) {
+        navigator.getBattery().then(function (b) {
+          respond("Battery at " + Math.round(b.level * 100) + " percent" + (b.charging ? " and charging" : "") + ".");
+        }).catch(function () { respond("I can't read the battery on this device."); });
+      } else {
+        respond("Battery status isn't available in this browser.");
+      }
+      return;
+    }
+
+    // IP
+    if (/\b(ip|my ip|network info)\b/.test(t)) {
+      setStatus("PROCESSING", "QUERYING NETWORK");
+      fetch("https://api.ipify.org?format=json")
+        .then(function (r) { return r.json(); })
+        .then(function (d) { respond("Your public IP address is " + d.ip + "."); })
+        .catch(function () { respond("I couldn't reach the network service."); });
+      return;
+    }
+
+    // System info
+    if (/\b(system info|device info|screen size|resolution|browser)\b/.test(t)) {
+      return respond("Display is " + window.screen.width + " by " + window.screen.height + ". " + (navigator.hardwareConcurrency || "unknown") + " logical cores available. Browser language " + navigator.language + ".");
+    }
+
+    // Clipboard
+    if ((m = t.match(/^(?:copy|clipboard)\s+(.+)$/))) {
+      var ctext = m[1];
+      navigator.clipboard.writeText(ctext)
+        .then(function () { respond("Copied to clipboard."); })
+        .catch(function () { respond("I couldn't access the clipboard."); });
+      return;
+    }
+
+    // Interface control
+    if (/^clear( the)?( activity)?( log)?$/.test(t)) {
+      if (els.log) els.log.innerHTML = "";
+      logCount = 0;
+      if (els.logCount) els.logCount.textContent = "0";
+      logLine("Activity log cleared.", "sys");
+      return respond("Log cleared.");
+    }
+    if (/(full ?screen|maximise|maximize)/.test(t)) {
+      if (!document.fullscreenElement) {
+        if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen();
+        return respond("Entering full screen.");
+      } else {
+        if (document.exitFullscreen) document.exitFullscreen();
+        return respond("Exiting full screen.");
+      }
+    }
+    if (/(stop talking|be quiet|silence|shut up|mute yourself)/.test(t)) {
+      if ("speechSynthesis" in window) speechSynthesis.cancel();
+      logLine("Voice output suppressed.", "sys");
+      return;
+    }
+    if (/(open|show).*(settings|preferences)|settings/.test(t) && /open|show/.test(t)) {
+      openSettings();
+      return respond("Opening settings.");
+    }
+
+    // Standby
+    if (/(shut down|power off|standby|sleep mode|good night)/.test(t)) {
+      setStatus("STANDBY", "ENTERING LOW POWER MODE");
+      energy = 0.05;
+      setTimeout(function () { if (!listening) setStatus("ONLINE", "ALL SYSTEMS NOMINAL"); }, 5000);
+      return respond("Entering standby. Wake me when you need me.");
+    }
+
+    // Help
+    if (/^(help|commands|what can i say|list commands)/.test(t)) {
+      var help = "Time & date, weather. Set timers: 'set a timer for 5 minutes'. Take notes: 'note that I need milk'. Remember things: 'remember my wifi password is hunter2'. Convert units: 'convert 10 km to miles'. Calculate: 'what is 15% of 240'. Open sites: 'open github'. Search: 'search for arc reactors'. Random: 'roll a dice'. Say 'settings' to configure me.";
+      logLine("Available protocols: " + help, "sys");
+      return respond(help);
+    }
+
+    // Math
+    if (looksLikeMath(t)) {
+      var cleaned = t.replace(/^(?:calculate|compute|what(?:'s| is)|solve|evaluate|eval)\s+/i, "");
+      var mres = safeEval(cleaned);
+      if (mres !== null) return respond("The result is " + round(mres) + ".");
+    }
+
+    // Fallback
+    askConfirm("I'm afraid I don't have a protocol for \"" + raw + "\". Shall I search the web for it?", function () {
       window.open("https://www.google.com/search?q=" + encodeURIComponent(raw), "_blank", "noopener");
-      respond(`Searching for ${raw}.`);
+      respond("Searching for " + raw + ".");
+    });
+  }
+
+  // ==================== BOOT SEQUENCE ====================
+  var BOOT_LINES = [
+    ["INITIALISING J.A.R.V.I.S. KERNEL", "OK"],
+    ["LOADING NEURAL INTERFACE", "OK"],
+    ["CALIBRATING SENSOR ARRAY", "OK"],
+    ["MOUNTING STARK INDUSTRIES DATABASE", "OK"],
+    ["ESTABLISHING SECURE UPLINK", "OK"],
+    ["ARC REACTOR OUTPUT", "98.4%"],
+    ["LOADING COMMAND PROTOCOLS", "214"],
+    ["ALL SYSTEMS NOMINAL", ""]
+  ];
+
+  function runBoot() {
+    var box = els.bootLog;
+    var bar = els.bootBar ? els.bootBar.firstElementChild : null;
+    if (!box) return Promise.resolve();
+
+    var i = 0;
+    function step() {
+      if (i >= BOOT_LINES.length) {
+        return sleep(380).then(function () {
+          els.boot.classList.add("done");
+          logLine("Interface initialised. Standing by.", "jarvis");
+          if (settings.alwaysOn) {
+            logLine("Always-listening mode active.", "ok");
+            setTimeout(function () {
+              if (userHasInteracted) startListening();
+            }, 500);
+          }
+        });
+      }
+      var line = BOOT_LINES[i];
+      var label = line[0], status = line[1];
+      var dots = ".".repeat(Math.max(4, 42 - label.length));
+      var row = document.createElement("div");
+      row.innerHTML = label + ' <span style="color:#1d5b6b">' + dots + '</span> <span class="ok">' + status + "</span>";
+      box.appendChild(row);
+      if (bar) bar.style.width = ((i + 1) / BOOT_LINES.length * 100) + "%";
+      i++;
+      var delay = (i === BOOT_LINES.length) ? 380 : rand(120, 240);
+      return sleep(delay).then(step);
     }
-  );
-}
+    return step();
+  }
 
-function askConfirm(prompt, action) {
-  pendingAction = action;
-  respond(prompt);
-}
+  // ==================== ELEMENT CACHE ====================
+  function cacheElements() {
+    els = {
+      boot: $("boot"),
+      bootLog: $("bootLog"),
+      bootBar: $("bootBar"),
+      clock: $("clock"),
+      uptime: $("uptime"),
+      netLabel: $("netLabel"),
+      statusText: $("statusText"),
+      coreSub: $("coreSub"),
+      reactor: $("reactor"),
+      log: $("log"),
+      logCount: $("logCount"),
+      cmd: $("cmd"),
+      micBtn: $("micBtn"),
+      micState: $("micState"),
+      voiceName: $("voiceName"),
+      memCount: $("memCount"),
+      telemetryPanel: $("telemetryPanel"),
+      logPanel: $("logPanel"),
+      mainGrid: $("mainGrid"),
+      listenBadge: $("listenBadge"),
+      listenBadgeText: $("listenBadgeText"),
+      settingsBtn: $("settingsBtn"),
+      settingsPanel: $("settingsPanel"),
+      settingsClose: $("settingsClose"),
+      settingsBackdrop: $("settingsBackdrop"),
+      setAlwaysOn: $("setAlwaysOn"),
+      setRequireWake: $("setRequireWake"),
+      setWakeWord: $("setWakeWord"),
+      setLang: $("setLang"),
+      setVoice: $("setVoice"),
+      setRate: $("setRate"),
+      setPitch: $("setPitch"),
+      setVolume: $("setVolume"),
+      valRate: $("valRate"),
+      valPitch: $("valPitch"),
+      valVolume: $("valVolume"),
+      setSpeak: $("setSpeak"),
+      setTelemetry: $("setTelemetry"),
+      setLogPanel: $("setLogPanel"),
+      setGrid: $("setGrid"),
+      setReduced: $("setReduced"),
+      testVoice: $("testVoice"),
+      clearLogBtn: $("clearLogBtn"),
+      clearMemBtn: $("clearMemBtn"),
+      resetBtn: $("resetBtn")
+    };
+    canvas = els.reactor;
+    if (canvas) ctx = canvas.getContext("2d");
+  }
 
-/* ============================================================
-   11. WEATHER HELPER
-   ============================================================ */
-const WX = {
-  0: "clear skies", 1: "mainly clear", 2: "partly cloudy", 3: "overcast",
-  45: "foggy", 48: "freezing fog", 51: "light drizzle", 53: "drizzle",
-  55: "heavy drizzle", 61: "light rain", 63: "rain", 65: "heavy rain",
-  71: "light snow", 73: "snow", 75: "heavy snow", 80: "rain showers",
-  81: "rain showers", 82: "violent rain showers", 95: "a thunderstorm",
-  96: "a thunderstorm with hail", 99: "a severe thunderstorm with hail"
-};
+  // ==================== EVENT BINDING ====================
+  function bindCheckbox(id, key, onChange) {
+    var el = els[id];
+    if (!el) return;
+    el.addEventListener("change", function (e) {
+      settings[key] = e.target.checked;
+      saveSettings();
+      applySettings();
+      if (onChange) onChange(e.target.checked);
+    });
+  }
 
-function getWeather() {
-  return new Promise((resolve, reject) => {
-    if (!navigator.geolocation) return reject(new Error("no-geo"));
-    navigator.geolocation.getCurrentPosition(async (pos) => {
-      try {
-        const { latitude, longitude } = pos.coords;
-        const url = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m`;
-        const res = await fetch(url);
-        const data = await res.json();
-        resolve(data.current);
-      } catch (err) { reject(err); }
-    }, () => reject(new Error("denied")), { timeout: 9000 });
-  });
-}
+  function bindRange(id, key, displayId) {
+    var el = els[id];
+    if (!el) return;
+    el.addEventListener("input", function (e) {
+      settings[key] = parseFloat(e.target.value);
+      if (els[displayId]) els[displayId].textContent = settings[key].toFixed(2);
+      saveSettings();
+    });
+  }
 
-/* ============================================================
-   12. SETTINGS UI
-   ============================================================ */
-const settingsPanel = $("settingsPanel");
-const settingsBackdrop = $("settingsBackdrop");
+  function bindAll() {
+    // Header / footer buttons
+    if (els.settingsBtn) els.settingsBtn.addEventListener("click", function () {
+      userHasInteracted = true;
+      toggleSettings();
+    });
+    if (els.settingsClose) els.settingsClose.addEventListener("click", closeSettings);
+    if (els.settingsBackdrop) els.settingsBackdrop.addEventListener("click", closeSettings);
 
-function openSettings() {
-  settingsPanel.classList.add("open");
-  settingsBackdrop.classList.add("open");
-  settingsPanel.setAttribute("aria-hidden", "false");
-  $("settingsBtn").classList.add("active");
-}
-function closeSettings() {
-  settingsPanel.classList.remove("open");
-  settingsBackdrop.classList.remove("open");
-  settingsPanel.setAttribute("aria-hidden", "true");
-  $("settingsBtn").classList.remove("active");
-}
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") closeSettings();
+    });
 
-$("settingsBtn").addEventListener("click", () => {
-  userHasInteracted = true;
-  if (settingsPanel.classList.contains("open")) closeSettings();
-  else openSettings();
-});
-$("settingsClose").addEventListener("click", closeSettings);
-settingsBackdrop.addEventListener("click", closeSettings);
-document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape" && settingsPanel.classList.contains("open")) closeSettings();
-});
+    if (els.micBtn) els.micBtn.addEventListener("click", toggleMic);
 
-/* --- bind setting controls --- */
-function bindCheckbox(id, key, onChange) {
-  $(id).addEventListener("change", (e) => {
-    settings[key] = e.target.checked;
-    saveSettings();
+    if (els.cmd) {
+      els.cmd.addEventListener("keydown", function (e) {
+        if (e.key === "Enter") {
+          var val = els.cmd.value.trim();
+          els.cmd.value = "";
+          if (val) {
+            userHasInteracted = true;
+            logLine(val, "user");
+            handleCommand(val);
+          }
+        }
+      });
+    }
+
+    // Unlock audio on first user gesture
+    document.addEventListener("click", function () { userHasInteracted = true; }, { once: true });
+    document.addEventListener("keydown", function () { userHasInteracted = true; }, { once: true });
+
+    // Settings controls
+    bindCheckbox("setSpeak", "speak");
+    bindCheckbox("setTelemetry", "showTelemetry");
+    bindCheckbox("setLogPanel", "showLog");
+    bindCheckbox("setGrid", "showGrid");
+    bindCheckbox("setReduced", "reducedMotion");
+    bindCheckbox("setRequireWake", "requireWake");
+    bindCheckbox("setAlwaysOn", "alwaysOn", function (on) {
+      if (on) {
+        if (userHasInteracted) startListening();
+        else {
+          // We'll start on first interaction
+          var unlock = function () {
+            startListening();
+            document.removeEventListener("click", unlock);
+            document.removeEventListener("keydown", unlock);
+          };
+          document.addEventListener("click", unlock);
+          document.addEventListener("keydown", unlock);
+        }
+        toast("Always-listening enabled");
+        logLine("Always-listening mode enabled. Mic will stay active.", "ok");
+      } else {
+        stopListening();
+        toast("Always-listening disabled");
+        logLine("Always-listening mode disabled.", "sys");
+      }
+    });
+
+    if (els.setWakeWord) {
+      els.setWakeWord.addEventListener("input", function (e) {
+        settings.wakeWord = e.target.value.trim() || "jarvis";
+        saveSettings();
+      });
+    }
+
+    if (els.setLang) {
+      els.setLang.addEventListener("change", function (e) {
+        settings.lang = e.target.value;
+        saveSettings();
+        if (recognition) {
+          recognition.lang = settings.lang;
+          if (wantListening) {
+            stopListening();
+            setTimeout(startListening, 300);
+          }
+        }
+        toast("Language updated");
+      });
+    }
+
+    if (els.setVoice) {
+      els.setVoice.addEventListener("change", function (e) {
+        settings.voiceName = e.target.value;
+        saveSettings();
+        var v = pickVoiceByName(settings.voiceName);
+        if (els.voiceName) {
+          els.voiceName.textContent = (v ? v.name : (jarvisVoice ? jarvisVoice.name : "DEFAULT")).toUpperCase().slice(0, 16);
+        }
+      });
+    }
+
+    bindRange("setRate", "rate", "valRate");
+    bindRange("setPitch", "pitch", "valPitch");
+    bindRange("setVolume", "volume", "valVolume");
+
+    if (els.testVoice) {
+      els.testVoice.addEventListener("click", function () {
+        userHasInteracted = true;
+        var wasSpeak = settings.speak;
+        settings.speak = true;
+        speak("All systems nominal. Voice interface operational.");
+        if (!wasSpeak) setTimeout(function () { settings.speak = false; }, 200);
+      });
+    }
+
+    if (els.clearLogBtn) {
+      els.clearLogBtn.addEventListener("click", function () {
+        if (els.log) els.log.innerHTML = "";
+        logCount = 0;
+        if (els.logCount) els.logCount.textContent = "0";
+        logLine("Activity log cleared.", "sys");
+        toast("Log cleared");
+      });
+    }
+
+    if (els.clearMemBtn) {
+      els.clearMemBtn.addEventListener("click", function () {
+        settings.memories = {};
+        settings.notes = [];
+        saveSettings();
+        applySettings();
+        logLine("All memories and notes erased.", "sys");
+        toast("Memories cleared");
+      });
+    }
+
+    if (els.resetBtn) {
+      els.resetBtn.addEventListener("click", function () {
+        if (!confirm("Reset all settings to defaults? This will also erase memories and notes.")) return;
+        settings = JSON.parse(JSON.stringify(DEFAULTS));
+        settings.memories = {};
+        settings.notes = [];
+        saveSettings();
+        applySettings();
+        if (recognition) recognition.lang = settings.lang;
+        stopListening();
+        logLine("All settings reset to defaults.", "sys");
+        toast("Settings reset");
+      });
+    }
+
+    window.addEventListener("resize", function () {
+      resizeCanvas();
+    });
+  }
+
+  // ==================== INIT ====================
+  function init() {
+    cacheElements();
+    bindAll();
     applySettings();
-    if (onChange) onChange(e.target.checked);
-  });
-}
-function bindRange(id, key, displayId) {
-  $(id).addEventListener("input", (e) => {
-    settings[key] = parseFloat(e.target.value);
-    if (displayId) $(displayId).textContent = settings[key].toFixed(2);
-    saveSettings();
-  });
-}
+    setupRecognition();
+    refreshVoices();
 
-bindCheckbox("setSpeak", "speak");
-bindCheckbox("setTelemetry", "showTelemetry");
-bindCheckbox("setLogPanel", "showLog");
-bindCheckbox("setGrid", "showGrid");
-bindCheckbox("setReduced", "reducedMotion");
-bindCheckbox("setRequireWake", "requireWake");
-
-bindCheckbox("setAlwaysOn", "alwaysOn", (on) => {
-  if (on) {
-    startListening();
-    toast("Always-listening enabled");
-    logLine("Always-listening mode enabled. Mic will stay active.", "ok");
-  } else {
-    stopListening();
-    toast("Always-listening disabled");
-    logLine("Always-listening mode disabled.", "sys");
-  }
-});
-
-$("setWakeWord").addEventListener("input", (e) => {
-  settings.wakeWord = e.target.value.trim() || "jarvis";
-  saveSettings();
-});
-
-$("setLang").addEventListener("change", (e) => {
-  settings.lang = e.target.value;
-  saveSettings();
-  if (recognition) {
-    recognition.lang = settings.lang;
-    if (wantListening) {
-      stopListening();
-      setTimeout(startListening, 300);
+    if ("speechSynthesis" in window) {
+      speechSynthesis.onvoiceschanged = refreshVoices;
+      setTimeout(refreshVoices, 500);
+      setTimeout(refreshVoices, 1500);
+    } else if (els.voiceName) {
+      els.voiceName.textContent = "UNSUPPORTED";
     }
+
+    if (!micSupported && els.micState) {
+      els.micState.textContent = "UNSUPPORTED";
+      if (els.micBtn) els.micBtn.title = "Voice input not supported in this browser";
+      logLine("Speech recognition unsupported — use Chrome or Edge for voice.", "warn");
+    }
+
+    // Timers
+    setInterval(tickClock, 1000);
+    tickClock();
+    setInterval(tickUptime, 1000);
+    tickUptime();
+    setInterval(updateStats, 1400);
+    updateStats();
+    setInterval(function () {
+      if (!listening) energy = clamp(energy + rand(-0.05, 0.06), 0.1, 0.55);
+    }, 1800);
+
+    // Canvas
+    resizeCanvas();
+    lastFrame = performance.now();
+    requestAnimationFrame(loop);
+    setTimeout(resizeCanvas, 200);
+    setTimeout(resizeCanvas, 600);
+
+    // Safety net — never let the boot screen stick
+    setTimeout(function () {
+      if (els.boot && !els.boot.classList.contains("done")) {
+        els.boot.classList.add("done");
+        logLine("Boot sequence timed out — interface ready.", "warn");
+      }
+    }, 6000);
+
+    // Run boot
+    runBoot().catch(function (err) {
+      console.error("Boot error:", err);
+      if (els.boot) els.boot.classList.add("done");
+    });
   }
-  toast("Language updated");
-});
 
-$("setVoice").addEventListener("change", (e) => {
-  settings.voiceName = e.target.value;
-  saveSettings();
-  const v = pickVoiceByName(settings.voiceName);
-  $("voiceName").textContent = (v ? v.name : (jarvisVoice ? jarvisVoice.name : "DEFAULT")).toUpperCase().slice(0, 16);
-});
-
-bindRange("setRate", "rate", "valRate");
-bindRange("setPitch", "pitch", "valPitch");
-bindRange("setVolume", "volume", "valVolume");
-
-$("testVoice").addEventListener("click", () => {
-  userHasInteracted = true;
-  const wasSpeak = settings.speak;
-  settings.speak = true;
-  speak("All systems nominal. Voice interface operational.");
-  if (!wasSpeak) setTimeout(() => { settings.speak = false; }, 100);
-});
-
-$("clearLogBtn").addEventListener("click", () => {
-  logEl.innerHTML = "";
-  logCount = 0;
-  $("logCount").textContent = "0";
-  logLine("Activity log cleared.", "sys");
-  toast("Log cleared");
-});
-
-$("clearMemBtn").addEventListener("click", () => {
-  settings.memories = {};
-  settings.notes = [];
-  saveSettings();
-  applySettings();
-  logLine("All memories and notes erased.", "sys");
-  toast("Memories cleared");
-});
-
-$("resetBtn").addEventListener("click", () => {
-  if (!confirm("Reset all settings to defaults? This will also erase memories and notes.")) return;
-  settings = JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
-  saveSettings();
-  applySettings();
-  if (recognition) recognition.lang = settings.lang;
-  stopListening();
-  logLine("All settings reset to defaults.", "sys");
-  toast("Settings reset");
-});
-
-/* ============================================================
-   13. INPUT HANDLING
-   ============================================================ */
-cmdInput.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") {
-    const val = cmdInput.value.trim();
-    cmdInput.value = "";
-    if (val) { userHasInteracted = true; logLine(val, "user"); handleCommand(val); }
+  // Fire when DOM is ready
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
   }
-});
 
-document.addEventListener("click", () => { userHasInteracted = true; }, { once: true });
-document.addEventListener("keydown", () => { userHasInteracted = true; }, { once: true });
-
-/* ============================================================
-   14. START
-   ============================================================ */
-resizeCanvas();
-requestAnimationFrame(loop);
-window.addEventListener("resize", resizeCanvas);
-setTimeout(resizeCanvas, 300);
-
-// idle reactor energy
-setInterval(() => {
-  if (!listening) energy = clamp(energy + rand(-0.05, 0.06), 0.1, 0.55);
-}, 1800);
-
-// apply persisted settings on load
-applySettings();
+})();
 </script>
 </body>
 </html>
